@@ -42,6 +42,20 @@
         color: green;
         width: 85px;
     }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border-bottom: 1px solid rgb(157, 157, 157);
+        text-align: center;
+    }
+
+    td {
+        padding: 10px 0 10px 0;
+    }
 {% endblock %}
 
 {% block javascript_docready %}
@@ -58,7 +72,7 @@
     });
 
     $('i[class*="icon-delete-"]').click(function() {
-    	$( "#dialog-confirm" ).data('compid', $(this).parent().parent().data('id')).dialog('open');
+    	$( "#dialog-confirm" ).data('compid', $(this).parent().parent().data('id')).modal('show');
     });
 
     $('.icon-delete-black').hover(
@@ -78,26 +92,16 @@
             $(this).removeClass('icon-view-green').addClass('icon-view-black');
         }
     );
-    
-    $( "#dialog-confirm" ).dialog({
-		resizable: false,
-		modal: true,
-		autoOpen: false,
-		buttons: {
-			"{{ 'competitionlist.delcomp.modal.del'|trans }}": function() {
-				$.ajax({
-					url: '/comp/del',
-					method: 'POST',
-					data: {compid: $( "#dialog-confirm" ).data('compid')}
-				}).success(function(data) {
-					(data == 'true') ? window.location.reload() : window.location.reload();
-				});
-			},
-			Cancel: function() {
-				$( this ).dialog( "close" );
-			}
-		}
-	});
+
+    $('#comp-del').click(function() {
+        $.ajax({
+            url: '/comp/del',
+            method: 'POST',
+            data: {compid: $( "#dialog-confirm" ).data('compid')}
+        }).success(function(data) {
+            (data == 'true') ? window.location.reload() : window.location.reload();
+        });
+    });
 {% endblock %}
 
 {% block content %}
@@ -131,7 +135,21 @@
 {% endblock %}
 
 {% block dialog %}
-	<div id="dialog-confirm" title="{{ 'competitionlist.delcomp.modal.title'|trans }}">
-		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>{{ 'competitionlist.delcomp.modal.message'|trans }}</p>
-	</div>
+    <div class="modal fade" id="dialog-confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">{{ 'competitionlist.delcomp.modal.title'|trans }}</h4>
+                </div>
+                <div class="modal-body">
+                    <span style="color: red;">{{ 'competitionlist.delcomp.modal.message'|trans }}</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="comp-del" class="btn btn-danger">{{ 'competitionlist.delcomp.modal.del'|trans }}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'competitionlist.delcomp.modal.cancel'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

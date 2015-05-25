@@ -45,6 +45,7 @@ competitionlist:
             title: 'Delete competition'
             message: 'This competition will be deleted. Are you sure?'
             del: 'Delete'
+            cancel: 'Cancel'
     form:
         name: 'Competition name'
         gym: 'Gym'

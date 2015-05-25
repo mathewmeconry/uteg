@@ -5,30 +5,37 @@
 {% block title %}{{ 'competitionlist.addcomp.title'|trans }}{% endblock %}
 
 {% block header %}
-<link href="/jqueryui/jquery-ui.css" rel="stylesheet">
-<script src="/jqueryui/jquery-ui.min.js"></script>
+
 {% endblock %}
 
 {% block javascript_docready %}
-$('#appbundle_competition_startdate').datepicker({
-	changeMonth: true,
-	changeYear: true,
-	dateFormat: 'yy-mm-dd',
-	minDate: 0,
-	onClose: function( selectedDate ) {
-		$( "#appbundle_competition_enddate" ).datepicker( "option", "minDate", selectedDate );
-	}
-});
+    $('#appbundle_competition_startdate').addClass('datepicker');
 
-$('#appbundle_competition_enddate').datepicker({
-	changeMonth: true,
-	changeYear: true,
-	dateFormat: 'yy-mm-dd',
-	minDate: 0,
-	onClose: function( selectedDate ) {
-		$( "#appbundle_competition_startdate" ).datepicker( "option", "maxDate", selectedDate );
-	}
-});
+    $('#appbundle_competition_enddate').addClass('datepicker');
+
+
+    $('.datepicker').datepicker({
+    showOtherMonths:true,
+    format:'yyyy-mm-dd',
+    weekStart:1,
+    autoClose:true
+    });
+
+    var nowTemp = new Date();
+    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+    var startdate = $('#appbundle_competition_startdate').datepicker({
+            format:'yyyy-mm-dd',
+            weekStart:1,
+            autoClose:true,
+            startDate: "-0d"
+        }).data('datepicker');
+
+    var enddate = $('#appbundle_competition_enddate').datepicker({
+            format:'yyyy-mm-dd',
+            weekStart:1,
+            autoClose:true
+        }).data('datepicker');
 {% endblock %}
 
 {% block content %}

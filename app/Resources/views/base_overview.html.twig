@@ -5,11 +5,23 @@
         <title>{% block title %}{% endblock %}</title>
         <link href='http://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <link href="/jqueryui/jquery-ui.css" rel="stylesheet">
-		<script src="/jqueryui/jquery-ui.min.js"></script>
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/bootstrap-dialog.min.css" rel="stylesheet">
+        <link href="/css/bootstrap-datepicker.css" rel="stylesheet">
+		<script src="/js/bootstrap.min.js"></script>
+        <script src="/js/bootstrap-datepicker.js"></script>
+        <script src="/js/bootstrap-dialog.min.js"></script>
         {%  block header %}{% endblock %}
         <style>
-           *{margin:0;padding:0;}
+           *{
+               margin:0;
+               padding:0;
+           }
+
+           #comp h1, #profile h1 {
+               margin: 0 !important;
+           }
+
 
             body{
                 background:#567;
@@ -72,22 +84,8 @@
                 padding:4% 4%;
             }
 
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            th, td {
-                border-bottom: 1px solid rgb(157, 157, 157);
-                text-align: center;
-            }
-
-            td {
-                padding: 10px 0 10px 0;
-            }
-
             input, select {
-                width: 100%;
+                width: 100% !important;
                 background:#fff;
                 margin-bottom:2%;
                 border:1px solid #ccc;
@@ -95,6 +93,7 @@
                 font-family:'Open Sans',sans-serif;
                 font-size:95%;
                 color:#555;
+                height: auto !important;
             }
             
             select {
