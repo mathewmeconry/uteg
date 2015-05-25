@@ -1,0 +1,150 @@
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <link href='http://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <style>
+           *{margin:0;padding:0;}
+
+            body{
+                background:#567;
+                font-family: 'Quicksand', sans-serif;
+            }
+
+            .button-holder {
+                width: 245px;
+                margin:0 auto;
+                margin-top:1%;
+            }
+
+            .button{
+                width:100px;
+                background:#3399cc;
+                display:inline-block;
+
+                padding:10px;
+                text-align:center;
+                text-decoration:none;
+                color:#fff;
+                cursor:pointer;
+                transition:background .3s;
+                -webkit-transition:background .3s;
+            }
+
+            .button:hover{
+                background:#2288bb;
+            }
+
+            #login, #register{
+                width:400px;
+                margin:0 auto;
+                margin-top:8px;
+                margin-bottom:2%;
+                transition:opacity 1s;
+                -webkit-transition:opacity 1s;
+            }
+
+            #triangle{
+                width:0;
+                border-top:12x solid transparent;
+                border-right:12px solid transparent;
+                border-bottom:12px solid #3399cc;
+                border-left:12px solid transparent;
+                margin:0 auto;
+            }
+
+            #login h1, #register h1{
+                background:#3399cc;
+                padding:20px 0;
+                font-size:140%;
+                font-weight:300;
+                text-align:center;
+                color:#fff;
+            }
+
+            form, div.content{
+                background:#f0f0f0;
+                padding:6% 4%;
+            }
+
+            input {
+                width: 100%;
+                background:#fff;
+                margin-bottom:4%;
+                border:1px solid #ccc;
+                padding:4%;
+                font-family:'Open Sans',sans-serif;
+                font-size:95%;
+                color:#555;
+            }
+
+            div.g-recaptcha {
+                margin-bottom: 4%;
+            }
+
+            input[type="checkbox"] {
+                width:10%;
+            }
+
+            input[type="submit"]{
+                width:100%;
+                background:#3399cc;
+                border:0;
+                padding:4%;
+                font-family:'Open Sans',sans-serif;
+                font-size:100%;
+                color:#fff;
+                cursor:pointer;
+                transition:background .3s;
+                -webkit-transition:background .3s;
+            }
+
+            input[type="submit"]:hover{
+                background:#2288bb;
+            }
+
+           i.icon:before {
+               content: "";
+               background-size: 20px 20px;
+               background-repeat: no-repeat;
+               background-position: 0;
+               padding-left: 30px;
+               font-size: medium;
+           }
+
+           i.icon-success-green:before {
+               background-image: url('/icons/icon-success-green.png');
+           }
+
+            ul, div.error {
+                list-style: none;
+                color: red;
+            }
+        </style>
+        <script>
+            $(document).ready(function() {
+               	$('.button').click(function() {
+                   	window.location.href = $(this).attr('href');
+               	});
+
+                if($('#login').length > 0) {
+                    $('.button-holder').css('padding', '0 0 0 120px');
+                }
+
+                if($('#register').length > 0) {
+                    $('.button-holder').css('padding', '0 120px 0 0');
+                }
+            });
+        </script>
+    </head>
+</html>
+<body>
+<div class="button-holder">
+    <span href="/login" class="button" id="toggle-login">{{ 'login.nav_button'|trans({}, 'uteg') }}</span>
+    <span href="/register" class="button" id="toggle-register">{{ 'register.nav_button'|trans({}, 'uteg') }}</span>
+</div>
+
+
+{% block fos_user_content %}{% endblock %}
+
+</body>

@@ -1,0 +1,8 @@
+login:
+  title: Log in
+  nav_button: Log in
+  header: Log in
+  button: Log in
+  username: Username
+  password: Password
+  remember_me: Remember me

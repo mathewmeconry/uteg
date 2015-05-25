@@ -1,0 +1,42 @@
+{% extends "base_overview.html.twig" %}
+
+{% trans_default_domain 'uteg' %}
+
+{% block title %}{{ 'competitionslist.newcomp.title'|trans }}{% endblock %}
+
+{% block javascript_docready %}
+$('#appbundle_competition_startdate').datepicker({
+	changeMonth: true,
+	changeYear: true,
+	dateFormat: 'yy-mm-dd',
+	minDate: 0,
+	onClose: function( selectedDate ) {
+		$( "#appbundle_competition_enddate" ).datepicker( "option", "minDate", selectedDate );
+	}
+});
+
+$('#appbundle_competition_enddate').datepicker({
+	changeMonth: true,
+	changeYear: true,
+	dateFormat: 'yy-mm-dd',
+	minDate: 0,
+	onClose: function( selectedDate ) {
+		$( "#appbundle_competition_startdate" ).datepicker( "option", "maxDate", selectedDate );
+	}
+});
+{% endblock %}
+
+{% block content %}
+	<div id="comp">
+        <div id="triangle"></div>
+        <h1>{{ 'competitionslist.newcomp.header'|trans }}</h1>
+        <div class="content">
+        	<form action="{{ path('addNewComp_post') }}" {{ form_enctype(form) }} method="POST">
+            	{{ form_widget(form) }}
+		        <div>
+					<input type="submit" value="{{ 'competitionslist.newcomp.submit'|trans() }}" />
+				</div>
+			</form>
+        </div>
+    </div>
+{% endblock %}

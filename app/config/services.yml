@@ -1,0 +1,39 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+            - { name: twig.extension }
+
+    acl_competition:
+        class:     AppBundle\ACL\ACLCompetition
+        arguments: ["@doctrine.orm.entity_manager","@security.acl.provider","@request_stack", "@security.authorization_checker"]
+
+    uteg_user.registration.form.type:
+        class: AppBundle\Form\Type\RegistrationFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: uteg_user_registration }
+
+    uteg_user.profile_edit.form.type:
+        class: AppBundle\Form\Type\ProfileFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: uteg_profile_edit }
+    
+    appbundle.menu_builder:
+        class: AppBundle\Menu\Breadcrumb
+        arguments: ["@knp_menu.factory"]
+        
+    appbundle.menu.breadcrumb:
+        class: AppBundle\Menu\Breadcrumb
+        factory_service: appbundle.menu_builder # the menu builder service above
+        factory_method: breadcrumb # the method name to generate the menu
+        arguments: ["@request"]
+        scope: request
+        tags:
+            - { name: knp_menu.menu, alias: breadcrumb } # The alias is used in the template

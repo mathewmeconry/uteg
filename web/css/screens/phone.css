@@ -1,0 +1,38 @@
+/* phones in both orientations */
+.header-bar {
+	height: 25px;
+}
+
+.header-bar span {
+	font-size: 15pt;
+	height: 25px;
+}
+
+.header-bar span {
+	display: none;
+}
+
+.header-bar span:last-child {
+	display: inline;
+}
+
+header i.menu-button {
+	top: 5px;
+	height: 15px;
+}
+
+header span:before {
+	background-size: 10px;
+}
+	
+nav.box {
+	width: 100%;
+}
+
+div.nav-userbox {
+	padding-top: 40px;
+}
+
+nav.main {
+	padding-top: 10px;
+}

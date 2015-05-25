@@ -1,0 +1,77 @@
+{% trans_default_domain 'uteg' %}
+
+<!DOCTYPE html>
+<html>
+	<head>
+        <title>{% block title %}{% endblock %}</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <link href='http://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
+        <link href="{{ asset('css/index.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ asset('css/screens/phone.css') }}" rel="stylesheet" type="text/css" media="screen and (min-width: 0px) and (max-width: 679px)">
+        <link href="{{ asset('css/screens/tablet-portrait.css') }}" rel="stylesheet" type="text/css" media="screen and (min-width: 680px) and (max-width: 1024px) and (orientation : portrait)">
+        <link href="{{ asset('css/screens/tablet-landscape.css') }}" rel="stylesheet" type="text/css" media="screen and (min-width: 680px) and (max-width: 1024px) and (orientation : landscape)">
+        <link href="{{ asset('css/screens/space.css') }}" rel="stylesheet" type="text/css" media="screen and (min-width: 1025px)">
+        <style>
+        	header ul li span:before {
+				background-image: url('/icons/icon-arrow-right.png');
+			}
+
+            header ul li.first span:before {
+                background-image: url('');
+            }
+        </style>
+        <script>
+            $(document).ready(function() {
+                switch (true) {
+                    case (window.innerWidth < 679):
+                        $('header i.menu-button').removeClass('active');
+                        $('nav.box').addClass('close');
+                        break;
+                    case (window.innerWidth > 680 &&  window.innerWidth < 1024):
+                        $('header i.menu-button').removeClass('active');
+                        $('nav.box').addClass('close');
+                        break;
+                    default:
+                        $('header i.menu-button').addClass('active');
+                        $('nav.box').removeClass('close');
+                        break;
+                }
+
+                $('header i.menu-button').click(function() {
+                    $(this).toggleClass('active');
+                    if($(this).hasClass('active')) {
+                        $('nav.box').removeClass('close');
+                    } else {
+                        $('nav.box').addClass('close');
+                    }
+                });
+
+                $('nav.main ul li').click(function() {
+                    document.location.href = $(this).children('a').eq(0).attr('href');
+                });
+            });
+        </script>
+	</head>
+	<body>
+		<header>
+			<div class="header-bar">
+				<i class="menu-button"></i>
+				<span class="breadcrumb">
+					{{ knp_menu_render('breadcrumb', {'currentAsLink': true}) }}
+				</span>
+			</div>
+		</header>
+		<nav class="box">
+			<div class="nav-userbox">
+				<img class="nav-profilepicture" src="/profilepictures/{% if app.user.profilepicturepath %}{{ app.user.profilepicturepath }}{% else %}default.jpg{% endif %}">
+				<span class="nav-username">{{ app.user.username }}</span>
+			</div>
+			<nav class="main">
+				{{ knp_menu_render('AppBundle:Builder:mainMenu', {'currentAsLink': true}) }}
+			</nav>
+		</nav>
+		<content>
+		{% block content %}{% endblock %}
+		</content>
+	</body>
+</html>

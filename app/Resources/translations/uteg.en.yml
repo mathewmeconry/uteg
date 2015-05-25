@@ -1,0 +1,108 @@
+login:
+    title: 'Log in'
+    nav_button: 'Log in'
+    header: 'Log in'
+    username: Username
+    password: Password
+    remember_me: 'Remember me'
+    button: 'Log in'
+
+register:
+    title: 'Register'
+    nav_button: 'Register'
+    header: 'Register'
+    username: 'Username'
+    firstname: 'Firstname'
+    lastname: 'lastname'
+    email: 'E-Mail'
+    password: 'Password'
+    password_repeat: 'Password repeat'
+    button: 'Register'
+    succeed: 'Registration succeed'
+
+competitionlist:
+    title: 'Competitions'
+    nav_button: 'Competitions'
+    header: 'Competitions'
+    add_new: 'Add new'
+    logout: 'Logout'
+    addcomp:
+        title: 'Competitions / New'
+        header: 'New Competition'
+        name: 'Competition name'
+        gym: 'Gym'
+        location: 'Location'
+        zipcode: 'Zip code'
+        startdate: 'Start date'
+        enddate: 'End date'
+        submit: 'Add'
+        success: 'Competition created successfully'
+    delcomp:
+        success: 'Competition deleted successfully'
+        denied: 'You have insufficent rights to delete this competition'
+        compnotset: 'An error occured. Please try it again later.'
+        modal:
+            title: 'Delete competition'
+            message: 'This competition will be deleted. Are you sure?'
+            del: 'Delete'
+    form:
+        name: 'Competition name'
+        gym: 'Gym'
+        location: 'Location'
+        zip_code: 'Zip code'
+        start_date: 'Start date'
+        end_date: 'End date'
+        actions: 'Actions'
+        delete: 'Delete'
+        view: 'View'
+
+profile:
+    edit:
+        title: 'Profile Edit'
+        nav_button: 'Profile'
+        header: 'Profile Edit'
+        profilepicture: 'Profile picuture'
+        username: 'Username'
+        firstname: 'Firstname'
+        lastname: 'lastname'
+        email: 'E-Mail'
+        password: 'Password'
+        password_repeat: 'Password repeat'
+        submit: 'Save'
+        succeed: 'Updated successfully'
+        
+nav:
+    dashboard: 'Dashboard'
+    starters: 'Starters'
+    competition: 'Competition'
+    competitions: 'Competitions'
+    permissions: 'Permissions'
+    profile: 'Profile'
+    log_out: 'Log out'
+
+dashboard:
+    title: 'Dashboard'
+    path: 'Dashboard'
+    
+starters:
+    title: 'Starters'
+    path: 'Starters'
+    path.male: 'Male'
+    path.female: 'Female'
+    male: 'Male'
+    female: 'Female'
+
+starter:
+    path: 'Starter'
+    pathlink: '/starters'
+
+competition:
+    title: 'Competition'
+    path: 'Competition'
+    
+permissions:
+    title: 'Permissions'
+    path: 'Permissions'
+
+
+

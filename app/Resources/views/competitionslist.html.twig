@@ -1,0 +1,54 @@
+{% extends "base_overview.html.twig" %}
+
+{% trans_default_domain 'uteg' %}
+
+{% block title %}{{ 'competitionslist.title'|trans }}{% endblock %}
+
+{% block css %}
+#new {
+	margin-top: 10px;
+}
+{% endblock %}
+
+{% block javascript_docready %}
+$('tbody tr').click(function() {
+	$.ajax({
+		url: '/comp/set',
+		method: 'POST',
+		data: {compid: $(this).data('id')}
+	}).success(function(url) {
+		if(url) {
+			window.location.href = url;
+		}
+	});
+});
+
+$('.delete').hover(
+	function() {
+		$(this).children().eq(0).removeClass('icon-delete-black').addClass('icon-delete-red');
+	},
+	function() {
+		$(this).children().eq(0).removeClass('icon-delete-red').addClass('icon-delete-black');
+	}
+);
+{% endblock %}
+
+{% block content %}
+	<div id="comp">
+        <div id="triangle"></div>
+        <h1>{{ 'competitionslist.header'|trans }}</h1>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr><th>{{ 'competitionslist.formheader.name'|trans }}</th><th>{{ 'competitionslist.formheader.gym'|trans }}</th><th>{{ 'competitionslist.formheader.location'|trans }}</th><th>{{ 'competitionslist.formheader.zip_code'|trans }}</th><th>{{ 'competitionslist.formheader.start_date'|trans }}</th><th>{{ 'competitionslist.formheader.end_date'|trans }}</th><th>{{ 'competitionslist.formheader.actions'|trans }}</th></tr>
+                </thead>
+                <tbody>
+                    {% for comp in comps %}
+                        <tr data-id="{{ comp.id }}"><td>{{ comp.name }}</td><td>{{ comp.gym }}</td><td>{{ comp.location }}</td><td>{{ comp.zipcode }}</td><td>{{ comp.startdate|localizeddate('medium', 'none', app.request.locale) }}</td><td>{{ comp.enddate|localizeddate('medium', 'none', app.request.locale) }}</td><td class="delete">{% if is_granted('OWNER', comp) %}<i class="icon icon-delete-black"></i>{% endif %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a id="new" class="button" href="/comp/new">{{ 'competitionslist.add_new'|trans }}</a>
+        </div>
+    </div>
+{% endblock %}

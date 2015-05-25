@@ -1,0 +1,25 @@
+.header-bar {
+	height: 35px;
+}
+		
+.header-bar span {
+	font-size: 20pt;
+	height: 35px;
+}
+			
+header i.menu-button {
+	top: 10px;
+	height: 15px;
+}
+
+nav.box {
+	width: 200px;
+}
+
+div.nav-userbox {
+	padding-top: 50px;
+}
+
+nav.main {
+	padding-top: 10px;
+}
