@@ -117,3 +117,14 @@ jms_i18n_routing:
     default_locale: en
     locales: [de, en]
     strategy: custom
+    
+liip_imagine:
+    resolvers:
+       default:
+          web_path: ~
+    
+    filter_sets:
+        profilepic:
+            quality: 75
+            filters:
+                thumbnail: { size: [200, 200], mode: outbound, allow_upscale: true }

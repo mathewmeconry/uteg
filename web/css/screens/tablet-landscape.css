@@ -1,47 +1,48 @@
 .header-bar {
-	height: 25px;
+    height: 25px;
 }
 
 .header-bar span {
-	font-size: 15pt;
-	height: 25px;
+    font-size: 15pt;
+    height: 25px;
 }
-			
+            
 header i.menu-button {
-	top: 5px;
-	height: 15px;
+    top: 5px;
+    height: 15px;
 }
 
 header span:before {
-	background-size: 10px;
+    background-size: 10px;
 }
 
 nav.box {
-	width: 200px;
+    width: 200px;
 }
 
 div.nav-userbox {
-	padding-top: 40px;
+    padding-top: 40px;
 }
 
 nav.main {
-	padding-top: 10px;
+    padding-top: 10px;
 }
 
 nav.box.close div.nav-userbox {
-	padding-top: 0px;
-	font-size: 0pt;
+    padding-top: 0px;
+    font-size: 0pt;
 }
 
 nav.box.close nav.main {
-	padding-top: 10px;
+    padding-top: 10px;
 }
-			
+            
 nav.box.close {
-	width: 40px;
-	margin: 0;
+    width: 40px;
+    margin: 0;
 }
-			
+            
 nav.box.close li {
-	font-size: 0pt;
+    font-size: 0pt;
 }
+ No newline at end of file

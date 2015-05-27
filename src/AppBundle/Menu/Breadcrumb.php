@@ -14,10 +14,13 @@ class Breadcrumb
 	}
 	
 	public function breadcrumb(Request $request) {
-		$menu = $this->factory->createItem('root');
+		$menu = $this->factory->createItem('root', array(
+		    'childrenAttributes'    => array(
+		        'class'             => 'breadcrumb',
+		    )
+        ));
 		// this item will always be displayed
-		$menu->addChild('UTEG');
-		$menu->addChild($request->getSession()->get('comp')->getName());
+		$menu->addChild($request->getSession()->get('comp')->getName()." ".$request->getSession()->get('comp')->getStartdate()->format("Y"));
 		 
 		// create the menu according to the route
 		switch($request->get('_route')){

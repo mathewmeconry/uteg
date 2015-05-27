@@ -75,6 +75,8 @@ profile:
 nav:
     dashboard: 'Dashboard'
     starters: 'Starters'
+    starters.male: 'Male'
+    starters.female: 'Female'
     competition: 'Competition'
     competitions: 'Competitions'
     permissions: 'Permissions'

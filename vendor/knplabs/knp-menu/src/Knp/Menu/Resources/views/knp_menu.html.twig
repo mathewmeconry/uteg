@@ -1,5 +1,4 @@
 {% extends 'knp_menu_base.html.twig' %}
-{% trans_default_domain 'uteg' %}
 
 {% macro attributes(attributes) %}
 {% for name, value in attributes %}
@@ -99,4 +98,4 @@
 
 {% block spanElement %}{% import _self as knp_menu %}<span{{ knp_menu.attributes(item.labelAttributes) }}>{{ block('label') }}</span>{% endblock %}
 
-{% block label %}{% if item.icon is not empty %}<i class="icon icon-{{ item.icon }}">{% endif %}{% if options.allow_safe_labels and item.getExtra('safe_label', false) %}{{ item.label|raw }}{% else %}{{ item.label|trans }}{% endif %}{% if item.icon is not empty %}</i>{% endif %}{% endblock %}
+{% block label %}{% if options.allow_safe_labels and item.getExtra('safe_label', false) %}{{ item.label|raw }}{% else %}{{ item.label }}{% endif %}{% endblock %}

@@ -13,13 +13,18 @@ class Builder extends ContainerAware
         $acl = $this->container->get('acl_competition');
         $menu = $factory->createItem('root');
 
-        ($acl->isGranted('DASHBOARD')) ? $menu->addChild('nav.dashboard', array('route' => 'dashboard', 'icon' => 'dashboard')) : '';
-        ($acl->isGranted('STARTERS_VIEW')) ? $menu->addChild('nav.starters', array('route' => 'starters', 'icon' => 'group')) : '';
+        ($acl->isGranted('DASHBOARD')) ? $menu->addChild('nav.dashboard', array('route' => 'dashboard', 'icon' => 'dashboard', 'labelAttributes' => array('class' => 'xn-text'))) : '';
+        if($acl->isGranted('STARTERS_VIEW')) {
+        	$menu->addChild('nav.starters', array('uri' => '#', 'icon' => 'group', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        	$menu['nav.starters']->addChild('nav.starters.male', array('uri' => '/starters/male', 'icon' => 'male'));
+        	$menu['nav.starters']->addChild('nav.starters.female', array('uri' => '/starters/female', 'icon' => 'female'));
+        }
+
         // create another menu item
-        ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'icon' => 'gears')) : '';
-        ($acl->isGranted('PERMISSIONS_VIEW')) ? $menu->addChild('nav.permissions', array('route' => 'permissions', 'icon'=> 'lock')) : '';
-        $menu->addChild('nav.profile', array('route' => 'fos_user_profile_edit', 'icon' => 'user-settings'));
-        $menu->addchild('nav.log_out', array('route' => 'fos_user_security_logout', 'icon' => 'onoff'));
+        ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'icon' => 'gears', 'labelAttributes' => array('class' => 'xn-text'))) : '';
+        ($acl->isGranted('PERMISSIONS_VIEW')) ? $menu->addChild('nav.permissions', array('route' => 'permissions', 'icon'=> 'lock', 'labelAttributes' => array('class' => 'xn-text'))) : '';
+        $menu->addChild('nav.profile', array('route' => 'fos_user_profile_edit', 'icon' => 'user-settings', 'labelAttributes' => array('class' => 'xn-text')));
+        $menu->addchild('nav.log_out', array('route' => 'fos_user_security_logout', 'icon' => 'sign-out', 'labelAttributes' => array('class' => 'xn-text')));
         // you can also add sub level's to your menu's as follows
         //$menu['About Me']->addChild('Edit profile', array('route' => ''));
 

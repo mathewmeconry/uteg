@@ -1,38 +1,38 @@
 /* phones in both orientations */
 .header-bar {
-	height: 25px;
+    height: 25px;
 }
 
 .header-bar span {
-	font-size: 15pt;
-	height: 25px;
+    font-size: 15pt;
+    height: 25px;
 }
 
 .header-bar span {
-	display: none;
+    display: none;
 }
 
 .header-bar span:last-child {
-	display: inline;
+    display: inline;
 }
 
 header i.menu-button {
-	top: 5px;
-	height: 15px;
+    top: 5px;
+    height: 15px;
 }
 
 header span:before {
-	background-size: 10px;
+    background-size: 10px;
 }
-	
+    
 nav.box {
-	width: 100%;
+    width: 100%;
 }
 
 div.nav-userbox {
-	padding-top: 40px;
+    padding-top: 40px;
 }
 
 nav.main {
-	padding-top: 10px;
+    padding-top: 10px;
 }

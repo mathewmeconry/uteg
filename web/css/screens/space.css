@@ -1,25 +1,26 @@
 .header-bar {
-	height: 35px;
+    height: 35px;
 }
-		
+        
 .header-bar span {
-	font-size: 20pt;
-	height: 35px;
+    font-size: 20pt;
+    height: 35px;
 }
-			
+            
 header i.menu-button {
-	top: 10px;
-	height: 15px;
+    top: 10px;
+    height: 15px;
 }
 
 nav.box {
-	width: 200px;
+    width: 200px;
 }
 
 div.nav-userbox {
-	padding-top: 50px;
+    padding-top: 50px;
 }
 
 nav.main {
-	padding-top: 10px;
+    padding-top: 10px;
 }
+ No newline at end of file

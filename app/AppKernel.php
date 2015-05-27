@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new EWZ\Bundle\RecaptchaBundle\EWZRecaptchaBundle(),
             new JMS\I18nRoutingBundle\JMSI18nRoutingBundle(),
             new JMS\TranslationBundle\JMSTranslationBundle(),
+        	new Liip\ImagineBundle\LiipImagineBundle(),
             new AppBundle\AppBundle(),
         );
 
