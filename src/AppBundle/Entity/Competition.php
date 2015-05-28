@@ -83,6 +83,7 @@ class Competition {
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->starters = new ArrayCollection();
     }
 
     /**

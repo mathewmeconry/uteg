@@ -94,10 +94,17 @@ starters:
     path.female: 'Female'
     male: 'Male'
     female: 'Female'
+    table:
+        firstname: 'Firstname'
+        lastname: 'Lastname'
+        birthyear: 'Birth year'
+        club: 'Club'
+        present: 'Present'
+        medicalcert: 'Med. Cert.'
+        actions: 'Actions'
 
 starter:
     path: 'Starter'
-    pathlink: '/starters'
 
 competition:
     title: 'Competition'

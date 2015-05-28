@@ -15,13 +15,22 @@ class StartersController extends Controller
 	{
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
 
+        $em = $this->getDoctrine()->getEntityManager();
+
 		$requestUri = explode("/", $request->getRequestUri());
 		 
 		if(end($requestUri) !== 'male' && end($requestUri) !== 'female') {
 			return $this->redirect($request->getRequestUri()."/male", 301);
 		} else {
+            $sex = (end($requestUri) == 'female') ? 'f' : 'm';
+            $sextrans = ($sex == 'f') ? 'starters.female' : 'starters.male';
+            $comp = $request->getSession()->get('comp');
+            $starters = $comp->getUsers();
+            var_dump($em->getRepository('\AppBundle\Entity\Starters2Competitions')->findOneBy(array("id" => 2)->getCompid()));
 			return $this->render('starters.html.twig', array(
-				"path" => array($request->getSession()->get('comp')->getName(), 'starters.path', 'starters.'.$sex)
+                "sex" => $sex,
+                "sextrans" => $sextrans,
+                "starters" => $starters
 			));
 		}
 	}

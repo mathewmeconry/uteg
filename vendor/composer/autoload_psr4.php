@@ -9,11 +9,6 @@ return array(
     'Symfony\\Bundle\\SwiftmailerBundle\\' => array($vendorDir . '/symfony/swiftmailer-bundle'),
     'Symfony\\Bundle\\MonologBundle\\' => array($vendorDir . '/symfony/monolog-bundle'),
     'Symfony\\Bundle\\AsseticBundle\\' => array($vendorDir . '/symfony/assetic-bundle'),
-    'Sonata\\CoreBundle\\' => array($vendorDir . '/sonata-project/core-bundle'),
-    'Sonata\\Cache\\Tests\\' => array($vendorDir . '/sonata-project/cache/test'),
-    'Sonata\\Cache\\' => array($vendorDir . '/sonata-project/cache/lib'),
-    'Sonata\\BlockBundle\\' => array($vendorDir . '/sonata-project/block-bundle'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Doctrine\\Bundle\\DoctrineBundle\\' => array($vendorDir . '/doctrine/doctrine-bundle'),
-    'Cocur\\Slugify\\' => array($vendorDir . '/cocur/slugify/src'),
 );

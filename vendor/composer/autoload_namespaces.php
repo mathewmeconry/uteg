@@ -25,7 +25,6 @@ return array(
     'Imagine' => array($vendorDir . '/imagine/imagine/lib'),
     'Gedmo\\' => array($vendorDir . '/gedmo/doctrine-extensions/lib'),
     'FOS\\UserBundle' => array($vendorDir . '/friendsofsymfony/user-bundle'),
-    'Exporter' => array($vendorDir . '/sonata-project/exporter/lib'),
     'EWZ\\Bundle\\RecaptchaBundle\\' => array($vendorDir . '/excelwebzone/recaptcha-bundle'),
     'Doctrine\\ORM\\' => array($vendorDir . '/doctrine/orm/lib'),
     'Doctrine\\DBAL\\' => array($vendorDir . '/doctrine/dbal/lib'),

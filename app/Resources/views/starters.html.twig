@@ -4,6 +4,49 @@
 
 {% block title %}{{ 'starters.title'|trans }}{% endblock %}
 
+{% block docready %}
+    $('#male').datatable();
+{% endblock %}
+
 {% block content %}
-<span class="button">Add</span>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Starters {{ sextrans|trans }}</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table id="male">
+                        <thead>
+                            <tr>
+                                <th>{{ 'starters.table.firstname'|trans }}</th>
+                                <th>{{ 'starters.table.lastname'|trans }}</th>
+                                <th>{{ 'starters.table.birthyear'|trans }}</th>
+                                <th>{{ 'starters.table.club'|trans }}</th>
+                                <th>{{ 'starters.table.present'|trans }}</th>
+                                <th>{{ 'starters.table.medicalcert'|trans }}</th>
+                                <th>{{ 'starters.table.actions'|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for starter  in starters %}
+                                <tr>
+                                    <td>starter.firstname</td>
+                                    <td>starter.lastname</td>
+                                    <td>starter.birthyear</td>
+                                    <td>starter.club</td>
+                                    <td>starter.present</td>
+                                    <td>starter.medicalcert</td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

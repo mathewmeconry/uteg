@@ -217,7 +217,7 @@ abstract class AbstractRememberMeServices implements RememberMeServicesInterface
      * @param array   $cookieParts
      * @param Request $request
      *
-     * @return TokenInterface
+     * @return UserInterface
      */
     abstract protected function processAutoLoginCookie(array $cookieParts, Request $request);
 
@@ -268,9 +268,17 @@ abstract class AbstractRememberMeServices implements RememberMeServicesInterface
      * @param array $cookieParts
      *
      * @return string
+     *
+     * @throws \InvalidArgumentException When $cookieParts contain the cookie delimiter. Extending class should either remove or escape it.
      */
     protected function encodeCookie(array $cookieParts)
     {
+        foreach ($cookieParts as $cookiePart) {
+            if (false !== strpos($cookiePart, self::COOKIE_DELIMITER)) {
+                throw new \InvalidArgumentException(sprintf('$cookieParts should not contain the cookie delimiter "%s"', self::COOKIE_DELIMITER));
+            }
+        }
+
         return base64_encode(implode(self::COOKIE_DELIMITER, $cookieParts));
     }
 

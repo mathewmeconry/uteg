@@ -28,7 +28,7 @@ class Starters2Competitions {
     protected $starter;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Competition")
+     * @ORM\ManytoOne(targetEntity="Competition", inversedBy="starters")
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
@@ -46,14 +46,19 @@ class Starters2Competitions {
     protected $category;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Grade", mappedBy="starter", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OnetoMany(targetEntity="Grade", mappedBy="s2c", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $grades;
 
     /**
-     * @ORM\Column(type="boolean", name="present")
+     * @ORM\Column(type="boolean", name="present", options={"default" = 0})
      */
     protected $present;
+
+    /**
+     * @ORM\Column(type="boolean", name="medicalcert", options={"default" = 0})
+     */
+    protected $medicalcert;
 
     /**
      * @Gedmo\Timestampable(on="create")

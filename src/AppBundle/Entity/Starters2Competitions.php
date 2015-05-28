@@ -51,9 +51,14 @@ class Starters2Competitions {
     protected $grades;
 
     /**
-     * @ORM\Column(type="boolean", name="present")
+     * @ORM\Column(type="boolean", name="present", options={"default" = 0})
      */
     protected $present;
+
+    /**
+     * @ORM\Column(type="boolean", name="medicalcert", options={"default" = 0})
+     */
+    protected $medicalcert;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -273,5 +278,28 @@ class Starters2Competitions {
     public function getGrades()
     {
         return $this->grades;
+    }
+
+    /**
+     * Set medicalcert
+     *
+     * @param boolean $medicalcert
+     * @return Starters2Competitions
+     */
+    public function setMedicalcert($medicalcert)
+    {
+        $this->medicalcert = $medicalcert;
+    
+        return $this;
+    }
+
+    /**
+     * Get medicalcert
+     *
+     * @return boolean 
+     */
+    public function getMedicalcert()
+    {
+        return $this->medicalcert;
     }
 }
