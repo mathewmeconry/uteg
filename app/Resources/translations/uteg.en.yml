@@ -97,7 +97,7 @@ starters:
     table:
         firstname: 'Firstname'
         lastname: 'Lastname'
-        birthyear: 'Birth year'
+        birthdate: 'Birth date'
         club: 'Club'
         present: 'Present'
         medicalcert: 'Med. Cert.'

@@ -4,7 +4,7 @@ namespace AppBundle\Form\Type;
 
 use FOS\UserBundle\Form\Type\ProfileFormType as BaseType;
 use Symfony\Component\Form\FormBuilderInterface;
-use EWZ\Bundle\RecaptchaBundle\Validator\Constraints\True;
+use Symfony\Component\Validator\Constraints\True;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
 class ProfileFormType extends BaseType {

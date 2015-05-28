@@ -388,7 +388,7 @@ function panel_collapse(panel,action,callback){
 }
 function panel_refresh(panel,action,callback){        
     if(!panel.hasClass("panel-refreshing")){
-        panel.append('<div class="panel-refresh-layer"><img src="img/loaders/default.gif"/></div>');
+        panel.append('<div class="panel-refresh-layer"><img src="/img/loaders/default.gif"/></div>');
         panel.find(".panel-refresh-layer").width(panel.width()).height(panel.height());
         panel.addClass("panel-refreshing");
         

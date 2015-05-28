@@ -65,7 +65,7 @@ class User extends BaseUser
     {
         parent::__construct();
 
-        $competitions = new ArrayCollection();
+        $this->competitions = new ArrayCollection();
     }
 
     /**

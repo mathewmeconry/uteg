@@ -231,6 +231,7 @@
         
         <script type="text/javascript" src="/js/plugins/moment.min.js"></script>
         <script type="text/javascript" src="/js/plugins/daterangepicker/daterangepicker.js"></script>
+        {% block jsplugins %}{% endblock %}
         <!-- END THIS PAGE PLUGINS-->        
 
         <!-- START TEMPLATE -->
@@ -241,6 +242,8 @@
         <!-- END TEMPLATE -->
 
         <script>
+        {% block jsglobal %}{% endblock %}
+        
             $(document).ready(function() {
                 {% block docready %}{% endblock %}
             });

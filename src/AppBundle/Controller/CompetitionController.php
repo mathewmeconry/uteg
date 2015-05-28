@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Cookie;
 use AppBundle\ACL\MaskBuilder;
 use AppBundle\Entity\Competition;
 use AppBundle\Form\Type\CompetitionType;
@@ -29,7 +30,7 @@ class CompetitionController extends Controller
         $authorizationChecker = $this->get('security.authorization_checker');
 
         foreach($user->getCompetitions() as $comp) {
-            $request->getSession()->set('comp', $comp);
+            $request->getSession()->set('comp', $comp->getId());
             if($authorizationChecker->isGranted('VIEW', $comp)) {
                 $comps[] = $comp;
             }
@@ -60,13 +61,18 @@ class CompetitionController extends Controller
         $em = $this->getDoctrine()->getEntityManager();
         $comp = $em->getRepository('AppBundle:Competition')->findOneBy(array('id' => $request->request->get('compid')));
 
-        $request->getSession()->set('comp', $comp);
-
         $aclcomp = $this->get('acl_competition');
         
-        return new Response(
+        $request->getSession()->set('comp', $comp->getId());
+        
+        $response = new Response(
             $aclcomp->getPossibleRoute()
         );
+        
+        $cookie = new Cookie('cid', $comp->getId(), (time() + 3600 * 24 * 7), '/');
+        
+        $response->headers->setCookie($cookie);
+        return $response;
     }
     
     
@@ -93,7 +99,7 @@ class CompetitionController extends Controller
             $em->persist($competition);
             $em->flush();
 
-            $request->getSession()->set('comp', $competition);
+            $request->getSession()->set('comp', $competition->getId());
             $aclcomp->addPermission(MaskBuilder::MASK_OWNER, array('username' => $user->getUsername()));
             $user->addCompetition($competition);
 
@@ -122,7 +128,7 @@ class CompetitionController extends Controller
         if(isset($_POST['compid'])) {
             $em = $this->getDoctrine()->getManager();
             $comp = $em->getRepository('AppBundle:Competition')->findOneBy(array("id" => $_POST['compid']));
-            $request->getSession()->set('comp', $comp);
+            $request->getSession()->set('comp', $comp->getId());
             if($aclcomp->isGranted('DELETE')) {
                 $em->remove($comp);
                 $em->flush();

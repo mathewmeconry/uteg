@@ -32,13 +32,9 @@ class Starter {
     protected $lastname;
 
     /**
-     * @ORM\Column(type="integer", name="birthyear", length=4)
-     * @Assert\Length(
-     *      min = 4,
-     *      max = 4
-     * )
+     * @ORM\Column(type="date", name="birthdate")
      */
-    protected $birthyear;
+    protected $birthdate;
 
     /**
      * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="starter", cascade={"persist", "remove"}, orphanRemoval=TRUE)
@@ -216,5 +212,28 @@ class Starter {
     public function getCompetitions()
     {
         return $this->competitions;
+    }
+
+    /**
+     * Set birthdate
+     *
+     * @param \DateTime $birthdate
+     * @return Starter
+     */
+    public function setBirthdate($birthdate)
+    {
+        $this->birthdate = $birthdate;
+    
+        return $this;
+    }
+
+    /**
+     * Get birthdate
+     *
+     * @return \DateTime 
+     */
+    public function getBirthdate()
+    {
+        return $this->birthdate;
     }
 }

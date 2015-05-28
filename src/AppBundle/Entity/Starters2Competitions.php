@@ -22,25 +22,25 @@ class Starters2Competitions {
     protected $id;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Starter")
+     * @ORM\ManytoOne(targetEntity="Starter", inversedBy="competitions")
      * @ORM\JoinColumn(name="starter_id", referencedColumnName="starter_id")
      */
     protected $starter;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Competition", inversedBy="starters")
+     * @ORM\ManytoOne(targetEntity="Competition", inversedBy="s2cs")
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Club")
+     * @ORM\ManytoOne(targetEntity="Club", inversedBy="members")
      * @ORM\JoinColumn(name="club_id", referencedColumnName="club_id")
      */
     protected $club;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Category")
+     * @ORM\ManytoOne(targetEntity="Category", inversedBy="starters")
      * @ORM\JoinColumn(name="cat_id", referencedColumnName="cat_id")
      */
     protected $category;
@@ -72,7 +72,6 @@ class Starters2Competitions {
     protected $deletedAt;
 
     public function __construct() {
-        $this->present = false;
         $this->grades = new ArrayCollection();
     }
 

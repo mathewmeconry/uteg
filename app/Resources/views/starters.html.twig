@@ -4,8 +4,32 @@
 
 {% block title %}{{ 'starters.title'|trans }}{% endblock %}
 
+{% block jsplugins %}
+	<script type="text/javascript" src="/js/plugins/datatables/jquery.dataTables.min.js"></script>
+{% endblock %}
+
+{% block jsglobal %}
+var table;
+{% endblock %}
+
 {% block docready %}
-    $('#male').datatable();
+	var sex = ('{{ sex }}' == 'f') ? 'female' : 'male';
+
+	table = $('#{{ sex|raw }}').dataTable( {
+        "ajax": {
+        	"url": "{{ path('starterspost') }}/" + sex,
+        	"method": "POST"
+        },
+        "columns": [
+            { "data": "firstname" },
+            { "data": "lastname" },
+            { "data": "birthdate" },
+            { "data": "club" },
+            { "data": "present" },
+            { "data": "medicalcert" },
+            { "data": null }
+        ]
+    } );
 {% endblock %}
 
 {% block content %}
@@ -19,31 +43,18 @@
                     </ul>
                 </div>
                 <div class="panel-body">
-                    <table id="male">
+                    <table id="{{ sex|raw }}" class="table">
                         <thead>
                             <tr>
                                 <th>{{ 'starters.table.firstname'|trans }}</th>
                                 <th>{{ 'starters.table.lastname'|trans }}</th>
-                                <th>{{ 'starters.table.birthyear'|trans }}</th>
+                                <th>{{ 'starters.table.birthdate'|trans }}</th>
                                 <th>{{ 'starters.table.club'|trans }}</th>
                                 <th>{{ 'starters.table.present'|trans }}</th>
                                 <th>{{ 'starters.table.medicalcert'|trans }}</th>
                                 <th>{{ 'starters.table.actions'|trans }}</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for starter  in starters %}
-                                <tr>
-                                    <td>starter.firstname</td>
-                                    <td>starter.lastname</td>
-                                    <td>starter.birthyear</td>
-                                    <td>starter.club</td>
-                                    <td>starter.present</td>
-                                    <td>starter.medicalcert</td>
-                                    <td></td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
                     </table>
                 </div>
             </div>

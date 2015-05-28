@@ -15,25 +15,10 @@ class DashboardController extends Controller
      */
     public function dashboardAction(Request $request)
     {
+    	$comp = $comp = $this->getDoctrine()->getEntityManager()->find('AppBundle:Competition', $request->getSession()->get('comp'));
+    	
        return $this->render('dashboard.html.twig', array(
-        		"path" => array($request->getSession()->get('comp')->getName(), "dashboard.path")
+        		"path" => array($comp->getName(), "dashboard.path")
         ));
-    }
-
-    /**
-     * @Route("/createuser", name="usercreation")
-     */
-    public function usercreationAction() {
-        $userManager = $this->get('fos_user.user_manager');
-
-        $user = $userManager->createUser();
-        $user->setFirstname("Mathias");
-        $user->setLastname("Scherer");
-        $user->setEmail("scherer.mat@gmail.com");
-        $user->setPassword("123");
-
-        $userManager->updateUser($user);
-
-        return $this->render('created');
     }
 }

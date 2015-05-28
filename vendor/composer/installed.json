@@ -2270,7 +2270,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/0f05ff637e91144f1d05a43af29f2bfef6ec2b27",
+            "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/6fd9dd18c22a6de68c979d54baee62e537af44db",
             "reference": "0f05ff637e91144f1d05a43af29f2bfef6ec2b27",
             "shasum": ""
         },
@@ -2376,6 +2376,48 @@
         "homepage": "https://github.com/excelwebzone/EWZRecaptchaBundle",
         "keywords": [
             "recaptcha"
+        ]
+    },
+    {
+        "name": "bcc/extra-tools-bundle",
+        "version": "v1.0",
+        "version_normalized": "1.0.0.0",
+        "target-dir": "BCC/ExtraToolsBundle",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/michelsalib/BCCExtraToolsBundle.git",
+            "reference": "5054efe77710f89b3bdaab19db7822bebf8e7847"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/michelsalib/BCCExtraToolsBundle/zipball/5054efe77710f89b3bdaab19db7822bebf8e7847",
+            "reference": "5054efe77710f89b3bdaab19db7822bebf8e7847",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2",
+            "symfony/framework-bundle": "2.*"
+        },
+        "time": "2012-07-09 09:11:48",
+        "type": "symfony-bundle",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "BCC\\ExtraToolsBundle": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "authors": [
+            {
+                "name": "Michel Salib",
+                "email": "michelsalib@hotmail.com",
+                "homepage": "http://www.michelsalib.com"
+            }
+        ],
+        "description": "A set of extra tools in a bundle for Symfony2: a translation extractor, a locale date parser/formatter, a unit converter...",
+        "homepage": "http://github.com/michelsalib/BCCExtraToolsBundle",
+        "keywords": [
+            "datetime unit converter formatter parser"
         ]
     }
 ]

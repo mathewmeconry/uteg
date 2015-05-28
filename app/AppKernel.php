@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new JMS\I18nRoutingBundle\JMSI18nRoutingBundle(),
             new JMS\TranslationBundle\JMSTranslationBundle(),
         	new Liip\ImagineBundle\LiipImagineBundle(),
+        	new BCC\ExtraToolsBundle\BCCExtraToolsBundle(),
             new AppBundle\AppBundle(),
         );
 

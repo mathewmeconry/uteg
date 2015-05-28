@@ -4,23 +4,28 @@ namespace AppBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManager;
 
 class Breadcrumb 
 {
 	private $factory;
+	private $em;
 	
-	public function __construct(FactoryInterface $factory) {
+	public function __construct(EntityManager $em, FactoryInterface $factory) {
+		$this->em = $em;
 		$this->factory = $factory;
 	}
 	
 	public function breadcrumb(Request $request) {
+		$comp = $this->em->find('AppBundle:Competition', $request->getSession()->get('comp'));
+		
 		$menu = $this->factory->createItem('root', array(
 		    'childrenAttributes'    => array(
 		        'class'             => 'breadcrumb',
 		    )
         ));
 		// this item will always be displayed
-		$menu->addChild($request->getSession()->get('comp')->getName()." ".$request->getSession()->get('comp')->getStartdate()->format("Y"));
+		$menu->addChild($comp->getName()." ".$comp->getStartdate()->format("Y"));
 		 
 		// create the menu according to the route
 		switch($request->get('_route')){

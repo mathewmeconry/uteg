@@ -26,7 +26,8 @@
         "excelwebzone/recaptcha-bundle": "dev-master",
         "jms/i18n-routing-bundle": "dev-master",
         "gedmo/doctrine-extensions": "^2.4",
-        "liip/imagine-bundle": "master-dev"
+        "liip/imagine-bundle": "master-dev",
+        "bcc/extra-tools-bundle": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

@@ -74,7 +74,7 @@ class Competition {
     /**
      * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
-    protected $starters;
+    protected $s2cs;
 
 
     /**
@@ -82,8 +82,8 @@ class Competition {
      */
     public function __construct()
     {
-        $this->users = new ArrayCollection();
-        $this->starters = new ArrayCollection();
+    	$this->users = new ArrayCollection();
+    	$this->starters = new ArrayCollection();
     }
 
     /**
@@ -342,9 +342,9 @@ class Competition {
      * @param \AppBundle\Entity\Starters2Competitions $starters
      * @return Competition
      */
-    public function addStarter(\AppBundle\Entity\Starters2Competitions $starters)
+    public function addS2c(\AppBundle\Entity\Starters2Competitions $starters)
     {
-        $this->starters[] = $starters;
+        $this->s2cs[] = $starters;
 
         return $this;
     }
@@ -354,9 +354,9 @@ class Competition {
      *
      * @param \AppBundle\Entity\Starters2Competitions $starters
      */
-    public function removeStarter(\AppBundle\Entity\Starters2Competitions $starters)
+    public function removeS2c(\AppBundle\Entity\Starters2Competitions $starters)
     {
-        $this->starters->removeElement($starters);
+        $this->s2cs->removeElement($starters);
     }
 
     /**
@@ -364,8 +364,8 @@ class Competition {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getStarters()
+    public function getS2cs()
     {
-        return $this->starters;
+        return $this->s2cs;
     }
 }

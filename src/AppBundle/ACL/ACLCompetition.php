@@ -116,7 +116,7 @@ class ACLCompetition {
     }
 
     private function updateAcl() {
-        $this->comp = $this->requestStack->getCurrentRequest()->getSession()->get('comp');
+        $this->comp = $this->em->find('AppBundle:Competition', $this->requestStack->getCurrentRequest()->getSession()->get('comp'));
         $objectIdentity = ObjectIdentity::fromDomainObject($this->comp);
 
         try {

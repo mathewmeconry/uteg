@@ -27,7 +27,7 @@ services:
     
     appbundle.menu_builder:
         class: AppBundle\Menu\Breadcrumb
-        arguments: ["@knp_menu.factory"]
+        arguments: ["@doctrine.orm.entity_manager","@knp_menu.factory"]
         
     appbundle.menu.breadcrumb:
         class: AppBundle\Menu\Breadcrumb

@@ -15,7 +15,7 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
 class Grade {
     /**
      * @ORM\Id
-     * @ORM\ManytoOne(targetEntity="Starters2Competitions")
+     * @ORM\ManytoOne(targetEntity="Starters2Competitions", inversedBy="grades")
      * @ORM\JoinColumn(name="s2c_id", referencedColumnName="s2c_id")
      */
     protected $s2c;
