@@ -34,10 +34,10 @@ class StartersController extends Controller
 	}
 	
 	/**
-	 * @Route("/starters/{sex}", name="starterspost", defaults={"sex": "male"}, requirements={"sex": "male|female"})
+	 * @Route("/starters/{sex}/{cat}", name="starterspost", defaults={"sex": "male", "cat": "0"}, requirements={"sex": "male|female", "cat": "\d+"})
 	 * @Method("POST")
 	 */
-	public function startersPostAction($sex, Request $request) {
+	public function startersPostAction($sex, $cat, Request $request) {
 		$this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
 		setlocale(LC_TIME, $request->getLocale());
 		$dateFormatter = $this->get('bcc_extra_tools.date_formatter');
@@ -46,16 +46,17 @@ class StartersController extends Controller
 		if($sex !== 'male' && $sex !== 'female') {
 			return $this->redirect($request->getRequestUri()."/male", 301);
 		} else {
-			
 			$comp = $this->getDoctrine()->getEntityManager()->find('AppBundle:Competition', $request->getSession()->get('comp'));
-			$s2cs = $comp->getS2cs()->toArray();
+			$s2cs = ($cat == 0) ? $comp->getS2csBySex(substr($sex,0,1)) : $comp->getS2csBySexCat(substr($sex,0,1), $cat);
 			$starters = array();
 
 			foreach($s2cs as $s2c) {
-				$starters["data"][] = array("firstname" => $s2c->getStarter()->getFirstname(),
+				$starters["data"][] = array("id" => $s2c->getStarter()->getId(),
+					"firstname" => $s2c->getStarter()->getFirstname(),
 					"lastname" => $s2c->getStarter()->getLastname(),
-					"birthdate" => $dateFormatter->format($s2c->getStarter()->getBirthdate(), 'medium', 'none', $request->getLocale()),
+					"birthyear" => $s2c->getStarter()->getBirthyear(),
 					"club" => $s2c->getClub()->getName(),
+					"category" => ($s2c->getCategory()->getNumber() == 8) ? ($s2c->getStarter()->getSex() == 'f') ? $s2c->getCategory()->getName()."D" : $s2c->getCategory()->getName()."H" : $s2c->getCategory()->getName(),
 					"present" => $s2c->getPresent(),
 					"medicalcert" => $s2c->getMedicalcert()
 				);

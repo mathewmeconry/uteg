@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
+use Doctrine\Common\Collections\Criteria;
 
 
 /**
@@ -337,7 +338,7 @@ class Competition {
     }
 
     /**
-     * Add starters
+     * Add s2cs
      *
      * @param \AppBundle\Entity\Starters2Competitions $starters
      * @return Competition
@@ -350,7 +351,7 @@ class Competition {
     }
 
     /**
-     * Remove starters
+     * Remove s2cs
      *
      * @param \AppBundle\Entity\Starters2Competitions $starters
      */
@@ -360,12 +361,36 @@ class Competition {
     }
 
     /**
-     * Get starters
+     * Get s2cs
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
     public function getS2cs()
     {
         return $this->s2cs;
+    }
+    
+    public function getS2csBySex($sex) {
+    	$return = array();
+    	
+    	foreach($this->s2cs as $s2c) {
+    		if($s2c->getStarterBySex($sex) !== null) {
+    			$return[] = $s2c;
+    		}
+    	}
+    	
+    	return $return;
+    }
+    
+    public function getS2csBySexCat($sex, $category) {
+    	$return = array();
+    	 
+    	foreach($this->s2cs as $s2c) {
+    		if($s2c->getStarterBySexCat($sex, $category) !== null) {
+    			$return[] = $s2c;
+    		}
+    	}
+    	 
+    	return $return;
     }
 }

@@ -22,6 +22,11 @@ class Category {
     protected $id;
 
     /**
+     * @ORM\Column(type="integer", name="number")
+     */
+    protected $number;
+    
+    /**
      * @ORM\Column(type="string", name="name")
      */
     protected $name;
@@ -156,5 +161,28 @@ class Category {
     public function getStarters()
     {
         return $this->starters;
+    }
+
+    /**
+     * Set number
+     *
+     * @param integer $number
+     * @return Category
+     */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+    
+        return $this;
+    }
+
+    /**
+     * Get number
+     *
+     * @return integer 
+     */
+    public function getNumber()
+    {
+        return $this->number;
     }
 }

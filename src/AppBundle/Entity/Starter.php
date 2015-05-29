@@ -30,11 +30,20 @@ class Starter {
      * @ORM\Column(type="string", name="lastname")
      */
     protected $lastname;
+    
+    /**
+     * @ORM\Column(type="string", name="sex")
+     */
+    protected $sex;
 
     /**
-     * @ORM\Column(type="date", name="birthdate")
+     * @ORM\Column(type="integer", name="birthyear", length=4)
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 4
+     * )
      */
-    protected $birthdate;
+    protected $birthyear;
 
     /**
      * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="starter", cascade={"persist", "remove"}, orphanRemoval=TRUE)
@@ -215,25 +224,25 @@ class Starter {
     }
 
     /**
-     * Set birthdate
+     * Set sex
      *
-     * @param \DateTime $birthdate
+     * @param string $sex
      * @return Starter
      */
-    public function setBirthdate($birthdate)
+    public function setSex($sex)
     {
-        $this->birthdate = $birthdate;
+        $this->sex = $sex;
     
         return $this;
     }
 
     /**
-     * Get birthdate
+     * Get sex
      *
-     * @return \DateTime 
+     * @return string 
      */
-    public function getBirthdate()
+    public function getSex()
     {
-        return $this->birthdate;
+        return $this->sex;
     }
 }

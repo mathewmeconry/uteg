@@ -174,17 +174,6 @@ $(document).ready(function(){
         $(this).parents(".dropdown").removeClass("open");
         return false;
     });
-    $(".panel-refresh").on("click",function(){
-        var panel = $(this).parents(".panel");
-        panel_refresh(panel);
-
-        setTimeout(function(){
-            panel_refresh(panel);
-        },3000);
-        
-        $(this).parents(".dropdown").removeClass("open");
-        return false;
-    });
     /* EOF PANELS */
     
     /* ACCORDION */

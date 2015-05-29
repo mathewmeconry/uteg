@@ -176,6 +176,14 @@ class Starters2Competitions {
     {
         return $this->starter;
     }
+    
+    public function getStarterBySex($sex) {
+    	return ($this->starter->getSex() == $sex) ? $this->starter : null;
+    }
+    
+    public function getStarterBySexCat($sex, $category) {
+    	return ($this->starter->getSex() == $sex && $this->category->getNumber() == $category) ? $this->starter : null;
+    }
 
     /**
      * Set competition
