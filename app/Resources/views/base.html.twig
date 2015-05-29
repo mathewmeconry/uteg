@@ -42,7 +42,7 @@
                                 <div class="profile-data-title"></div>
                             </div>
                             <div class="profile-controls">
-                                <a href="/pages-profile.html" class="profile-control-left"><span class="fa fa-info"></span></a>
+                                <a href="{{ path('fos_user_profile_edit') }}" class="profile-control-left"><span class="fa fa-info"></span></a>
                                 <a href="/pages-messages.html" class="profile-control-right"><span class="fa fa-envelope"></span></a>
                             </div>
                         </div>                                                                        
@@ -187,15 +187,15 @@
         <div class="message-box animated fadeIn" data-sound="alert" id="mb-signout">
             <div class="mb-container">
                 <div class="mb-middle">
-                    <div class="mb-title"><span class="fa fa-sign-out"></span> Log <strong>Out</strong> ?</div>
+                    <div class="mb-title"><span class="fa fa-sign-out"></span> {{ 'nav.log_out'|trans }} ?</div>
                     <div class="mb-content">
-                        <p>Are you sure you want to log out?</p>                    
-                        <p>Press No if youwant to continue work. Press Yes to logout current user.</p>
+                        <p>{{ 'nav.log_out.question'|trans }}</p>
+                        <p>{{ 'nav.log_out.info'|trans }}</p>
                     </div>
                     <div class="mb-footer">
                         <div class="pull-right">
-                            <a href="/pages-login.html" class="btn btn-success btn-lg">Yes</a>
-                            <button class="btn btn-default btn-lg mb-control-close">No</button>
+                            <a href="{{ path('fos_user_security_logout') }}" class="btn btn-success btn-lg">{{ 'nav.log_out.yes'|trans }}</a>
+                            <button class="btn btn-default btn-lg mb-control-close">{{ 'nav.log_out.no'|trans }}</button>
                         </div>
                     </div>
                 </div>

@@ -23,8 +23,6 @@ class Builder extends ContainerAware
         // create another menu item
         ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'icon' => 'gears', 'labelAttributes' => array('class' => 'xn-text'))) : '';
         ($acl->isGranted('PERMISSIONS_VIEW')) ? $menu->addChild('nav.permissions', array('route' => 'permissions', 'icon'=> 'lock', 'labelAttributes' => array('class' => 'xn-text'))) : '';
-        $menu->addChild('nav.profile', array('route' => 'fos_user_profile_edit', 'icon' => 'user-settings', 'labelAttributes' => array('class' => 'xn-text')));
-        $menu->addchild('nav.log_out', array('route' => 'fos_user_security_logout', 'icon' => 'sign-out', 'labelAttributes' => array('class' => 'xn-text')));
         // you can also add sub level's to your menu's as follows
         //$menu['About Me']->addChild('Edit profile', array('route' => ''));
 

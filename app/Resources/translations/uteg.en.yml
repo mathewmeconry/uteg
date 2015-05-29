@@ -82,6 +82,10 @@ nav:
     permissions: 'Permissions'
     profile: 'Profile'
     log_out: 'Log out'
+    log_out.question: 'Are you sure you want to log out?'
+    log_out.info: 'Press No if you want to continue work. Press Yes to logout current user.'
+    log_out.yes: 'Yes'
+    log_out.no: 'No'
 
 dashboard:
     title: 'Dashboard'
