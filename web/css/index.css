@@ -1,5 +1,6 @@
 html, body {
 	font-family: 'Quicksand', sans-serif;
+    overflow-x: auto !important;
 }
 
 .button {
@@ -19,7 +20,23 @@ html, body {
 .button:hover{
     background:#2288bb;
 }
-	
+
+.btn-icon {
+    width: 35px;
+}
+
+.btn-icon span {
+    padding-left: 10px;
+}
+
+.btn-icon:hover {
+    width: auto;
+}
+
+.btn-icon:hover span{
+    padding-left: 2px;
+}
+
 .fa-user-settings:before {
     background-image: url('/icons/icon-user-settings.png');
 }

@@ -15,7 +15,12 @@
         <!-- CSS INCLUDE -->        
         <link rel="stylesheet" type="text/css" id="theme" href="/css/theme-default.css"/>
         <link rel="stylesheet" type="text/css" id="theme" href="/css/index.css"/>
+        {% block cssplugins %}{% endblock %}
         <!-- EOF CSS INCLUDE -->
+
+        <style>
+            {% block css %}{% endblock %}
+        </style>
     </head>
     <body>
         <!-- START PAGE CONTAINER -->
@@ -208,7 +213,7 @@
         <audio id="audio-fail" src="/audio/fail.mp3" preload="auto"></audio>
         <!-- END PRELOADS -->                  
         
-    <!-- START SCRIPTS -->
+        <!-- START SCRIPTS -->
         <!-- START PLUGINS -->
         <script type="text/javascript" src="/js/plugins/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="/js/plugins/jquery/jquery-ui.min.js"></script>
@@ -241,6 +246,7 @@
 
         <script>
         {% block jsglobal %}{% endblock %}
+        {% block jsfunctions %}{% endblock %}
         
             $(document).ready(function() {
                 {% block docready %}{% endblock %}

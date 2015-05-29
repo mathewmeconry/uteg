@@ -4,93 +4,73 @@
 
 {% block title %}{{ 'starters.title'|trans }}{% endblock %}
 
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" href="/js/plugins/datatables/dataTables.responsive.css"/>
+{% endblock %}
+
 {% block jsplugins %}
 	<script type="text/javascript" src="/js/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/js/plugins/datatables/dataTables.responsive.js"></script>
+{% endblock %}
+
+{% block jsfunctions %}
+    function dataTable(table) {
+        var sex = ('{{ sex }}' == 'f') ? 'female' : 'male';
+
+        $(table).DataTable({
+            "ajax": {
+                "url": "{{ path('starterspost') }}/" + sex + "/" + $(table).data('cat'),
+                "method": "POST"
+            },
+            "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "starters.table.all"|trans }}"] ],
+            "search": {
+                "regex": true
+            },
+            "order": [[ 2, "asc" ]],
+            responsive: {
+                details: {
+                    type: 'column'
+                }
+            },
+            "columns": [
+                { "data": null, "defaultContent": "" },
+                { "data": "id", 'type': 'integer' },
+                { "data": "firstname", 'type': 'string' },
+                { "data": "lastname", 'type': 'string' },
+                { "data": "birthyear", 'type': 'integer' },
+                { "data": "club", 'type': 'string' },
+                { "data": "category", 'type': 'string' },
+                { "data": "present", 'type': 'bool' },
+                { "data": "medicalcert", 'type': 'bool' },
+                { "data": null, "defaultContent": '<div class="btn-group"><button class="btn btn-sm btn-warning btn-condensed btn-icon"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-sm btn-danger btn-condensed btn-icon"><i class="fa fa-times"></i><span>Remove</span></button></div>' }
+            ],
+            "columnDefs": [
+                { "visible": false, "targets": [1, 6] },
+                { "orderable": false, "targets": [0, 9] },
+                { "searchable": false, "targets": [0, 1, 6, 9] },
+                { "className": 'control', "targets": 0 }
+            ],
+            "paginate": {
+                "next": "{{ "starters.table.next"|trans }}",
+                "previous": "{{ "starters.table.previous"|trans }}"
+            },
+            "language": {
+                "search": "{{ "starters.table.search"|trans }}",
+                "searchPlaceholder": "{{ "starters.table.searchPlaceholder"|trans }}",
+                "thousands": "'",
+                "zeroRecords": "{{ "starters.table.zeroRecords"|trans }}"
+            }
+        });
+    }
 {% endblock %}
 
 {% block docready %}
-	var sex = ('{{ sex }}' == 'f') ? 'female' : 'male';
-
 	$.each($('.cat-table'), function(key, table) {
-		$(table).DataTable({
-	        "ajax": {
-	        	"url": "{{ path('starterspost') }}/" + sex + "/" + $(table).data('cat'),
-	        	"method": "POST"
-	        },
-	        "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "starters.table.all"|trans }}"] ],
-	        "search": {
-	        	"regex": true
-	        },
-	        "order": [[ 1, "asc" ]],
-	        responsive: true,
-	        "columns": [
-	        	{ "data": "id", 'type': 'integer' },
-	            { "data": "firstname", 'type': 'string' },
-	            { "data": "lastname", 'type': 'string' },
-	            { "data": "birthyear", 'type': 'integer' },
-	            { "data": "club", 'type': 'string' },
-	            { "data": "category", 'type': 'string' },
-	            { "data": "present", 'type': 'bool' },
-	            { "data": "medicalcert", 'type': 'bool' },
-	            { "data": null }
-	        ], 
-	        "columnDefs": [
-	        	{ "visible": false, "targets": [0, 5] },
-	        	{ "orderable": false, "targets": 8 },
-	        	{ "searchable": false, "targets": [0, 5, 8] }
-	        ],
-	        "paginate": {
-	        	 "next": "{{ "starters.table.next"|trans }}",
-	        	 "previous": "{{ "starters.table.previous"|trans }}" 
-	       	}, 
-	       	"language": {
-	       		"search": "{{ "starters.table.search"|trans }}",
-	       		"searchPlaceholder": "{{ "starters.table.searchPlaceholder"|trans }}",
-	       		"thousands": "'",
-	       		"zeroRecords": "{{ "starters.table.zeroRecords"|trans }}"
-	       	}
-	    });
+        dataTable(table);
 	});
-	
-	$('#{{ sex|raw }}_all').DataTable({
-		"ajax": {
-	     	"url": "{{ path('starterspost') }}/" + sex,
-	    	"method": "POST"
-	    },
-	    "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "{{ "starters.table.all"|trans }}"] ],
-	    "search": {
-	     	"regex": true
-	    },
-	    "order": [[ 1, "asc" ]],
-	    responsive: true,
-	    "columns": [
-	       	{ "data": "id", 'type': 'integer' },
-	        { "data": "firstname", 'type': 'string' },
-	        { "data": "lastname", 'type': 'string' },
-	        { "data": "birthyear", 'type': 'integer' },
-	        { "data": "club", 'type': 'string' },
-	        { "data": "category", 'type': 'string' },
-	        { "data": "present", 'type': 'bool' },
-	        { "data": "medicalcert", 'type': 'bool' },
-	        { "data": null }
-	    ], 
-	    "columnDefs": [
-	      	{ "visible": false, "targets": 0 },
-	      	{ "orderable": false, "targets": 8 },
-	       	{ "searchable": false, "targets": [0, 8] }
-	    ],
-	    "paginate": {
-	       	 "next": "{{ "starters.table.next"|trans }}",
-	       	 "previous": "{{ "starters.table.previous"|trans }}" 
-	    }, 
-	    "language": {
-	    	"search": "{{ "starters.table.search"|trans }}",
-	    	"searchPlaceholder": "{{ "starters.table.searchPlaceholder"|trans }}",
-	    	"thousands": "'",
-	    	"zeroRecords": "{{ "starters.table.zeroRecords"|trans }}"
-	    }
-	});
-    
+
+	dataTable($('#{{ sex|raw }}_all'));
+
     $('.table').on('init.dt', function() {
     	onload();
     });
@@ -114,7 +94,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <div id="panel_{{ sex|raw }}" class="panel panel-default nav-tabs-vertical">
+            <div id="panel_{{ sex|raw }}" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
                 <div class="panel-heading">
                     <h3 class="panel-title">Starters {{ sextrans|trans }}</h3>
                     <ul class="panel-controls">
@@ -136,36 +116,38 @@
                 <div class="panel-body tab-content">
                 	{% for i in 1..8 %}
 	                	<div id="{{ i }}" class="tab-pane{% if i == 1 %} active{% endif %}">
-		                    <table id="{{ sex|raw }}_{{ i }}" class="table table-striped cat-table" data-cat="{{ i }}">
+		                    <table id="{{ sex|raw }}_{{ i }}" class="table table-striped cat-table" data-cat="{{ i }}" width="100%">
 		                        <thead>
 		                            <tr>
-		                            	<th>id</th>
-		                                <th>{{ 'starters.table.firstname'|trans }}</th>
-		                                <th>{{ 'starters.table.lastname'|trans }}</th>
-		                                <th>{{ 'starters.table.birthyear'|trans }}</th>
-		                                <th>{{ 'starters.table.club'|trans }}</th>
-		                                <th>{{ 'starters.table.category'|trans }}</th>
-		                                <th>{{ 'starters.table.present'|trans }}</th>
-		                                <th>{{ 'starters.table.medicalcert'|trans }}</th>
-		                                <th>{{ 'starters.table.actions'|trans }}</th>
+                                        <th class="max-tablet-p"></th>
+                                        <th class="never">id</th>
+                                        <th class="all">{{ 'starters.table.firstname'|trans }}</th>
+                                        <th class="all">{{ 'starters.table.lastname'|trans }}</th>
+                                        <th class="min-desktop">{{ 'starters.table.birthyear'|trans }}</th>
+                                        <th class="min-tablet-p">{{ 'starters.table.club'|trans }}</th>
+                                        <th class="never">{{ 'starters.table.category'|trans }}</th>
+                                        <th class="min-tablet-l">{{ 'starters.table.present'|trans }}</th>
+                                        <th class="min-tablet-l">{{ 'starters.table.medicalcert'|trans }}</th>
+                                        <th class="min-tablet-p">{{ 'starters.table.actions'|trans }}</th>
 		                            </tr>
 		                        </thead>
 		                    </table>
 		             	</div>
 		             {% endfor %}
 		             <div id="all" class="tab-pane">
-		             	<table id="{{ sex|raw }}_all" class="table table-striped" data-cat="0">
+		             	<table id="{{ sex|raw }}_all" class="table responsive table-striped" data-cat="0" width="100%">
 		                	<thead>
 		                		<tr>
-		                         	<th>id</th>
-		                           	<th>{{ 'starters.table.firstname'|trans }}</th>
-		                         	<th>{{ 'starters.table.lastname'|trans }}</th>
-		                       		<th>{{ 'starters.table.birthyear'|trans }}</th>
-		                         	<th>{{ 'starters.table.club'|trans }}</th>
-		                        	<th>{{ 'starters.table.category'|trans }}</th>
-		                        	<th>{{ 'starters.table.present'|trans }}</th>
-		                         	<th>{{ 'starters.table.medicalcert'|trans }}</th>
-		                       		<th>{{ 'starters.table.actions'|trans }}</th>
+                                    <th class="max-tablet-p"></th>
+                                    <th class="never">id</th>
+                                    <th class="all">{{ 'starters.table.firstname'|trans }}</th>
+                                    <th class="all">{{ 'starters.table.lastname'|trans }}</th>
+                                    <th class="min-desktop">{{ 'starters.table.birthyear'|trans }}</th>
+                                    <th class="min-tablet-p">{{ 'starters.table.club'|trans }}</th>
+                                    <th class="min-tablet">{{ 'starters.table.category'|trans }}</th>
+                                    <th class="min-tablet-l">{{ 'starters.table.present'|trans }}</th>
+                                    <th class="min-tablet-l">{{ 'starters.table.medicalcert'|trans }}</th>
+                                    <th class="min-tablet-p">{{ 'starters.table.actions'|trans }}</th>
 		                    	</tr>
 		                	</thead>
 		           		</table>
