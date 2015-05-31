@@ -42,7 +42,7 @@
                 { "data": "category", 'type': 'string' },
                 { "data": "present", 'type': 'bool' },
                 { "data": "medicalcert", 'type': 'bool' },
-                { "data": null, "defaultContent": '<div class="btn-group"><button class="btn btn-sm btn-warning btn-condensed btn-icon"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-sm btn-danger btn-condensed btn-icon"><i class="fa fa-times"></i><span>Remove</span></button></div>' }
+                { "data": null, "defaultContent": '{% if is_granted('STARTERS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-sm btn-warning btn-condensed btn-icon starters-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-sm btn-danger btn-condensed btn-icon starters-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}' }
             ],
             "columnDefs": [
                 { "visible": false, "targets": [1, 6] },
@@ -86,9 +86,67 @@
     			setTimeout(function() {
     				panel_refresh($('#panel_{{ sex|raw }}')); 
     			}, 500); 
-    		})
+    		}, false)
     	);
     });
+
+    {% if is_granted('STARTERS_EDIT', comp) %}
+
+        $('tbody').on('click', 'td div button.starters-edit', function(event) {
+            var table = $(this).parent().parent().parent().parent().parent().DataTable();
+            var s2c_id = table.cell($(this).parent().parent().parent(), 1).data();
+
+            $.ajax({
+                url: "{{ path('starterEdit') }}/" + s2c_id,
+                method: "POST"
+            }).success(function(data) {
+                $('#dialog-edit-body').html(data);
+            });
+
+            $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
+            $( "#dialog-edit" ).data('s2c_id', s2c_id).modal('show');
+        });
+
+        $('tbody').on('click', 'td div button.starters-remove', function(event) {
+            var table = $(this).parent().parent().parent().parent().parent().DataTable();
+            var s2c_id = table.cell($(this).parent().parent().parent(), 1).data();
+
+            $('#dialog-remove-modal-title').html("Remove " + table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
+            $('#dialog-remove-body-name').html(table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
+            $("#dialog-remove").data('s2c_id', s2c_id).modal('show');
+        });
+
+        $('#starter-save').click(function() {
+            var values = {};
+            $.each( $('#starterEditForm').serializeArray(), function(i, field) {
+                values[field.name] = field.value;
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "{{ path('starterEdit') }}/" + $( "#dialog-edit" ).data('s2c_id'),
+                data: values
+            }).success(function(data) {
+                if(data == 'true') {
+                    $('#dialog-edit').modal('hide');
+                    $('.panel-refresh').click();
+                }
+            });
+        });
+
+        $('#starter-remove').click(function() {
+            $.ajax({
+                type: "POST",
+                url: "{{ path('starterRemove') }}",
+                data: { id: $( "#dialog-remove" ).data('s2c_id') }
+            }).success(function(data) {
+                if(data == 'true') {
+                    $('#dialog-remove').modal('hide');
+                    $('.panel-refresh').click();
+                }
+            });
+        });
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -156,4 +214,43 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block dialog %}
+    {% if is_granted('STARTERS_EDIT', comp) %}
+        <div class="modal fade" id="dialog-edit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="dialog-edit-modal-title"></h4>
+                    </div>
+                    <div id="dialog-edit-body" class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="starter-save" class="btn btn-success">{{ 'starters.edit.modal.save'|trans }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'starters.edit.modal.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="dialog-remove" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="dialog-remove-modal-title"></h4>
+                    </div>
+                    <div id="dialog-remove-body" class="modal-body">
+                        {{ 'starters.remove.modal.question'|trans }} <span id="dialog-remove-body-name"></span>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="starter-remove" class="btn btn-danger">{{ 'starters.remove.modal.confirm'|trans }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'starters.remove.modal.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

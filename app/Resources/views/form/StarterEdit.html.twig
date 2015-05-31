@@ -1,0 +1,25 @@
+<form id="starterEditForm" method="post" action="{{ path('starterEdit')}}" class="form-horizontal">
+    {{ form_row(form.firstname) }}
+
+    {{ form_row(form.lastname) }}
+    {{ form_row(form.birthyear) }}
+
+    {{ form_row(form.club) }}
+
+    {{ form_errors(form.present) }}
+    {{ form_label(form.present) }}
+    <br>
+    <label class="switch switch-small">
+        {{ form_widget(form.present) }}
+        <span></span>
+    </label>
+    <br>
+    {{ form_errors(form.medicalcert) }}
+    {{ form_label(form.medicalcert) }}
+    <br>
+    <label class="switch switch-small">
+        {{ form_widget(form.medicalcert) }}
+        <span></span>
+    </label>
+    {{ form_row(form._token) }}
+</form>

@@ -309,4 +309,28 @@ class Starters2Competitions {
     {
         return $this->medicalcert;
     }
+
+    public function getFirstname() {
+        return $this->starter->getFirstname();
+    }
+
+    public function setFirstname($firstname) {
+        return $this;
+    }
+
+    public function getLastname() {
+        return $this->starter->getLastname();
+    }
+
+    public function setLastname($lastname) {
+        return $this;
+    }
+
+    public function getBirthyear() {
+        return $this->starter->getBirthyear();
+    }
+
+    public function setBirthyear($birthyear) {
+        return $this;
+    }
 }

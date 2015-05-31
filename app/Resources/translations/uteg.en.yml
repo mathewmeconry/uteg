@@ -115,6 +115,22 @@ starters:
         search: 'Search'
         searchPlaceholder: 'Search...'
         zeroRecords: 'No matching starters found'
+    edit:
+        modal:
+            save: 'Save'
+            cancel: 'Cancel'
+        form:
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            birthyear: 'Birth year'
+            club: 'Club'
+            present: 'Present'
+            medicalcert: 'Medical cert.'
+    remove:
+        modal:
+            question: 'Are you sure you want to remove'
+            confirm: 'Remove'
+            cancel: 'Cancel'
 
 starter:
     path: 'Starter'

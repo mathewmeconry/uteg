@@ -2,11 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\Type\StarterType;
+use AppBundle\Form\Type\S2cType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 
 class StartersController extends Controller 
 {
@@ -28,7 +31,8 @@ class StartersController extends Controller
 
 			return $this->render('starters.html.twig', array(
                 "sex" => $sexshort,
-                "sextrans" => $sextrans
+                "sextrans" => $sextrans,
+                "comp" => $this->getDoctrine()->getEntityManager()->find('AppBundle:Competition', $request->getSession()->get('comp'))
 			));
 		}
 	}
@@ -51,7 +55,7 @@ class StartersController extends Controller
 			$starters = array();
 
 			foreach($s2cs as $s2c) {
-				$starters["data"][] = array("id" => $s2c->getStarter()->getId(),
+				$starters["data"][] = array("id" => $s2c->getId(),
 					"firstname" => $s2c->getStarter()->getFirstname(),
 					"lastname" => $s2c->getStarter()->getLastname(),
 					"birthyear" => $s2c->getStarter()->getBirthyear(),
@@ -83,6 +87,50 @@ class StartersController extends Controller
 			));
 		}
 	}
+
+    /**
+     * @Route("/starter/edit/{id}", name="starterEdit", defaults={"id": ""}, requirements={"id": "\d+"})
+     */
+    public function starterEditAction($id, Request $request) {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+
+        $s2c = $this->getDoctrine()->getEntityManager()->find('AppBundle:Starters2Competitions',$id);
+
+        $form = $this->createForm(new S2cType(), $s2c);
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $s2c = $form->getData();
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $em->persist($s2c);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('success', 'competitionlist.addcomp.success');
+
+            return new Response('true');
+        }
+
+        return $this->render('form/StarterEdit.html.twig',
+            array('form' => $form->createView())
+        );
+    }
+
+    /**
+     * @Route("/starter/remove", name="starterRemove")
+     */
+    public function starterRemoveAction(Request $request) {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $s2c = $em->find('AppBundle:Starters2Competitions', $_POST['id']);
+        $competition = $em->find('AppBundle:Competition', $request->getSession()->get('comp'));
+
+        $competition->removeS2c($s2c);
+        $em->persist($competition);
+        $em->flush();
+        return new Response('true');
+    }
 	
 	private function getName($id) {
 		return "Mathias Scherer";
