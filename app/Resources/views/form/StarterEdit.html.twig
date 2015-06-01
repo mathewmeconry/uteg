@@ -1,8 +1,13 @@
-<form id="starterEditForm" method="post" action="{{ path('starterEdit')}}" class="form-horizontal">
+<form id="starterEditForm" method="post" action="{{ path(target)}}" class="form-horizontal">
     {{ form_row(form.firstname) }}
 
     {{ form_row(form.lastname) }}
+    
     {{ form_row(form.birthyear) }}
+    
+    {{ form_row(form.sex) }}
+    
+    {{ form_row(form.category) }}
 
     {{ form_row(form.club) }}
 

@@ -123,6 +123,8 @@ starters:
             firstname: 'Firstname'
             lastname: 'Lastname'
             birthyear: 'Birth year'
+            sex: 'Sex'
+            category: 'Category'
             club: 'Club'
             present: 'Present'
             medicalcert: 'Medical cert.'

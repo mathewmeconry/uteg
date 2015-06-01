@@ -121,15 +121,19 @@
             $.each( $('#starterEditForm').serializeArray(), function(i, field) {
                 values[field.name] = field.value;
             });
+            
+            var url = ($('#dialog-edit-body form').attr('action').indexOf('edit') > -1) ? $('#dialog-edit-body form').attr('action') + "/" + $( "#dialog-edit" ).data('s2c_id') : $('#dialog-edit-body form').attr('action');
 
             $.ajax({
                 type: "POST",
-                url: "{{ path('starterEdit') }}/" + $( "#dialog-edit" ).data('s2c_id'),
+                url: url,
                 data: values
             }).success(function(data) {
                 if(data == 'true') {
                     $('#dialog-edit').modal('hide');
                     $('.panel-refresh').click();
+                } else {
+                	$('#dialog-edit-body').html(data);
                 }
             });
         });
@@ -146,6 +150,18 @@
                 }
             });
         });
+        
+        $('.control-add').click(function() {
+        	$.ajax({
+                url: "{{ path('starterAdd') }}",
+                method: "POST"
+            }).success(function(data) {
+                $('#dialog-edit-body').html(data);
+            });
+
+            $('#dialog-edit-modal-title').html('Add new');
+            $('#dialog-edit').modal('show');
+        });
     {% endif %}
 {% endblock %}
 
@@ -156,6 +172,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Starters {{ sextrans|trans }}</h3>
                     <ul class="panel-controls">
+                    	{% if is_granted("STARTERS_EDIT", comp) %}<li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a></li>{% endif %}
                         <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                     </ul>
                 </div>

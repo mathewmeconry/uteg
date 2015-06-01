@@ -16,6 +16,7 @@ return array(
     'SensioLabs\\Security' => array($vendorDir . '/sensiolabs/security-checker'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'PHPParser' => array($vendorDir . '/nikic/php-parser/lib'),
+    'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
     'Liip\\ImagineBundle' => array($vendorDir . '/liip/imagine-bundle'),
     'Knp\\Menu\\' => array($vendorDir . '/knplabs/knp-menu/src'),
     'Knp\\Bundle\\MenuBundle' => array($vendorDir . '/knplabs/knp-menu-bundle'),

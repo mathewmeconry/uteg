@@ -22,7 +22,7 @@ class Starters2Competitions {
     protected $id;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Starter", inversedBy="competitions")
+     * @ORM\ManytoOne(targetEntity="Starter", inversedBy="s2cs")
      * @ORM\JoinColumn(name="starter_id", referencedColumnName="starter_id")
      */
     protected $starter;
@@ -332,5 +332,13 @@ class Starters2Competitions {
 
     public function setBirthyear($birthyear) {
         return $this;
+    }
+    
+    public function getSex() {
+    	return $this->starter->getSex();
+    }
+    
+    public function setSex($sex) {
+    	return $this;
     }
 }

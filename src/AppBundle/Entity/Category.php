@@ -50,6 +50,10 @@ class Category {
     public function __construct() {
         $this->starters = new ArrayCollection();
     }
+    
+    public function __toString() {
+    	return $this->name;
+    }
 
     /**
      * Get id

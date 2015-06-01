@@ -4,11 +4,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Form\Type\StarterType;
 use AppBundle\Form\Type\S2cType;
+use AppBundle\Entity\Starters2Competitions;
+use AppBundle\Entity\Starter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 
 class StartersController extends Controller 
@@ -87,6 +90,114 @@ class StartersController extends Controller
 			));
 		}
 	}
+	
+	/**
+	 * @Route("/starter/add", name="starterAdd")
+	 */
+	public function starterAddAction(Request $request) {
+		$this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+		
+		$form = $this->createForm(new S2cType(false));
+		
+		$form->handleRequest($request);
+		if ($form->isValid()) {
+			$em = $this->getDoctrine()->getEntityManager();
+			$competition = $em->getRepository('AppBundle:Competition')->find($request->getSession()->get('comp'));
+			$formdata = $form->getData();
+			
+			$starter = $em->getRepository('AppBundle:Starter')->findOneBy(array("firstname" => $formdata['firstname'], "lastname" => $formdata['lastname'], "birthyear" => $formdata['birthyear'], "sex" => $formdata['sex']));
+			if(!$starter) {
+				$starter = $em->getRepository('AppBundle:Starter')->findOneBy(array("lastname" => $formdata['firstname'], "firstname" => $formdata['lastname'], "birthyear" => $formdata['birthyear'], "sex" => $formdata['sex']));
+				if(!$starter) {
+					$starter = new Starter();
+					$starter->setFirstname($formdata['firstname']);
+					$starter->setLastname($formdata['lastname']);
+					$starter->setBirthyear($formdata['birthyear']);
+					$starter->setSex($formdata['sex']);
+					$s2c = false;
+				} else {
+					$s2c = $em->getRepository('AppBundle:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+				}
+			} else {
+				$s2c = $em->getRepository('AppBundle:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+			}
+			
+			if(!$s2c) {
+				$s2c = new Starters2Competitions();
+				$s2c->setStarter($starter);
+				$s2c->setCompetition($competition);
+				
+				$starter->addS2c($s2c);
+				$competition->addS2c($s2c);
+			}
+			
+			$s2c->setClub($em->getRepository('AppBundle:Club')->find($formdata['club']));
+			$s2c->setCategory($em->getRepository('AppBundle:Category')->find($formdata['category']));
+			$s2c->setPresent($formdata['present']);
+			$s2c->setMedicalcert($formdata['medicalcert']);
+			
+			$em->persist($starter);
+			$em->persist($s2c);
+			$em->persist($competition);
+			$em->flush();
+			
+			$this->get('session')->getFlashBag()->add('success', 'competitionlist.addcomp.success');
+		
+			return new Response('true');
+		}
+		
+		return $this->render('form/StarterEdit.html.twig',
+				array('form' => $form->createView(),
+						'target' => 'starterAdd'
+				)
+		);
+	}
+	
+	/**
+	 * @Route("/starter/import", name="starterImport")
+	 */
+	public function starterImportAction() {
+		try {
+		    $inputFileType = \PHPExcel_IOFactory::identify($this->get('kernel')->getRootDir() . '/../web/test_excel.xlsx');
+		    $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+		    $objPHPExcel = $objReader->load($this->get('kernel')->getRootDir() . '/../web/test_excel.xlsx');
+		} catch(Exception $e) {
+		    die('Error loading file "'.pathinfo($this->get('kernel')->getRootDir() . '/../web/test_excel.xlsx',PATHINFO_BASENAME).'": '.$e->getMessage());
+		}
+		
+		//  Get worksheet dimensions
+		$sheetData = $objPHPExcel->getActiveSheet();
+		$highestRow = $sheetData->getHighestRow(); 
+		$highestColumn = $sheetData->getHighestColumn(); 
+		$highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn); 
+		
+		if($highestColumnIndex == 6) {
+			for ($row = 1; $row <= $highestRow; ++$row) {
+				($sheetData->getCellByColumnAndRow(0, $row)->getValue() == 'Firstname') ? $row++ : $row;
+				($sheetData->getCellByColumnAndRow(0, $row)->getValue() == '') ? $row++ : $row;
+				
+				if($sheetData->getCellByColumnAndRow(0, $row)->getValue() !== NULL) {
+			    	$starters[] = array("firstname" => $sheetData->getCellByColumnAndRow(0, $row)->getValue(),
+				    	'lastname' => $sheetData->getCellByColumnAndRow(1, $row)->getValue(),
+				    	'birthyear' => $sheetData->getCellByColumnAndRow(2, $row)->getValue(),
+				    	'sex' => $sheetData->getCellByColumnAndRow(3, $row)->getValue(),
+				    	'category' => $sheetData->getCellByColumnAndRow(4, $row)->getValue(),
+				    	'club' => $sheetData->getCellByColumnAndRow(5, $row)->getValue()
+			    	);
+				}
+			}
+		} else {
+			throw new HttpException(406, "Invalid column count. Counted: ".$highestColumnIndex);
+		}
+		
+		if(isset($starters)) {
+			
+		} else {
+			throw new HttpException(406, "No Data passed in Excel");
+		}
+		
+		return new Response('true');
+	}
 
     /**
      * @Route("/starter/edit/{id}", name="starterEdit", defaults={"id": ""}, requirements={"id": "\d+"})
@@ -112,7 +223,9 @@ class StartersController extends Controller
         }
 
         return $this->render('form/StarterEdit.html.twig',
-            array('form' => $form->createView())
+            array('form' => $form->createView(),
+						'target' => 'starterEdit'
+            )
         );
     }
 

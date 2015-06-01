@@ -48,7 +48,7 @@ class Starter {
     /**
      * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="starter", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
-    protected $competitions;
+    protected $s2cs;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -62,7 +62,7 @@ class Starter {
     protected $deletedAt;
 
     public function __construct() {
-        $this->competitions = new ArrayCollection();
+        $this->s2cs = new ArrayCollection();
     }
 
     /**
@@ -191,36 +191,36 @@ class Starter {
     }
 
     /**
-     * Add competitions
+     * Add s2c
      *
-     * @param \AppBundle\Entity\Starters2Competitions $competitions
+     * @param \AppBundle\Entity\Starters2Competitions $s2c
      * @return Starter
      */
-    public function addCompetition(\AppBundle\Entity\Starters2Competitions $competitions)
+    public function addS2c(\AppBundle\Entity\Starters2Competitions $s2c)
     {
-        $this->competitions[] = $competitions;
+        $this->s2cs[] = $s2c;
 
         return $this;
     }
 
     /**
-     * Remove competitions
+     * Remove s2c
      *
-     * @param \AppBundle\Entity\Starters2Competitions $competitions
+     * @param \AppBundle\Entity\Starters2Competitions $s2cs
      */
-    public function removeCompetition(\AppBundle\Entity\Starters2Competitions $competitions)
+    public function removeS2c(\AppBundle\Entity\Starters2Competitions $s2c)
     {
-        $this->competitions->removeElement($competitions);
+        $this->s2cs->removeElement($s2c);
     }
 
     /**
-     * Get competitions
+     * Get s2cs
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getCompetitions()
+    public function getS2cs()
     {
-        return $this->competitions;
+        return $this->s2cs;
     }
 
     /**
