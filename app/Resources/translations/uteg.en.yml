@@ -104,6 +104,7 @@ starters:
         firstname: 'Firstname'
         lastname: 'Lastname'
         birthyear: 'Birth year'
+        sex: 'Sex'
         club: 'Club'
         category: 'Category'
         present: 'Present'
@@ -133,6 +134,9 @@ starters:
             question: 'Are you sure you want to remove'
             confirm: 'Remove'
             cancel: 'Cancel'
+    import:
+        title: 'Starters Import'
+        header: 'Import'
 
 starter:
     path: 'Starter'

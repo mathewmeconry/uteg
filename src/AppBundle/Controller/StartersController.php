@@ -155,14 +155,19 @@ class StartersController extends Controller
 	
 	/**
 	 * @Route("/starter/import", name="starterImport")
+     * Increase max_input_var in php.ini from 1000 to 6000 to import max. 1000 starters at once
 	 */
 	public function starterImportAction() {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+
+        $em = $this->getDoctrine()->getEntityManager();
+
 		try {
-		    $inputFileType = \PHPExcel_IOFactory::identify($this->get('kernel')->getRootDir() . '/../web/test_excel.xlsx');
+		    $inputFileType = \PHPExcel_IOFactory::identify($this->get('kernel')->getRootDir() . '/../web/test_data.xlsx');
 		    $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
-		    $objPHPExcel = $objReader->load($this->get('kernel')->getRootDir() . '/../web/test_excel.xlsx');
+		    $objPHPExcel = $objReader->load($this->get('kernel')->getRootDir() . '/../web/test_data.xlsx');
 		} catch(Exception $e) {
-		    die('Error loading file "'.pathinfo($this->get('kernel')->getRootDir() . '/../web/test_excel.xlsx',PATHINFO_BASENAME).'": '.$e->getMessage());
+		    die('Error loading file "'.pathinfo($this->get('kernel')->getRootDir() . '/../web/test_data.xlsx',PATHINFO_BASENAME).'": '.$e->getMessage());
 		}
 		
 		//  Get worksheet dimensions
@@ -173,16 +178,39 @@ class StartersController extends Controller
 		
 		if($highestColumnIndex == 6) {
 			for ($row = 1; $row <= $highestRow; ++$row) {
-				($sheetData->getCellByColumnAndRow(0, $row)->getValue() == 'Firstname') ? $row++ : $row;
-				($sheetData->getCellByColumnAndRow(0, $row)->getValue() == '') ? $row++ : $row;
-				
+				($sheetData->getCellByColumnAndRow(0, $row)->getValue() == 'Firstname' ||
+                    $sheetData->getCellByColumnAndRow(1, $row)->getValue() == 'Lastname' ||
+                    $sheetData->getCellByColumnAndRow(2, $row)->getValue() == 'Brith year' ||
+                    $sheetData->getCellByColumnAndRow(3, $row)->getValue() == 'Sex' ||
+                    $sheetData->getCellByColumnAndRow(4, $row)->getValue() == 'Category' ||
+                    $sheetData->getCellByColumnAndRow(5, $row)->getValue() == 'Club') ? $row++ : $row;
+
+                ($sheetData->getCellByColumnAndRow(0, $row)->getValue() == '' ||
+                    $sheetData->getCellByColumnAndRow(1, $row)->getValue() == '' ||
+                    $sheetData->getCellByColumnAndRow(2, $row)->getValue() == '' ||
+                    $sheetData->getCellByColumnAndRow(3, $row)->getValue() == '' ||
+                    $sheetData->getCellByColumnAndRow(4, $row)->getValue() == '' ||
+                    $sheetData->getCellByColumnAndRow(5, $row)->getValue() == '') ? $row++ : $row;
+
 				if($sheetData->getCellByColumnAndRow(0, $row)->getValue() !== NULL) {
+                    $sex = ($sheetData->getCellByColumnAndRow(3, $row)->getValue() == 'Female') ? 'f' : 'm';
+
+                    $category = $em->getRepository('AppBundle:Category')->findOneBy(array("name" => $sheetData->getCellByColumnAndRow(4, $row)->getValue()));
+
+                    $club = $em->getRepository('AppBundle:Club')->findOneBy(array("name" => $sheetData->getCellByColumnAndRow(5, $row)->getValue()));
+                    if(!$club) {
+                        $club = new Club();
+                        $club->setName($sheetData->getCellByColumnAndRow(5, $row)->getValue());
+                        $em->persist($club);
+                        $em->flush();
+                    }
+
 			    	$starters[] = array("firstname" => $sheetData->getCellByColumnAndRow(0, $row)->getValue(),
 				    	'lastname' => $sheetData->getCellByColumnAndRow(1, $row)->getValue(),
 				    	'birthyear' => $sheetData->getCellByColumnAndRow(2, $row)->getValue(),
-				    	'sex' => $sheetData->getCellByColumnAndRow(3, $row)->getValue(),
-				    	'category' => $sheetData->getCellByColumnAndRow(4, $row)->getValue(),
-				    	'club' => $sheetData->getCellByColumnAndRow(5, $row)->getValue()
+				    	'sex' => $sex,
+				    	'category' => $category,
+				    	'club' => $club
 			    	);
 				}
 			}
@@ -191,7 +219,15 @@ class StartersController extends Controller
 		}
 		
 		if(isset($starters)) {
-			
+            $clubs = $em->getRepository('AppBundle:Club')->findBy(array(), array('name'=>'asc'));
+            $categories = $em->getRepository('AppBundle:Category')->findBy(array(), array('number'=>'asc'));
+
+			return $this->render('form/StarterImport.html.twig',
+                array('clubs' => $clubs,
+                    'categories' => $categories,
+                    'starters' => $starters
+                )
+            );
 		} else {
 			throw new HttpException(406, "No Data passed in Excel");
 		}
