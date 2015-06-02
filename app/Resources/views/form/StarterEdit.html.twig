@@ -1,15 +1,24 @@
+{% trans_default_domain 'uteg' %}
+
 <form id="starterEditForm" method="post" action="{{ path(target)}}" class="form-horizontal">
+
     {{ form_row(form.firstname) }}
+	{% if error.firstname is defined %}<label class="error">{{ error.firstname|trans }}</label>{% endif %}
 
-    {{ form_row(form.lastname) }}
-    
-    {{ form_row(form.birthyear) }}
-    
-    {{ form_row(form.sex) }}
-    
-    {{ form_row(form.category) }}
+    {{ form_row(form.lastname) }}	
+	{% if error.lastname is defined %}<label class="error">{{ error.lastname|trans }}</label>{% endif %}
 
-    {{ form_row(form.club) }}
+    {{ form_row(form.birthyear) }}    
+    {% if error.birthyear is defined %}<label class="error">{{ error.birthyear|trans }}</label>{% endif %}
+
+    {{ form_row(form.sex) }}    
+    {% if error.sex is defined %}<label class="error">{{ error.sex|trans }}</label>{% endif %}
+
+    {{ form_row(form.category) }}    
+    {% if error.category is defined %}<label class="error">{{ error.category|trans }}</label>{% endif %}
+
+    {{ form_row(form.club) }}	
+	{% if error.club is defined %}<label class="error">{{ error.club|trans }}</label>{% endif %}
 
     {{ form_errors(form.present) }}
     {{ form_label(form.present) }}
@@ -18,6 +27,7 @@
         {{ form_widget(form.present) }}
         <span></span>
     </label>
+    {% if error.present is defined %}<label class="error">{{ error.present|trans }}</label>{% endif %}
     <br>
     {{ form_errors(form.medicalcert) }}
     {{ form_label(form.medicalcert) }}
@@ -26,5 +36,11 @@
         {{ form_widget(form.medicalcert) }}
         <span></span>
     </label>
+    {% if error.medicalcert is defined %}<label class="error">{{ error.medicalcert|trans }}</label>{% endif %}
     {{ form_row(form._token) }}
 </form>
+<script>
+{% if error.firstname is defined %}$('input[name*="firstname"]').addClass('error');{% endif %}
+{% if error.lastname is defined %}$('input[name*="lastname"]').addClass('error');{% endif %}
+{% if error.birthyear is defined %}$('input[name*="birthyear"]').addClass('error');{% endif %}
+</script>

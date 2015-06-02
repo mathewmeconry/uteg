@@ -2,3 +2,4 @@ app/cache/
 app/logs/
 .idea/
 web/bundles/
+web/uploads/

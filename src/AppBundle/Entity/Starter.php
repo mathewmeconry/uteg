@@ -23,24 +23,31 @@ class Starter {
 
     /**
      * @ORM\Column(type="string", name="firstname")
+     * @Assert\NotBlank(message="starter.error.firstname")
      */
     protected $firstname;
 
     /**
      * @ORM\Column(type="string", name="lastname")
+     * @Assert\NotBlank(message="starter.error.lastname")
      */
     protected $lastname;
     
     /**
      * @ORM\Column(type="string", name="sex")
+     * @Assert\NotBlank()
+     * @Assert\Choice(choices = {"male", "female"}, message = "starter.error.sex")
      */
     protected $sex;
 
     /**
      * @ORM\Column(type="integer", name="birthyear", length=4)
+     * @Assert\NotBlank(message="starter.error.birthyear")
      * @Assert\Length(
      *      min = 4,
-     *      max = 4
+     *      max = 4,
+     *      minMessage="starter.error.birthyearMin",
+     *      maxMessage="starter.error.birthyearMax"
      * )
      */
     protected $birthyear;

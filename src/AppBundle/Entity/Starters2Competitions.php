@@ -73,6 +73,7 @@ class Starters2Competitions {
 
     public function __construct() {
         $this->grades = new ArrayCollection();
+        $this->starter = new Starter();
     }
 
     /**

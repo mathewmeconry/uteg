@@ -172,7 +172,10 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Starters {{ sextrans|trans }}</h3>
                     <ul class="panel-controls">
-                    	{% if is_granted("STARTERS_EDIT", comp) %}<li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a></li>{% endif %}
+                    	{% if is_granted("STARTERS_EDIT", comp) %}
+                    		<li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a></li>
+                    		<li><a href="{{ path('starterImport') }}" class="control-primary"><span class="fa fa-upload"></span></a></li>
+                    	{% endif %}
                         <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                     </ul>
                 </div>

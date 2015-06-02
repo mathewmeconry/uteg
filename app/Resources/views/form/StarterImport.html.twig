@@ -24,30 +24,30 @@
                         <table class="table table-striped" >
                             <thead>
                                 <tr>
-                                    <th>{{ 'starters.table.firstname'|trans }}</th>
-                                    <th>{{ 'starters.table.lastname'|trans }}</th>
-                                    <th>{{ 'starters.table.birthyear'|trans }}</th>
-                                    <th>{{ 'starters.table.sex'|trans }}</th>
-                                    <th>{{ 'starters.table.club'|trans }}</th>
-                                    <th>{{ 'starters.table.category'|trans }}</th>
+                                    <th>{{ 'starters.import.table.firstname'|trans }}</th>
+                                    <th>{{ 'starters.import.table.lastname'|trans }}</th>
+                                    <th>{{ 'starters.import.table.birthyear'|trans }}</th>
+                                    <th>{{ 'starters.import.table.sex'|trans }}</th>
+                                    <th>{{ 'starters.import.table.club'|trans }}</th>
+                                    <th>{{ 'starters.import.table.category'|trans }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for starter in starters %}
                                     <tr>
-                                        <td><input name="{{ loop.index }}[starterFirstname]" type="text" value="{{ starter.firstname }}" ></td>
-                                        <td><input name="{{ loop.index }}[starterLastname]" type="text" value="{{ starter.lastname }}" ></td>
-                                        <td><input name="{{ loop.index }}[starterBirthyear]" type="number" max-length="4" min-length="4" value="{{ starter.birthyear }}" ></td>
-                                        <td><select id="sex{{ loop.index }}" name="{{ loop.index }}[starterSex]" ><option value="m">Male</option><option value="f">Female</option></select></td>
-                                        <td><select id="club{{ loop.index }}" name="{{ loop.index }}[starterClub]" >{% for club in clubs %}<option value="{{ club.id }}">{{ club.name }}</option>{% endfor %}</select></td>
-                                        <td><select id="category{{ loop.index }}" name="{{ loop.index }}[starterCategory]" >{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select></td>
+                                        <td><input name="{{ loop.index }}[starterFirstname]" type="text" class="form-control" value="{{ starter.firstname }}" ></td>
+                                        <td><input name="{{ loop.index }}[starterLastname]" type="text"  class="form-control"value="{{ starter.lastname }}" ></td>
+                                        <td><input name="{{ loop.index }}[starterBirthyear]" type="number" max-length="4" min-length="4"  class="form-control"value="{{ starter.birthyear }}" ></td>
+                                        <td><select id="sex{{ loop.index }}" name="{{ loop.index }}[starterSex]" class="form-control"><option value="male">{{ 'starters.import.table.male'|trans }}</option><option value="female">{{ 'starters.import.table.female'|trans }}</option></select></td>
+                                        <td><select id="club{{ loop.index }}" name="{{ loop.index }}[starterClub]" class="form-control" >{% for club in clubs %}<option value="{{ club.id }}">{{ club.name }}</option>{% endfor %}</select></td>
+                                        <td><select id="category{{ loop.index }}" name="{{ loop.index }}[starterCategory]" class="form-control" >{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                         <div class="pull-right">
-                            <button class="btn btn-success active"><span class="fa fa-save"></span> Save</button>
-                            <button class="btn btn-danger"><span class="fa fa-times"></span> Cancel</button>
+                            <button class="btn btn-success active"><span class="fa fa-save"></span> {{ 'starters.import.save'|trans }}</button>
+                            <button class="btn btn-danger"><span class="fa fa-times"></span> {{ 'starters.import.cancel'|trans }}</button>
                         </div>
                     </form>
                 </div>

@@ -134,12 +134,39 @@ starters:
             question: 'Are you sure you want to remove'
             confirm: 'Remove'
             cancel: 'Cancel'
+    upload:
+        title: 'Starters Upload'
+        header: 'Upload'
+        procress: 'Procress'
+        cancel: 'Cancel'
     import:
         title: 'Starters Import'
         header: 'Import'
-
+        save: 'Save'
+        cancel: 'Cancel'
+        table:
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            birthyear: 'Birth year'
+            sex: 'Sex'
+            male: 'Male'
+            female: 'Female'
+            category: 'Category'
+            club: 'Club'
+            present: 'Present'
+            medicalcert: 'Medical cert.'
+        error:
+            empty: 'No starters found in Excel'
+            columnCount: 'Not all columns are filled up'
+            
 starter:
     path: 'Starter'
+    error:
+        firstname: 'Please enter a firstname'
+        lastname: 'Please enter a lastname'
+        birthyear: 'Please enter a birth year'
+        birthyearMin: 'Please enter excat 4 numbers'
+        birthyearMax: 'Please enter excat 4 numbers'
 
 competition:
     title: 'Competition'
