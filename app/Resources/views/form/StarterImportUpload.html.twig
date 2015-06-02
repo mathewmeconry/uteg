@@ -12,6 +12,8 @@
 		paramName: "file", // The name that will be used to transfer the file
 		autoProcessQueue: false,
 		uploadMultiple: true,
+        parallelUploads: 20,
+        maxFiles: 20,
 		acceptedFiles: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
 	});
 	
@@ -20,7 +22,9 @@
 	});
 	
 	myDropzone.on("success", function(file, responseText) {
-		window.location.href = responseText;
+        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+            window.location.href = responseText;
+        }
 	});
 
 	$('#cancel').click(function() {
@@ -39,7 +43,7 @@
                     <form enctype="multipart/form-data" id="starterUpload" name="starterUpload" class="dropzone dz-clickable" action="{{ path('starterProcess') }}" method="POST">
                     </form>
                     <div class="pull-right">
-                    	<button id="process" class="btn btn-success active"><span class="fa fa-cogs"></span> {{ 'starters.upload.procress'|trans }}</button>
+                    	<button id="process" class="btn btn-success active"><span class="fa fa-cogs"></span> {{ 'starters.upload.process'|trans }}</button>
                         <button id="cancel" class="btn btn-danger"><span class="fa fa-times"></span> {{ 'starters.upload.cancel'|trans }}</button>
                     </div>
                 </div>

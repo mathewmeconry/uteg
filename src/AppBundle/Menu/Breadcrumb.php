@@ -43,6 +43,11 @@ class Breadcrumb
                 $menu->addChild((strpos($uri, 'female') == false) ? 'starters.path.male' : 'starters.path.female')
 				        ->setCurrent(true);
 				break;
+            case 'starterImport':
+                $menu
+                    ->addChild('starters.import.path')
+                    ->setCurrent(true);
+                break;
             case 'starter':
                 $uri = explode("/", $request->getRequestUri());
                 $uri = str_replace("%20", " ", end($uri));

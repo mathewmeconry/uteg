@@ -12,6 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 
 class StartersController extends Controller 
@@ -161,7 +163,99 @@ class StartersController extends Controller
 				)
 		);
 	}
-	
+
+    /**
+     * @Route("/starter/add/massive", name="starterAddMassive")
+     * @Method("POST")
+     */
+    public function starterAddMassiveAction(Request $request) {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $starters = $this->get('request')->request->get('data');
+        $competition = $em->getRepository('AppBundle:Competition')->find($request->getSession()->get('comp'));
+
+        foreach($starters as $starterPost) {
+            $starter = $em->getRepository('AppBundle:Starter')->findOneBy(array("firstname" => $starterPost['firstname'], "lastname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "sex" => $starterPost['sex']));
+            if(!$starter) {
+                $starter = $em->getRepository('AppBundle:Starter')->findOneBy(array("lastname" => $starterPost['firstname'], "firstname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "sex" => $starterPost['sex']));
+                if(!$starter) {
+                    $starter = new Starter();
+                    $starter->setFirstname($starterPost['firstname']);
+                    $starter->setLastname($starterPost['lastname']);
+                    $starter->setBirthyear($starterPost['birthyear']);
+                    $starter->setSex($starterPost['sex']);
+                    $s2c = false;
+                } else {
+                    $s2c = $em->getRepository('AppBundle:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+                }
+            } else {
+                $s2c = $em->getRepository('AppBundle:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+            }
+
+            if(!$s2c) {
+                $s2c = new Starters2Competitions();
+                $s2c->setStarter($starter);
+                $s2c->setCompetition($competition);
+
+                $starter->addS2c($s2c);
+                $competition->addS2c($s2c);
+            }
+
+            $club = $em->getRepository('AppBundle:Club')->find((array_key_exists('club', $starterPost)) ? $starterPost['club'] : 0);
+            if($club !== 0 && $club) {
+                $s2c->setClub($club);
+            } else {
+                $errorMessagesRaw['club'] = 'starter.error.club';
+            }
+
+            $category = $em->getRepository('AppBundle:Category')->find((array_key_exists('category', $starterPost)) ? $starterPost['category'] : 0);
+            if($category !== 0 && $category) {
+                $s2c->setCategory($category);
+            } else {
+                $errorMessagesRaw['category'] = 'starter.error.category';
+            }
+
+            $validator = $this->get('validator');
+            $errors = $validator->validate($starter);
+            if(count($errors) <= 0 && $club && $category && $club !== 0 && $category !== 0) {
+                $em->persist($starter);
+                $em->persist($s2c);
+                $em->flush($starter);
+                $em->flush($s2c);
+            } else {
+                $array = $starter->__toArray();
+                $array['club']['id'] = (array_key_exists('club', $starterPost)) ? $starterPost['club'] : 0;
+                $array['category']['id'] = (array_key_exists('category', $starterPost)) ? $starterPost['category'] : 0;
+                foreach ($errors as $error) {
+                    $errorMessagesRaw[$error->getPropertyPath()] = $error->getMessage();
+                }
+                $fails[] = $array;
+                $errorMessages[] = $errorMessagesRaw;
+            }
+
+            unset($starter);
+            unset($s2c);
+            unset($errorMessagesRaw);
+        }
+
+        if(isset($fails)) {
+            $clubs = $em->getRepository('AppBundle:Club')->findBy(array(), array('name'=>'asc'));
+            $categories = $em->getRepository('AppBundle:Category')->findBy(array(), array('number'=>'asc'));
+
+            return $this->render('form/StarterImport.html.twig',
+                array('clubs' => $clubs,
+                    'categories' => $categories,
+                    'starters' => $fails,
+                    'errors' => $errorMessages
+                )
+            );
+        } else {
+            $this->get('session')->getFlashBag()->add('success', 'competitionlist.addcomp.success');
+            return $this->redirectToRoute('starters');
+        }
+    }
+
 	/**
 	 * @Route("/starter/import", name="starterImport")
      * Increase max_input_vars in php.ini from 1000 to 6000 to import max. 1000 starters at once
@@ -171,16 +265,20 @@ class StartersController extends Controller
 		
         $files = $request->getSession()->get('import');
         $request->getSession()->set('import', null);
+        $errors = array();
+
         if($files) {
 			$em = $this->getDoctrine()->getEntityManager();
-			
+            $fs = new Filesystem();
+            $index = -1;
+
 			foreach($files as $file) {
 				try {
 				    $inputFileType = \PHPExcel_IOFactory::identify($file);
 				    $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
 				    $objPHPExcel = $objReader->load($file);
 				} catch(Exception $e) {
-				    die('Error loading file "'.pathinfo($file,PATHINFO_BASENAME).'": '.$e->getMessage());
+				    throw new HttpException(500, 'Error loading file "'.pathinfo($file,PATHINFO_BASENAME).'": '.$e->getMessage());
 				}
 				
 				//  Get worksheet dimensions
@@ -188,44 +286,86 @@ class StartersController extends Controller
 				$highestRow = $sheetData->getHighestRow(); 
 				$highestColumn = $sheetData->getHighestColumn(); 
 				$highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn); 
-				
+                ($fs->exists($file)) ? $fs->remove($file) : '';
+
 				if($highestColumnIndex == 6) {
+
 					for ($row = 1; $row <= $highestRow; ++$row) {
-						($sheetData->getCellByColumnAndRow(0, $row)->getValue() == 'Firstname' ||
-		                    $sheetData->getCellByColumnAndRow(1, $row)->getValue() == 'Lastname' ||
-		                    $sheetData->getCellByColumnAndRow(2, $row)->getValue() == 'Brith year' ||
-		                    $sheetData->getCellByColumnAndRow(3, $row)->getValue() == 'Sex' ||
-		                    $sheetData->getCellByColumnAndRow(4, $row)->getValue() == 'Category' ||
-		                    $sheetData->getCellByColumnAndRow(5, $row)->getValue() == 'Club') ? $row++ : $row;
-		
-		                ($sheetData->getCellByColumnAndRow(0, $row)->getValue() == '' ||
-		                    $sheetData->getCellByColumnAndRow(1, $row)->getValue() == '' ||
-		                    $sheetData->getCellByColumnAndRow(2, $row)->getValue() == '' ||
-		                    $sheetData->getCellByColumnAndRow(3, $row)->getValue() == '' ||
-		                    $sheetData->getCellByColumnAndRow(4, $row)->getValue() == '' ||
-		                    $sheetData->getCellByColumnAndRow(5, $row)->getValue() == '') ? $row++ : $row;
-		
-						if($sheetData->getCellByColumnAndRow(0, $row)->getValue() !== NULL) {
-		                    $sex = strtolower($sheetData->getCellByColumnAndRow(3, $row)->getValue());
-		
-		                    $category = $em->getRepository('AppBundle:Category')->findOneBy(array("name" => $sheetData->getCellByColumnAndRow(4, $row)->getValue()));
-		
-		                    $club = $em->getRepository('AppBundle:Club')->findOneBy(array("name" => $sheetData->getCellByColumnAndRow(5, $row)->getValue()));
-		                    if(!$club) {
-		                        $club = new Club();
-		                        $club->setName($sheetData->getCellByColumnAndRow(5, $row)->getValue());
-		                        $em->persist($club);
-		                        $em->flush();
-		                    }
-		
-					    	$starters[] = array("firstname" => $sheetData->getCellByColumnAndRow(0, $row)->getValue(),
-						    	'lastname' => $sheetData->getCellByColumnAndRow(1, $row)->getValue(),
-						    	'birthyear' => $sheetData->getCellByColumnAndRow(2, $row)->getValue(),
-						    	'sex' => $sex,
-						    	'category' => $category,
-						    	'club' => $club
-					    	);
-						}
+                        ++$index;
+
+                        ($sheetData->getCellByColumnAndRow(0, $row)->getValue() == 'Firstname' ||
+                            $sheetData->getCellByColumnAndRow(1, $row)->getValue() == 'Lastname' ||
+                            $sheetData->getCellByColumnAndRow(2, $row)->getValue() == 'Brith year' ||
+                            $sheetData->getCellByColumnAndRow(3, $row)->getValue() == 'Sex' ||
+                            $sheetData->getCellByColumnAndRow(4, $row)->getValue() == 'Category' ||
+                            $sheetData->getCellByColumnAndRow(5, $row)->getValue() == 'Club') ? $row++ : $row;
+
+                        ($sheetData->getCellByColumnAndRow(0, $row)->getValue() == '' &&
+                            $sheetData->getCellByColumnAndRow(1, $row)->getValue() == '' &&
+                            $sheetData->getCellByColumnAndRow(2, $row)->getValue() == '' &&
+                            $sheetData->getCellByColumnAndRow(3, $row)->getValue() == '' &&
+                            $sheetData->getCellByColumnAndRow(4, $row)->getValue() == '' &&
+                            $sheetData->getCellByColumnAndRow(5, $row)->getValue() == '') ? $row++ : $row;
+
+                        $firstname = $sheetData->getCellByColumnAndRow(0, $row)->getValue();
+                        if (strlen($firstname) <= 0) {
+                            $errors[$index]['firstname'] = 'starter.error.firstname';
+                        }
+
+                        $lastname = $sheetData->getCellByColumnAndRow(1, $row)->getValue();
+                        if (strlen($lastname) <= 0) {
+                            $errors[$index]['lastname'] = 'starter.error.lastname';
+                        }
+
+                        $birthyear = $sheetData->getCellByColumnAndRow(2, $row)->getValue();
+                        if (strlen($birthyear) < 4) {
+                            $errors[$index]['birthyear'] = 'starter.error.birthyearMin';
+                        }
+
+                        if (strlen($birthyear) > 4) {
+                            $errors[$index]['birthyear'] = 'starter.error.birthyearMax';
+                        }
+
+                        $sex = strtolower($sheetData->getCellByColumnAndRow(3, $row)->getValue());
+                        if ($sex !== 'male' && $sex !== 'female') {
+                            $errors[$index]['sex'] = 'starter.error.sex';
+                        }
+
+                        $clubname = $sheetData->getCellByColumnAndRow(5, $row)->getValue();
+                        if ($clubname) {
+                            $club = $em->getRepository('AppBundle:Club')->findOneBy(array("name" => $clubname));
+                            if (!$club) {
+                                $club = new Club();
+                                $club->setName($sheetData->getCellByColumnAndRow(5, $row)->getValue());
+                                $em->persist($club);
+                                $em->flush();
+                            }
+                        } else {
+                            $club['id'] = 0;
+                            $errors[$index]['club'] = 'starter.error.club';
+                        }
+
+                        $category = $em->getRepository('AppBundle:Category')->findOneBy(array("name" => $sheetData->getCellByColumnAndRow(4, $row)->getValue()));
+                        if (!$category) {
+                            $category['id'] = 0;
+                            $errors[$index]['category'] = 'starter.error.category';
+                        }
+
+                        $starters[] = array("firstname" => $firstname,
+                            'lastname' => $lastname,
+                            'birthyear' => $birthyear,
+                            'sex' => $sex,
+                            'category' => $category,
+                            'club' => $club
+                        );
+
+                        unset($firstname);
+                        unset($lastname);
+                        unset($birthyear);
+                        unset($sex);
+                        unset($club);
+                        unset($clubname);
+                        unset($category);
 					}
 				} else {
 					return $this->render('form/StarterImportUpload.html.twig',
@@ -240,7 +380,8 @@ class StartersController extends Controller
 				return $this->render('form/StarterImport.html.twig',
 	                array('clubs' => $clubs,
 	                    'categories' => $categories,
-	                    'starters' => $starters
+	                    'starters' => $starters,
+                        'errors' => $errors
 	                )
 	            );
 			} else {
@@ -280,16 +421,6 @@ class StartersController extends Controller
 		
 		// return data to the frontend
 		return new Response($this->get('router')->generate('starterImport'));
-	}
-	
-	/**
-	 * @Route("/starter/import/save", name="starterImportSave")
-	 * @Method("POST")
-	 */
-	public function starterImportSave() {
-		$this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
-		
-		return new Response('true');
 	}
 	
     /**

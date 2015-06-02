@@ -22,7 +22,7 @@ class Starters2Competitions {
     protected $id;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Starter", inversedBy="s2cs")
+     * @ORM\ManytoOne(targetEntity="Starter", inversedBy="s2cs", cascade={"persist"})
      * @ORM\JoinColumn(name="starter_id", referencedColumnName="starter_id")
      */
     protected $starter;
@@ -36,12 +36,14 @@ class Starters2Competitions {
     /**
      * @ORM\ManytoOne(targetEntity="Club", inversedBy="members")
      * @ORM\JoinColumn(name="club_id", referencedColumnName="club_id")
+     * @Assert\NotBlank(message="stater.error.club")
      */
     protected $club;
 
     /**
      * @ORM\ManytoOne(targetEntity="Category", inversedBy="starters")
      * @ORM\JoinColumn(name="cat_id", referencedColumnName="cat_id")
+     * @Assert\NotBlank(message="stater.error.category")
      */
     protected $category;
 
@@ -74,6 +76,8 @@ class Starters2Competitions {
     public function __construct() {
         $this->grades = new ArrayCollection();
         $this->starter = new Starter();
+        $this->present = 0;
+        $this->medicalcert = 0;
     }
 
     /**

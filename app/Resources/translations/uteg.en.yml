@@ -77,6 +77,7 @@ nav:
     starters: 'Starters'
     starters.male: 'Male'
     starters.female: 'Female'
+    starters.import: 'Import'
     competition: 'Competition'
     competitions: 'Competitions'
     permissions: 'Permissions'
@@ -135,12 +136,13 @@ starters:
             confirm: 'Remove'
             cancel: 'Cancel'
     upload:
-        title: 'Starters Upload'
+        title: 'Starters / Upload'
         header: 'Upload'
-        procress: 'Procress'
+        process: 'Process'
         cancel: 'Cancel'
     import:
-        title: 'Starters Import'
+        path: 'Starters import'
+        title: 'Starters / Import'
         header: 'Import'
         save: 'Save'
         cancel: 'Cancel'
@@ -165,8 +167,10 @@ starter:
         firstname: 'Please enter a firstname'
         lastname: 'Please enter a lastname'
         birthyear: 'Please enter a birth year'
-        birthyearMin: 'Please enter excat 4 numbers'
-        birthyearMax: 'Please enter excat 4 numbers'
+        birthyearMin: 'Please enter the year with 4 numbers'
+        birthyearMax: 'Please enter the year with 4 numbers'
+        club: 'Please choose a club'
+        category: 'Please choose a category'
 
 competition:
     title: 'Competition'

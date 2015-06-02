@@ -72,6 +72,14 @@ class Starter {
         $this->s2cs = new ArrayCollection();
     }
 
+    public function __toArray() {
+        $array['firstname'] = $this->firstname;
+        $array['lastname'] = $this->lastname;
+        $array['birthyear'] = $this->birthyear;
+        $array['sex'] = $this->sex;
+        return $array;
+    }
+
     /**
      * Get id
      *
@@ -252,4 +260,5 @@ class Starter {
     {
         return $this->sex;
     }
+
 }
