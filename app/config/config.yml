@@ -5,7 +5,7 @@ imports:
     - { resource: doctrine_extensions.yml }
 
 parameters:
-    security.acl.permission.map.class: AppBundle\ACL\PermissionMap
+    security.acl.permission.map.class: uteg\ACL\PermissionMap
 
 framework:
     #esi:             ~
@@ -100,7 +100,7 @@ swiftmailer:
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
-    user_class: AppBundle\Entity\User
+    user_class: uteg\Entity\User
     registration:
            form:
                 type: uteg_user_registration

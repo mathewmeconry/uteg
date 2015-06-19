@@ -78,6 +78,7 @@ nav:
     starters.male: 'Male'
     starters.female: 'Female'
     starters.import: 'Import'
+    clubs: 'Clubs'
     competition: 'Competition'
     competitions: 'Competitions'
     permissions: 'Permissions'
@@ -171,6 +172,9 @@ starter:
         birthyearMax: 'Please enter the year with 4 numbers'
         club: 'Please choose a club'
         category: 'Please choose a category'
+
+clubs:
+    title: 'Clubs'
 
 competition:
     title: 'Competition'

@@ -5,12 +5,12 @@
         <title>{% block title %}{% endblock %}</title>
         <link href='http://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <link href="/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/css/bootstrap-dialog.min.css" rel="stylesheet">
-        <link href="/css/bootstrap-datepicker.css" rel="stylesheet">
-		<script src="/js/bootstrap.min.js"></script>
-        <script src="/js/bootstrap-datepicker.js"></script>
-        <script src="/js/bootstrap-dialog.min.js"></script>
+        <link href="{{ asset("css/bootstrap.min.css") }}" rel="stylesheet">
+        <link href="{{ asset("css/bootstrap-dialog.min.css") }}" rel="stylesheet">
+        <link href="{{ asset("css/bootstrap-datepicker.css") }}" rel="stylesheet">
+		<script src="{{ asset("js/bootstrap.min.js") }}"></script>
+        <script src="{{ asset("js/bootstrap-datepicker.js") }}"></script>
+        <script src="{{ asset("js/bootstrap-dialog.min.js") }}"></script>
         {%  block header %}{% endblock %}
         <style>
            *{
@@ -148,19 +148,19 @@
 			}
             
             i.icon-delete-black:before {
-			    background-image: url('/icons/icon-delete-black.png');
+			    background-image: url('{{ asset("img/icons/icon-delete-black.png") }}');
 			}
 			
 			i.icon-delete-red:before {
-			    background-image: url('/icons/icon-delete-red.png');
+			    background-image: url('{{ asset("img/icons/icon-delete-red.png") }}');
 			}
 
             i.icon-view-black:before {
-                background-image: url('/icons/icon-view-black.png');
+                background-image: url('{{ asset("img/icons/icon-view-black.png") }}');
             }
 
             i.icon-view-green:before {
-                background-image: url('/icons/icon-view-green.png');
+                background-image: url('{{ asset("img/icons/icon-view-green.png") }}');
             }
 			
 			{% block css %}{% endblock %}

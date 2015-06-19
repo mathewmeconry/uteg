@@ -61,7 +61,7 @@
 {% block javascript_docready %}
     $('i[class*="icon-view-"]').click(function() {
         $.ajax({
-            url: '/comp/set',
+            url: '{{ asset("/comp/set") }}',
             method: 'POST',
             data: {compid: $(this).parent().parent().data('id')}
         }).success(function(url) {

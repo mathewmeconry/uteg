@@ -1,5 +1,5 @@
 app:
-    resource: "@AppBundle/Controller/"
+    resource: "@uteg/Controller/"
     type:     annotation
 
 _liip_imagine:
