@@ -31,6 +31,11 @@ class Clubs2Invites {
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
+    
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $token;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -161,5 +166,51 @@ class Clubs2Invites {
     public function getMembers()
     {
         return $this->members;
+    }
+
+    /**
+     * Set club
+     *
+     * @param \uteg\Entity\Club $club
+     * @return Clubs2Invites
+     */
+    public function setClub(\uteg\Entity\Club $club = null)
+    {
+        $this->club = $club;
+    
+        return $this;
+    }
+
+    /**
+     * Get club
+     *
+     * @return \uteg\Entity\Club 
+     */
+    public function getClub()
+    {
+        return $this->club;
+    }
+
+    /**
+     * Set competition
+     *
+     * @param \uteg\Entity\Competition $competition
+     * @return Clubs2Invites
+     */
+    public function setCompetition(\uteg\Entity\Competition $competition = null)
+    {
+        $this->competition = $competition;
+    
+        return $this;
+    }
+
+    /**
+     * Get competition
+     *
+     * @return \uteg\Entity\Competition 
+     */
+    public function getCompetition()
+    {
+        return $this->competition;
     }
 }

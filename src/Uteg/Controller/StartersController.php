@@ -83,6 +83,7 @@ class StartersController extends Controller
 	 */
 	public function starterAction($id, $name, Request $request)
 	{
+		$this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
 		if($name === "") {
 			return $this->redirect($request->getRequestUri()."/".$this->getName($id), 301);
 		} else {

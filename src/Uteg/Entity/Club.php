@@ -199,4 +199,37 @@ class Club {
     {
         return $this->i2cs;
     }
+
+    /**
+     * Add c2is
+     *
+     * @param \uteg\Entity\Clubs2Invites $c2is
+     * @return Club
+     */
+    public function addC2i(\uteg\Entity\Clubs2Invites $c2is)
+    {
+        $this->c2is[] = $c2is;
+    
+        return $this;
+    }
+
+    /**
+     * Remove c2is
+     *
+     * @param \uteg\Entity\Clubs2Invites $c2is
+     */
+    public function removeC2i(\uteg\Entity\Clubs2Invites $c2is)
+    {
+        $this->c2is->removeElement($c2is);
+    }
+
+    /**
+     * Get c2is
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getC2is()
+    {
+        return $this->c2is;
+    }
 }

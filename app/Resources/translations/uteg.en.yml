@@ -79,6 +79,8 @@ nav:
     starters.female: 'Female'
     starters.import: 'Import'
     clubs: 'Clubs'
+    clubs.list: 'Clubs'
+    clubs.invite: 'Invite'
     competition: 'Competition'
     competitions: 'Competitions'
     permissions: 'Permissions'
@@ -175,6 +177,15 @@ starter:
 
 clubs:
     title: 'Clubs'
+    header: 'Clubs'
+    table:
+        name: 'Name'
+        next: 'Next'
+        previous: 'Previous'
+        search: 'Search'
+        searchPlaceholder: 'Search...'
+        zeroRecords: 'No matching clubs found'
+        all: 'All'
 
 competition:
     title: 'Competition'

@@ -80,7 +80,7 @@ class Competition {
     /**
      * @ORM\OnetoMany(targetEntity="Clubs2Invites", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
-    protected $i2cs;
+    protected $c2is;
 
 
     /**
@@ -90,7 +90,7 @@ class Competition {
     {
     	$this->users = new ArrayCollection();
     	$this->s2cs = new ArrayCollection();
-        $this->i2cs = new ArrayCollection();
+        $this->c2is = new ArrayCollection();
     }
 
     /**
@@ -398,5 +398,38 @@ class Competition {
     	}
     	 
     	return $return;
+    }
+
+    /**
+     * Add i2cs
+     *
+     * @param \uteg\Entity\Clubs2Invites $i2cs
+     * @return Competition
+     */
+    public function addI2c(\uteg\Entity\Clubs2Invites $i2cs)
+    {
+        $this->i2cs[] = $i2cs;
+    
+        return $this;
+    }
+
+    /**
+     * Remove i2cs
+     *
+     * @param \uteg\Entity\Clubs2Invites $i2cs
+     */
+    public function removeI2c(\uteg\Entity\Clubs2Invites $i2cs)
+    {
+        $this->i2cs->removeElement($i2cs);
+    }
+
+    /**
+     * Get i2cs
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getI2cs()
+    {
+        return $this->i2cs;
     }
 }

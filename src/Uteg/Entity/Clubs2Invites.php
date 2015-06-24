@@ -31,6 +31,11 @@ class Clubs2Invites {
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
+    
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $token;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -44,7 +49,7 @@ class Clubs2Invites {
     protected $deletedAt;
 
     public function __construct() {
-        $this->members = new ArrayCollection();
+
     }
 
     public function __toString() {
@@ -207,5 +212,28 @@ class Clubs2Invites {
     public function getCompetition()
     {
         return $this->competition;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string $token
+     * @return Clubs2Invites
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+    
+        return $this;
+    }
+
+    /**
+     * Get token
+     *
+     * @return string 
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }
