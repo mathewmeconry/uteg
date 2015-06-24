@@ -26,7 +26,7 @@ class ClubsController extends Controller
 	public function clubsInviteAction()
 	{
 		$this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
-		return $this->render('clubs.html.twig');
+		return $this->render('clubsInvite.html.twig');
 	}
 	
 	/**

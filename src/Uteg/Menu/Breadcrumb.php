@@ -44,6 +44,7 @@ class Breadcrumb
 				        ->setCurrent(true);
 				break;
             case 'starterImport':
+                $menu->addChild('starters.path');
                 $menu
                     ->addChild('starters.import.path')
                     ->setCurrent(true);
@@ -56,6 +57,21 @@ class Breadcrumb
                 $menu->addChild($uri)
                     ->setCurrent(true);
                 break;
+                break;
+            case 'clubs':
+                $menu
+                    ->addChild('clubs.path')
+                    ->setCurrent(true)
+                    // setCurrent is use to add a "current" css class
+                ;
+                break;
+            case 'clubsInvite':
+                $menu->addChild('clubs.path');
+                $menu
+                    ->addChild('clubs.invite.path')
+                    ->setCurrent(true)
+                    // setCurrent is use to add a "current" css class
+                ;
                 break;
 			case 'competition':
                 $menu

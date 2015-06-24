@@ -144,7 +144,7 @@ starters:
         process: 'Process'
         cancel: 'Cancel'
     import:
-        path: 'Starters import'
+        path: 'Import'
         title: 'Starters / Import'
         header: 'Import'
         save: 'Save'
@@ -178,6 +178,7 @@ starter:
 clubs:
     title: 'Clubs'
     header: 'Clubs'
+    path: 'Clubs'
     table:
         name: 'Name'
         next: 'Next'
@@ -186,6 +187,8 @@ clubs:
         searchPlaceholder: 'Search...'
         zeroRecords: 'No matching clubs found'
         all: 'All'
+    invite:
+        path: 'Invite'
 
 competition:
     title: 'Competition'
