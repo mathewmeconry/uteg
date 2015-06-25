@@ -1,9 +1,235 @@
-{% trans_default_domain 'uteg' %}
+{% trans_default_domain 'uteg' %} 
 
-{% extends "base.html.twig" %}
+{% extends "base.html.twig" %} 
 
 {% block title %}{{ 'clubs.title'|trans }}{% endblock %}
 
-{% block content %}
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
+{% endblock %}
 
+{% block jsplugins %}
+	<script type="text/javascript" src="{{ asset("js/plugins/smartwizard/jquery.smartWizard.min.js") }}"></script>
+	<script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
+    <script type='text/javascript' src='{{ asset("js/plugins/validationengine/languages/jquery.validationEngine-en.js") }}'></script>
+    <script type='text/javascript' src='{{ asset("js/plugins/validationengine/jquery.validationEngine.js") }}'></script>        
+	<script type='text/javascript' src='{{ asset("js/plugins/jquery-validation/jquery.validate.js") }}'></script>
+{% endblock %}
+
+{% block jsfunctions %}
+	function showStepWizard(obj, context) {
+		switch(context.toStep) {
+			case 1:
+				(context.fromStep != 1) ? $('.wizard').smartWizard("fixHeight") : '';
+				break;
+			case 2:
+				if(context.fromStep == 1) {
+					$('#clubsInviteMail tbody').html('');
+					
+					var clubsInviteMailForm = $("#clubsInviteMailForm").validate({
+		                ignore: []                                      
+	                }); 
+	                
+	                var counter = 0;
+					$.each($('.clubsInviteCheckbox:checked'), function(key, value) {
+						var id = $(value).parent().parent().parent().attr('id');
+						var name = $(value).parent().parent().next().html();
+						
+						$('#clubsInviteMail tbody').append('<tr id="' + id + '"><td style="white-space:nowrap;">' + name + '</td><td><input name="email[' + counter + ']" type="text" class="form-control"/></td></tr>');
+						
+						$('input[name="email['+counter+']"]').rules("add", { 
+					        required: true,
+					        email: true
+					    });
+					    
+						counter += 1;
+					});
+				}
+				
+				$('.wizard').smartWizard("fixHeight");
+				break;
+			case 3:
+				$('.wizard').smartWizard("fixHeight");
+				break;
+		}
+	}
+	
+	function leaveStepWizard(obj, context) {
+		return validateSteps(context);
+	}
+	
+	function validateSteps(context) {
+		var isStepValid = true
+		
+		if(context.fromStep < context.toStep) {
+			switch(context.fromStep) {
+				case 2:
+					(!$("#clubsInviteMailForm").valid()) ? isStepValid = false : '';
+					break;
+				case 3:
+					(!$("#clubsInviteMessageForm").valid()) ? isStepValid = false : '';
+					break;
+			}
+		}
+		
+		$('.wizard').smartWizard("fixHeight");
+		
+		return isStepValid;
+	}
+{% endblock %}
+
+{% block docready %}
+	$('#clubsInviteList').DataTable({
+    	"ajax": {
+			"url": "{{ path('clubsPost') }}",
+				"method": "POST"
+		},
+		"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "clubs.invite.step1.table.all"|trans }}"] ],
+		"search": {
+			"regex": true
+		},
+		"order": [[ 1, "asc" ]],
+		responsive: {
+			details: {
+				type: 'column'
+			}
+		},
+		"columns": [
+			{ "data": null, "defaultContent": '<label class="switch switch-small"><input class="clubsInviteCheckbox" type="checkbox" value="0"><span></span> </label>' },
+			{ "data": "name", 'type': 'string' },
+		],
+		"columnDefs": [
+                { "orderable": false, "targets": 0 },
+                { "searchable": false, "targets": 0 },
+                { "width": "40px", "targets": 0 }
+            ],
+		"paginate": {
+			"next": "{{ "clubs.invite.step1.table.next"|trans }}",
+			"previous": "{{ "clubs.invite.step1.table.previous"|trans }}"
+		},
+		"language": {
+			"search": "{{ "clubs.invite.step1.table.search"|trans }}",
+			"searchPlaceholder": "{{ "clubs.invite.step1.table.searchPlaceholder"|trans }}",
+			"thousands": "'",
+			"zeroRecords": "{{ "clubs.invite.step1.table.zeroRecords"|trans }}"
+		}
+	});
+
+    $('.table').on('init.dt', function() {
+   		$(".wizard").smartWizard({                        
+         	//This is important part of wizard init
+         	onShowStep: showStepWizard,
+         	onLeaveStep: leaveStepWizard,
+         	transitionEffect: 'slide',
+           	labelNext: '{{ 'clubs.invite.wizard.next'|trans }}',
+            labelPrevious: '{{ 'clubs.invite.wizard.previous'|trans }}',
+           	labelFinish: '{{ 'clubs.invite.wizard.finish'|trans }}'
+      	});
+      	
+      	$('.wizard').smartWizard("fixHeight");
+    });
+    
+    $('select[name*="clubsInviteList_length"]').change(function()  {
+    	$('.wizard').smartWizard("fixHeight");
+    });
+    
+    var clubsInviteMessageForm = $("#clubsInviteMessageForm").validate({
+		ignore: [],
+		mailMessage: {
+			required: true
+		}                             
+	}); 
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div id="panel_clubsInvite" class="panel panel-default" style="min-height: 400px;">
+			<div class="panel-heading">
+         		<h3 class="panel-title">{{ 'clubs.invite.header'|trans }}</h3>
+         		<ul class="panel-controls">
+                    <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a></li>
+                </ul>
+            </div>
+			<div class="panel-body">
+				<div class="wizard show-submit">
+					<ul class="steps_4 anchor">
+						<li><a href="#step-1" class="selected" isdone="1" rel="1"> <span
+								class="stepNumber">1</span> <span class="stepDesc">{{ "clubs.invite.step"|trans }} 1<br>
+								<small>{{ 'clubs.invite.step1.small_description'|trans }}</small></span>
+						</a></li>
+						<li><a href="#step-2" class="disabled" isdone="0" rel="2"> <span
+								class="stepNumber">2</span> <span class="stepDesc">{{ "clubs.invite.step"|trans }} 2<br>
+								<small>{{ 'clubs.invite.step2.small_description'|trans }}</small></span>
+						</a></li>
+						<li><a href="#step-3" class="disabled" isdone="0" rel="3"> <span
+								class="stepNumber">2</span> <span class="stepDesc">{{ "clubs.invite.step"|trans }} 3<br>
+								<small>{{ 'clubs.invite.step3.small_description'|trans }}</small></span>
+						</a></li>
+						<li><a href="#step-4" class="disabled" isdone="0" rel="4"> <span
+								class="stepNumber">2</span> <span class="stepDesc">{{ "clubs.invite.step"|trans }} 4<br>
+								<small>{{ 'clubs.invite.step4.small_description'|trans }}</small></span>
+						</a></li>
+					</ul>
+
+					<div class="stepContainer" style="height: 54px;">
+						<div id="step-1" class="content" style="display: block;">
+							<h4>{{ 'clubs.invite.step1.header'|trans }}</h4>
+							<p>
+								<table id="clubsInviteList" class="table responsive table-striped" data-cat="0" width="100%">
+					               	<thead>
+					               		<tr>
+					               			<th class="all"></th>
+			                	            <th class="all">{{ 'clubs.table.name'|trans }}</th>
+					                   	</tr>
+					               	</thead>
+					        	</table>
+		        			</p>
+						</div>
+						<div id="step-2" class="content" style="display: none;">
+							<h4>{{ 'clubs.invite.step2.header'|trans }}</h4>
+							<p>
+								<form id="clubsInviteMailForm">
+									<table id="clubsInviteMail" name="mailMessage" class="table responsive table-striped" data-cat="0" width="100%">
+						               	<thead>
+						               		<tr>
+				                	            <th>{{ 'clubs.table.name'|trans }}</th>
+				                	            <th>{{ 'clubs.table.mail'|trans }}</th>
+						                   	</tr>
+						               	</thead>
+						               	<tbody>
+						               	</tbody>
+						        	</table>
+						        </form>
+							</p>
+						</div>
+						<div id="step-3" class="content" style="display: none;">
+							<h4>{{ 'clubs.invite.step3.header'|trans }}</h4>
+							<p>
+								<span>{{ 'clubs.invite.step3.text'|trans }}</span>
+								<form id="clubsInviteMessageForm">
+									<textarea id="mailMessage" style="resize: none" class="form-control required" rows="10"></textarea>
+								</form>
+							</p>
+						</div>
+						<div id="step-4" class="content" style="display: none;">
+							<h4>{{ 'clubs.invite.step4.header'|trans }}</h4>
+							<p>
+								<div class="col-md-6">
+									<h3>Clubs</h3>
+									<div id="clubsInviteClubsDiv"></div>
+								</div>
+								<div class="col-md-6">
+									<h3>Message</h3>
+									<div id="clubsInviteMessageDiv"></div>
+								</div>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

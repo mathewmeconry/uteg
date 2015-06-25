@@ -5,12 +5,12 @@
 {% block title %}{{ 'clubs.title'|trans }}{% endblock %}
 
 {% block cssplugins %}
-    <link rel="stylesheet" type="text/css" href="/js/plugins/datatables/dataTables.responsive.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
 {% endblock %}
 
 {% block jsplugins %}
-	<script type="text/javascript" src="/js/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="/js/plugins/datatables/dataTables.responsive.js"></script>
+	<script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
 {% endblock %}
 
 {% block jsfunctions %}
@@ -25,14 +25,13 @@
             "search": {
                 "regex": true
             },
-            "order": [[ 1, "asc" ]],
+            "order": [[ 0, "asc" ]],
             responsive: {
                 details: {
                     type: 'column'
                 }
             },
             "columns": [
-                { "data": "id", 'type': 'integer' },
                 { "data": "name", 'type': 'string' },
             ],
             "paginate": {
@@ -79,6 +78,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ 'clubs.header'|trans }}</h3>
                     <ul class="panel-controls">
+                    	<li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a></li>
                         <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                     </ul>
                 </div>
@@ -86,7 +86,6 @@
 		           	<table id="clubs" class="table responsive table-striped" data-cat="0" width="100%">
 		               	<thead>
 		               		<tr>
-                                <th class="never">id</th>
                 	            <th class="all">{{ 'clubs.table.name'|trans }}</th>
 		                   	</tr>
 		               	</thead>

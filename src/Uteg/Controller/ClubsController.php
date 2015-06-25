@@ -38,7 +38,7 @@ class ClubsController extends Controller
 		$this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
 
 		$qb = $this->getDoctrine()->getManager()->createQueryBuilder();
-		$result['data'] = $qb->select("c.id as id, c.name as name")
+		$result['data'] = $qb->select("c.id as DT_RowId, c.name as name")
 					->from("uteg:Club" ,"c")
 					->getQuery()
 					->getResult();

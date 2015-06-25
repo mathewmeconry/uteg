@@ -181,6 +181,7 @@ clubs:
     path: 'Clubs'
     table:
         name: 'Name'
+        mail: 'E-Mail'
         next: 'Next'
         previous: 'Previous'
         search: 'Search'
@@ -189,6 +190,34 @@ clubs:
         all: 'All'
     invite:
         path: 'Invite'
+        header: 'Invite clubs'
+        wizard:
+            next: 'Next'
+            previous: 'Previous'
+            finish: 'Finish'
+        step: 'Step'
+        step1:
+            small_description: 'Choose your clubs'
+            header: 'Choose the clubs you want to invite'
+            table:
+                name: 'Name'
+                next: 'Next'
+                previous: 'Previous'
+                search: 'Search'
+                searchPlaceholder: 'Search...'
+                zeroRecords: 'No matching clubs found'
+                all: 'All'
+        step2:
+            small_description: 'Configure clubs'
+            header: 'Enter an E-Mail address for each club'
+        step3:
+            small_description: 'Custom Message'
+            header: 'Enter a custom invite message'
+            text: 'Use #LINK# to place the invite link into the text'
+        step4:
+            small_description: 'Review'
+            header: 'Please review the invites'
+        
 
 competition:
     title: 'Competition'
