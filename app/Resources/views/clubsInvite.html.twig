@@ -19,6 +19,8 @@
 
 {% block jsfunctions %}
 	function showStepWizard(obj, context) {
+        $('.wizard .actionBar .btn-primary').hide();
+
 		switch(context.toStep) {
 			case 1:
 				(context.fromStep != 1) ? $('.wizard').smartWizard("fixHeight") : '';
@@ -46,12 +48,29 @@
 						counter += 1;
 					});
 				}
-				
 				$('.wizard').smartWizard("fixHeight");
 				break;
 			case 3:
 				$('.wizard').smartWizard("fixHeight");
 				break;
+            case 4:
+                $('#clubsInviteClubsDiv').html('');
+                $('#clubsInviteMessageReview').html('');
+
+                $.each($('#clubsInviteMail tbody tr'), function(key, tr) {
+                    $('#clubsInviteClubsReview tbody').append('<tr id="' + $(tr).attr('id') + '"><td>' + $(tr).children().eq(0).html() + '</td><td>' + $(tr).children().eq(1).children().eq(0).val() + '</td></tr>');
+                });
+
+                if($('#customMessage').is(':checked')) {
+                    $('#clubsInviteMessageReview').html($('#mailMessage').val());
+                } else {
+                    $('#clubsInviteMessageReview').html('{{ 'clubs.invite.step4.default'|trans }}');
+                }
+
+                $('.wizard .actionBar .btn-primary').show();
+
+                $('.wizard').smartWizard("fixHeight");
+                break;
 		}
 	}
 	
@@ -66,9 +85,6 @@
 			switch(context.fromStep) {
 				case 2:
 					(!$("#clubsInviteMailForm").valid()) ? isStepValid = false : '';
-					break;
-				case 3:
-					(!$("#clubsInviteMessageForm").valid()) ? isStepValid = false : '';
 					break;
 			}
 		}
@@ -122,6 +138,8 @@
          	onShowStep: showStepWizard,
          	onLeaveStep: leaveStepWizard,
          	transitionEffect: 'slide',
+            enableFinishButton: false,
+            includeFinishButton : true,
            	labelNext: '{{ 'clubs.invite.wizard.next'|trans }}',
             labelPrevious: '{{ 'clubs.invite.wizard.previous'|trans }}',
            	labelFinish: '{{ 'clubs.invite.wizard.finish'|trans }}'
@@ -133,13 +151,16 @@
     $('select[name*="clubsInviteList_length"]').change(function()  {
     	$('.wizard').smartWizard("fixHeight");
     });
-    
-    var clubsInviteMessageForm = $("#clubsInviteMessageForm").validate({
-		ignore: [],
-		mailMessage: {
-			required: true
-		}                             
-	}); 
+
+    $('#customMessage').change(function() {
+        if($(this).is(':checked')) {
+            $('#clubsInviteMessageForm').show();
+        } else {
+            $('#clubsInviteMessageForm').hide();
+        }
+
+        $('.wizard').smartWizard("fixHeight");
+    });
 {% endblock %}
 
 {% block content %}
@@ -207,8 +228,9 @@
 						<div id="step-3" class="content" style="display: none;">
 							<h4>{{ 'clubs.invite.step3.header'|trans }}</h4>
 							<p>
-								<span>{{ 'clubs.invite.step3.text'|trans }}</span>
-								<form id="clubsInviteMessageForm">
+                                <span>{{ 'clubs.invite.step3.checkboxtext'|trans }}</span><label class="switch switch-small"><input id="customMessage" type="checkbox" value="0"><span></span></label>
+								<form id="clubsInviteMessageForm" style="display: none">
+                                    <p>{{ 'clubs.invite.step3.text'|trans }}</p>
 									<textarea id="mailMessage" style="resize: none" class="form-control required" rows="10"></textarea>
 								</form>
 							</p>
@@ -217,12 +239,19 @@
 							<h4>{{ 'clubs.invite.step4.header'|trans }}</h4>
 							<p>
 								<div class="col-md-6">
-									<h3>Clubs</h3>
-									<div id="clubsInviteClubsDiv"></div>
+									<h5>Clubs</h5>
+									<table id="clubsInviteClubsReview" class="table">
+                                        <thead>
+                                            <th>{{ 'clubs.invite.step4.club'|trans }}</th>
+                                            <th>{{ 'clubs.invite.step4.email'|trans }}</th>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
 								</div>
 								<div class="col-md-6">
-									<h3>Message</h3>
-									<div id="clubsInviteMessageDiv"></div>
+									<h5>Message</h5>
+									<div id="clubsInviteMessageReview" style="white-space: pre-wrap"></div>
 								</div>
 							</p>
 						</div>

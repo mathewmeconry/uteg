@@ -211,12 +211,16 @@ clubs:
             small_description: 'Configure clubs'
             header: 'Enter an E-Mail address for each club'
         step3:
-            small_description: 'Custom Message'
-            header: 'Enter a custom invite message'
+            small_description: 'Message'
+            header: 'Mail Message'
+            checkboxtext: 'Use custom E-Mail message: '
             text: 'Use #LINK# to place the invite link into the text'
         step4:
             small_description: 'Review'
             header: 'Please review the invites'
+            club: 'Club'
+            email: 'E-Mail'
+            default: 'Using default message.'
         
 
 competition:
