@@ -399,37 +399,37 @@ class Competition {
     	 
     	return $return;
     }
-
+    
     /**
-     * Add i2cs
+     * Add c2is
      *
-     * @param \uteg\Entity\Clubs2Invites $i2cs
+     * @param \uteg\Entity\Clubs2Invites $c2is
      * @return Competition
      */
-    public function addI2c(\uteg\Entity\Clubs2Invites $i2cs)
+    public function addC2i(\uteg\Entity\Clubs2Invites $c2is)
     {
-        $this->i2cs[] = $i2cs;
+        $this->c2is[] = $c2is;
     
         return $this;
     }
 
     /**
-     * Remove i2cs
+     * Remove c2is
      *
-     * @param \uteg\Entity\Clubs2Invites $i2cs
+     * @param \uteg\Entity\Clubs2Invites $c2is
      */
-    public function removeI2c(\uteg\Entity\Clubs2Invites $i2cs)
+    public function removeC2i(\uteg\Entity\Clubs2Invites $c2is)
     {
-        $this->i2cs->removeElement($i2cs);
+        $this->c2is->removeElement($c2is);
     }
 
     /**
-     * Get i2cs
+     * Get c2is
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getI2cs()
+    public function getC2is()
     {
-        return $this->i2cs;
+        return $this->c2is;
     }
 }

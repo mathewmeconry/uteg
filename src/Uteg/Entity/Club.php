@@ -168,39 +168,6 @@ class Club {
     }
 
     /**
-     * Add i2cs
-     *
-     * @param \uteg\Entity\Clubs2Invites $i2cs
-     * @return Club
-     */
-    public function addI2c(\uteg\Entity\Clubs2Invites $i2cs)
-    {
-        $this->i2cs[] = $i2cs;
-    
-        return $this;
-    }
-
-    /**
-     * Remove i2cs
-     *
-     * @param \uteg\Entity\Clubs2Invites $i2cs
-     */
-    public function removeI2c(\uteg\Entity\Clubs2Invites $i2cs)
-    {
-        $this->i2cs->removeElement($i2cs);
-    }
-
-    /**
-     * Get i2cs
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getI2cs()
-    {
-        return $this->i2cs;
-    }
-
-    /**
      * Add c2is
      *
      * @param \uteg\Entity\Clubs2Invites $c2is

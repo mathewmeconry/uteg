@@ -191,10 +191,13 @@ clubs:
     invite:
         path: 'Invite'
         header: 'Invite clubs'
+        mail:
+            message: 'Hi<br><br>You got invited to the Competition #COMPETITION#.<br><br>Please click on the following link to sign up your starters:<br><br>#LINK#<br><br>This link is valid until: #VALID#'
+            subject %compname%: 'Inventation %compname%'
         wizard:
             next: 'Next'
             previous: 'Previous'
-            finish: 'Finish'
+            finish: 'Send'
         step: 'Step'
         step1:
             small_description: 'Choose your clubs'
@@ -213,15 +216,19 @@ clubs:
         step3:
             small_description: 'Message'
             header: 'Mail Message'
-            checkboxtext: 'Use custom E-Mail message: '
+            validtext: 'Invite link valid until'
+            checkboxtext: 'Use custom E-Mail message'
             text: 'Use #LINK# to place the invite link into the text'
         step4:
             small_description: 'Review'
             header: 'Please review the invites'
             club: 'Club'
+            clubs: 'Clubs'
+            message: 'Message'
             email: 'E-Mail'
             default: 'Using default message.'
-        
+            validuntil: 'Link valid until: '
+            text: 'Message text: '        
 
 competition:
     title: 'Competition'

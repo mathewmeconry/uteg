@@ -19,7 +19,8 @@
 
 {% block jsfunctions %}
 	function showStepWizard(obj, context) {
-        $('.wizard .actionBar .btn-primary').hide();
+        $('.buttonFinish').hide();
+        $('.buttonNext').show();
 
 		switch(context.toStep) {
 			case 1:
@@ -34,7 +35,7 @@
 	                }); 
 	                
 	                var counter = 0;
-					$.each($('.clubsInviteCheckbox:checked'), function(key, value) {
+					$.each($('.clubsInviteCheckbox:checked', $('#clubsInviteList').dataTable().fnGetNodes()), function(key, value) {
 						var id = $(value).parent().parent().parent().attr('id');
 						var name = $(value).parent().parent().next().html();
 						
@@ -52,22 +53,35 @@
 				break;
 			case 3:
 				$('.wizard').smartWizard("fixHeight");
+				
+				var clubsInviteMessageForm = $("#clubsInviteMessageForm").validate({
+		        	messageValidUntil: {
+		        		required: true
+		        	},
+		        	mailMessage: {
+		        		required: false
+		        	}
+	            });
 				break;
             case 4:
+            	$('#clubsInviteClubsReview tbody').html('');
                 $('#clubsInviteClubsDiv').html('');
                 $('#clubsInviteMessageReview').html('');
 
                 $.each($('#clubsInviteMail tbody tr'), function(key, tr) {
                     $('#clubsInviteClubsReview tbody').append('<tr id="' + $(tr).attr('id') + '"><td>' + $(tr).children().eq(0).html() + '</td><td>' + $(tr).children().eq(1).children().eq(0).val() + '</td></tr>');
                 });
+                
+                $('#clubsInviteMessageReviewValidBody').html($('#messageValidUntil').val());
 
                 if($('#customMessage').is(':checked')) {
-                    $('#clubsInviteMessageReview').html($('#mailMessage').val());
+                    $('#clubsInviteMessageReviewTextBody').html($('#mailMessage').val());
                 } else {
-                    $('#clubsInviteMessageReview').html('{{ 'clubs.invite.step4.default'|trans }}');
+                    $('#clubsInviteMessageReviewTextBody').html('{{ 'clubs.invite.step4.default'|trans }}');
                 }
 
-                $('.wizard .actionBar .btn-primary').show();
+                $('.buttonFinish').show();
+				$('.buttonNext').hide();
 
                 $('.wizard').smartWizard("fixHeight");
                 break;
@@ -86,12 +100,50 @@
 				case 2:
 					(!$("#clubsInviteMailForm").valid()) ? isStepValid = false : '';
 					break;
+				case 3:
+					(!$("#clubsInviteMessageForm").valid()) ? isStepValid = false : '';
+					break;
 			}
 		}
 		
 		$('.wizard').smartWizard("fixHeight");
 		
 		return isStepValid;
+	}
+	
+	function finishWizard(context) {
+		var clubs = [];
+
+		$.each($('#clubsInviteClubsReview tbody tr'), function(index, tr) {
+			clubs[index] = {id: $(tr).attr('id'), name: $(tr).children().eq(0).html(), mail: $(tr).children().eq(1).html()};
+		});
+		
+		if($('#customMessage').is(':checked')) {
+			var message = {
+				valid: $('#clubsInviteMessageReviewValidBody').html(),
+				default: false,
+				message: nl2br($('#clubsInviteMessageReviewTextBody').html(), false)
+			};
+		} else {
+			var message = {
+				valid: $('#clubsInviteMessageReviewValidBody').html(),
+				default: true
+			};
+		}
+	
+		$.ajax({
+			url: "{{ path('clubsInvitePost') }}",
+			method: "POST",
+			data: { clubs: clubs, message: message },
+			success: function(url) {
+				window.location.href = url;
+			}
+		});
+	}
+	
+	function nl2br (str, is_xhtml) {   
+	    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
+	    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
 	}
 {% endblock %}
 
@@ -137,6 +189,7 @@
          	//This is important part of wizard init
          	onShowStep: showStepWizard,
          	onLeaveStep: leaveStepWizard,
+         	onFinish: finishWizard,
          	transitionEffect: 'slide',
             enableFinishButton: false,
             includeFinishButton : true,
@@ -154,9 +207,9 @@
 
     $('#customMessage').change(function() {
         if($(this).is(':checked')) {
-            $('#clubsInviteMessageForm').show();
+            $('#mailMessageDiv').show();
         } else {
-            $('#clubsInviteMessageForm').hide();
+            $('#mailMessageDiv').hide();
         }
 
         $('.wizard').smartWizard("fixHeight");
@@ -228,10 +281,18 @@
 						<div id="step-3" class="content" style="display: none;">
 							<h4>{{ 'clubs.invite.step3.header'|trans }}</h4>
 							<p>
-                                <span>{{ 'clubs.invite.step3.checkboxtext'|trans }}</span><label class="switch switch-small"><input id="customMessage" type="checkbox" value="0"><span></span></label>
-								<form id="clubsInviteMessageForm" style="display: none">
-                                    <p>{{ 'clubs.invite.step3.text'|trans }}</p>
-									<textarea id="mailMessage" style="resize: none" class="form-control required" rows="10"></textarea>
+								<form id="clubsInviteMessageForm">
+									<span>{{ 'clubs.invite.step3.validtext'|trans }}</span>
+									<div style="margin-bottom: 15px" class="input-group col-md-5">
+	                                 	<input type="text" id="messageValidUntil" name="messageValidUntil" class="form-control datepicker required" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
+	                                	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+	                                </div>
+	                                <p style="margin: 0">{{ 'clubs.invite.step3.checkboxtext'|trans }}</p>
+	                                <label class="switch switch-small"><input id="customMessage" type="checkbox" value="0"><span></span></label>
+	                                <div id="mailMessageDiv" style="display: none">
+	                                    <p>{{ 'clubs.invite.step3.text'|trans }}</p>
+										<textarea id="mailMessage" name="mailMessage" style="resize: none" class="form-control required" rows="10"></textarea>
+									</div>
 								</form>
 							</p>
 						</div>
@@ -239,7 +300,7 @@
 							<h4>{{ 'clubs.invite.step4.header'|trans }}</h4>
 							<p>
 								<div class="col-md-6">
-									<h5>Clubs</h5>
+									<h5>{{ 'clubs.invite.step4.clubs'|trans }}</h5>
 									<table id="clubsInviteClubsReview" class="table">
                                         <thead>
                                             <th>{{ 'clubs.invite.step4.club'|trans }}</th>
@@ -250,8 +311,18 @@
                                     </table>
 								</div>
 								<div class="col-md-6">
-									<h5>Message</h5>
-									<div id="clubsInviteMessageReview" style="white-space: pre-wrap"></div>
+									<h5>{{ 'clubs.invite.step4.message'|trans }}</h5>
+									<div id="clubsInviteMessage">
+										<div id="clubsInviteMessageReviewValid">
+											<span>{{ 'clubs.invite.step4.validuntil'|trans }}</span>
+											<span id="clubsInviteMessageReviewValidBody" style="font-weight: bold"></span>
+										</div>
+										<div id="clubsInviteMessageReviewText">
+											<p></p>
+											<p>{{ 'clubs.invite.step4.text'|trans }}</p>
+											<p id="clubsInviteMessageReviewTextBody" style="white-space: pre-wrap; font-weight: bold"></p>
+										</div>
+									</div>
 								</div>
 							</p>
 						</div>

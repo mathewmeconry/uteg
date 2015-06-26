@@ -36,6 +36,11 @@ class Clubs2Invites {
      * @ORM\Column(type="string")
      */
     protected $token;
+    
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $valid;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -47,10 +52,6 @@ class Clubs2Invites {
      * @ORM\Column(type="datetime", name="deletedAt", nullable=true)
      */
     protected $deletedAt;
-
-    public function __construct() {
-        $this->members = new ArrayCollection();
-    }
 
     public function __toString() {
         return $this->name;
@@ -212,5 +213,28 @@ class Clubs2Invites {
     public function getCompetition()
     {
         return $this->competition;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string $token
+     * @return Clubs2Invites
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+    
+        return $this;
+    }
+
+    /**
+     * Get token
+     *
+     * @return string 
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }
