@@ -1,0 +1,120 @@
+{% trans_default_domain 'uteg' %}
+
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'invites.title'|trans }}{% endblock %}
+
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
+{% endblock %}
+
+{% block jsplugins %}
+	<script type="text/javascript" src="{{ asset("js/plugins/noty/jquery.noty.js") }}"></script>
+	<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topCenter.js") }}"></script>
+	<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topLeft.js") }}"></script>
+	<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topRight.js") }}"></script>
+	<script type="text/javascript" src="{{ asset("js/plugins/noty/themes/default.js") }}"></script>
+	<script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
+{% endblock %}
+
+{% block jsfunctions %}
+    function dataTable(table) {
+
+        $(table).DataTable({
+            "ajax": {
+                "url": "{{ path('inviteListPost') }}",
+                "method": "POST"
+            },
+            "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "invites.table.all"|trans }}"] ],
+            "search": {
+                "regex": true
+            },
+            "order": [[ 0, "asc" ]],
+            responsive: {
+                details: {
+                    type: 'column'
+                }
+            },
+            "columns": [
+                { "data": "name", 'type': 'string' },
+                { "data": "validUntil", 'type': 'date'},
+                { "data": "state", 'type': 'string'},
+                { "data": null, "defaultContent": '{% if is_granted('CLUBS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-warning btn-rounded btn-condensed btn-sm btn-icon clubs-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon clubs-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}' }
+            ],
+            "columnDefs": [
+                { "orderable": false, "targets": [3] },
+                { "searchable": false, "targets": [3] },
+            ],
+            "paginate": {
+                "next": "{{ "invites.table.next"|trans }}",
+                "previous": "{{ "invites.table.previous"|trans }}"
+            },
+            "language": {
+                "search": "{{ "invites.table.search"|trans }}",
+                "searchPlaceholder": "{{ "invites.table.searchPlaceholder"|trans }}",
+                "thousands": "'",
+                "zeroRecords": "{{ "invites.table.zeroRecords"|trans }}"
+            }
+        });
+    }
+{% endblock %}
+
+{% block docready %}
+	{% for flashMessage in app.session.flashbag.get('error') %}
+	    noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'error', timeout: 10000});
+	{% endfor %}
+	{% for flashMessage in app.session.flashbag.get('success') %}
+	    noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'success', timeout: 10000});
+	{% endfor %}
+	
+	dataTable($('#invites'));
+
+    $('.table').on('init.dt', function() {
+    	onload();
+    });
+    
+    $('select[name*="m_length"]').change(function()  {
+    	onload();
+    });
+    
+    $('.panel-refresh').click(function() {
+    	panel_refresh(
+    		$('#panel_invites'), 
+    		$('#invites').DataTable().ajax.reload(function() { 
+    			setTimeout(function() {
+    				panel_refresh($('#panel_invites')); 
+    			}, 500); 
+    		}, false)
+    	);
+    });
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div id="panel_invites" class="panel panel-default" style="min-height: 400px;">
+			<div class="panel-heading">
+         		<h3 class="panel-title">{{ 'invites.header'|trans }}</h3>
+         		<ul class="panel-controls">
+                    <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a></li>
+                    <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                </ul>
+            </div>
+			<div class="panel-body">
+				<table id="invites" class="table responsive table-striped" data-cat="0" width="100%">
+		        	<thead>
+		          		<tr>
+                	   		<th class="all">{{ 'invites.table.name'|trans }}</th>
+                	       	<th class="all">{{ 'invites.table.validUntil'|trans }}</th>
+                	      	<th class="all">{{ 'invites.table.state'|trans }}</th>
+                	      	<th style="width: 150px;" class="all">{{ 'invites.table.actions'|trans }}</th>
+		               	</tr>
+		           	</thead>
+		      	</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@
 
 {% extends "base.html.twig" %} 
 
-{% block title %}{{ 'clubs.title'|trans }}{% endblock %}
+{% block title %}{{ 'invite.title'|trans }}{% endblock %}
 
 {% block cssplugins %}
     <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
@@ -28,18 +28,18 @@
 				break;
 			case 2:
 				if(context.fromStep == 1) {
-					$('#clubsInviteMail tbody').html('');
+					$('#inviteMail tbody').html('');
 					
-					var clubsInviteMailForm = $("#clubsInviteMailForm").validate({
+					var inviteMailForm = $("#inviteMailForm").validate({
 		                ignore: []                                      
 	                }); 
 	                
 	                var counter = 0;
-					$.each($('.clubsInviteCheckbox:checked', $('#clubsInviteList').dataTable().fnGetNodes()), function(key, value) {
+					$.each($('.inviteCheckbox:checked', $('#inviteList').dataTable().fnGetNodes()), function(key, value) {
 						var id = $(value).parent().parent().parent().attr('id');
 						var name = $(value).parent().parent().next().html();
 						
-						$('#clubsInviteMail tbody').append('<tr id="' + id + '"><td style="white-space:nowrap;">' + name + '</td><td><input name="email[' + counter + ']" type="text" class="form-control"/></td></tr>');
+						$('#inviteMail tbody').append('<tr id="' + id + '"><td style="white-space:nowrap;">' + name + '</td><td><input name="email[' + counter + ']" type="text" class="form-control"/></td></tr>');
 						
 						$('input[name="email['+counter+']"]').rules("add", { 
 					        required: true,
@@ -54,7 +54,7 @@
 			case 3:
 				$('.wizard').smartWizard("fixHeight");
 				
-				var clubsInviteMessageForm = $("#clubsInviteMessageForm").validate({
+				var inviteMessageForm = $("#inviteMessageForm").validate({
 		        	messageValidUntil: {
 		        		required: true
 		        	},
@@ -64,20 +64,20 @@
 	            });
 				break;
             case 4:
-            	$('#clubsInviteClubsReview tbody').html('');
-                $('#clubsInviteClubsDiv').html('');
-                $('#clubsInviteMessageReview').html('');
+            	$('#inviteClubsReview tbody').html('');
+                $('#inviteClubsDiv').html('');
+                $('#inviteMessageReview').html('');
 
-                $.each($('#clubsInviteMail tbody tr'), function(key, tr) {
-                    $('#clubsInviteClubsReview tbody').append('<tr id="' + $(tr).attr('id') + '"><td>' + $(tr).children().eq(0).html() + '</td><td>' + $(tr).children().eq(1).children().eq(0).val() + '</td></tr>');
+                $.each($('#inviteMail tbody tr'), function(key, tr) {
+                    $('#inviteClubsReview tbody').append('<tr id="' + $(tr).attr('id') + '"><td>' + $(tr).children().eq(0).html() + '</td><td>' + $(tr).children().eq(1).children().eq(0).val() + '</td></tr>');
                 });
                 
-                $('#clubsInviteMessageReviewValidBody').html($('#messageValidUntil').val());
+                $('#inviteMessageReviewValidBody').html($('#messageValidUntil').val());
 
                 if($('#customMessage').is(':checked')) {
-                    $('#clubsInviteMessageReviewTextBody').html($('#mailMessage').val());
+                    $('#inviteMessageReviewTextBody').html($('#mailMessage').val());
                 } else {
-                    $('#clubsInviteMessageReviewTextBody').html('{{ 'clubs.invite.step4.default'|trans }}');
+                    $('#inviteMessageReviewTextBody').html('{{ 'invite.step4.default'|trans }}');
                 }
 
                 $('.buttonFinish').show();
@@ -98,10 +98,10 @@
 		if(context.fromStep < context.toStep) {
 			switch(context.fromStep) {
 				case 2:
-					(!$("#clubsInviteMailForm").valid()) ? isStepValid = false : '';
+					(!$("#inviteMailForm").valid()) ? isStepValid = false : '';
 					break;
 				case 3:
-					(!$("#clubsInviteMessageForm").valid()) ? isStepValid = false : '';
+					(!$("#inviteMessageForm").valid()) ? isStepValid = false : '';
 					break;
 			}
 		}
@@ -114,25 +114,25 @@
 	function finishWizard(context) {
 		var clubs = [];
 
-		$.each($('#clubsInviteClubsReview tbody tr'), function(index, tr) {
+		$.each($('#inviteClubsReview tbody tr'), function(index, tr) {
 			clubs[index] = {id: $(tr).attr('id'), name: $(tr).children().eq(0).html(), mail: $(tr).children().eq(1).html()};
 		});
 		
 		if($('#customMessage').is(':checked')) {
 			var message = {
-				valid: $('#clubsInviteMessageReviewValidBody').html(),
+				valid: $('#inviteMessageReviewValidBody').html(),
 				default: false,
-				message: nl2br($('#clubsInviteMessageReviewTextBody').html(), false)
+				message: nl2br($('#inviteMessageReviewTextBody').html(), false)
 			};
 		} else {
 			var message = {
-				valid: $('#clubsInviteMessageReviewValidBody').html(),
+				valid: $('#inviteMessageReviewValidBody').html(),
 				default: true
 			};
 		}
 	
 		$.ajax({
-			url: "{{ path('clubsInvitePost') }}",
+			url: "{{ path('invitePost') }}",
 			method: "POST",
 			data: { clubs: clubs, message: message },
 			success: function(url) {
@@ -148,12 +148,12 @@
 {% endblock %}
 
 {% block docready %}
-	$('#clubsInviteList').DataTable({
+	$('#inviteList').DataTable({
     	"ajax": {
 			"url": "{{ path('clubsPost') }}",
 				"method": "POST"
 		},
-		"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "clubs.invite.step1.table.all"|trans }}"] ],
+		"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "invite.step1.table.all"|trans }}"] ],
 		"search": {
 			"regex": true
 		},
@@ -164,7 +164,7 @@
 			}
 		},
 		"columns": [
-			{ "data": null, "defaultContent": '<label class="switch switch-small"><input class="clubsInviteCheckbox" type="checkbox" value="0"><span></span> </label>' },
+			{ "data": null, "defaultContent": '<label class="switch switch-small"><input class="inviteCheckbox" type="checkbox" value="0"><span></span> </label>' },
 			{ "data": "name", 'type': 'string' },
 		],
 		"columnDefs": [
@@ -173,14 +173,14 @@
                 { "width": "40px", "targets": 0 }
             ],
 		"paginate": {
-			"next": "{{ "clubs.invite.step1.table.next"|trans }}",
-			"previous": "{{ "clubs.invite.step1.table.previous"|trans }}"
+			"next": "{{ "invite.step1.table.next"|trans }}",
+			"previous": "{{ "invite.step1.table.previous"|trans }}"
 		},
 		"language": {
-			"search": "{{ "clubs.invite.step1.table.search"|trans }}",
-			"searchPlaceholder": "{{ "clubs.invite.step1.table.searchPlaceholder"|trans }}",
+			"search": "{{ "invite.step1.table.search"|trans }}",
+			"searchPlaceholder": "{{ "invite.step1.table.searchPlaceholder"|trans }}",
 			"thousands": "'",
-			"zeroRecords": "{{ "clubs.invite.step1.table.zeroRecords"|trans }}"
+			"zeroRecords": "{{ "invite.step1.table.zeroRecords"|trans }}"
 		}
 	});
 
@@ -193,15 +193,15 @@
          	transitionEffect: 'slide',
             enableFinishButton: false,
             includeFinishButton : true,
-           	labelNext: '{{ 'clubs.invite.wizard.next'|trans }}',
-            labelPrevious: '{{ 'clubs.invite.wizard.previous'|trans }}',
-           	labelFinish: '{{ 'clubs.invite.wizard.finish'|trans }}'
+           	labelNext: '{{ 'invite.wizard.next'|trans }}',
+            labelPrevious: '{{ 'invite.wizard.previous'|trans }}',
+           	labelFinish: '{{ 'invite.wizard.finish'|trans }}'
       	});
       	
       	$('.wizard').smartWizard("fixHeight");
     });
     
-    $('select[name*="clubsInviteList_length"]').change(function()  {
+    $('select[name*="inviteList_length"]').change(function()  {
     	$('.wizard').smartWizard("fixHeight");
     });
 
@@ -219,9 +219,9 @@
 {% block content %}
 <div class="row">
 	<div class="col-md-12">
-		<div id="panel_clubsInvite" class="panel panel-default" style="min-height: 400px;">
+		<div id="panel_invite" class="panel panel-default" style="min-height: 400px;">
 			<div class="panel-heading">
-         		<h3 class="panel-title">{{ 'clubs.invite.header'|trans }}</h3>
+         		<h3 class="panel-title">{{ 'invite.header'|trans }}</h3>
          		<ul class="panel-controls">
                     <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a></li>
                 </ul>
@@ -230,28 +230,28 @@
 				<div class="wizard show-submit">
 					<ul class="steps_4 anchor">
 						<li><a href="#step-1" class="selected" isdone="1" rel="1"> <span
-								class="stepNumber">1</span> <span class="stepDesc">{{ "clubs.invite.step"|trans }} 1<br>
-								<small>{{ 'clubs.invite.step1.small_description'|trans }}</small></span>
+								class="stepNumber">1</span> <span class="stepDesc">{{ "invite.step"|trans }} 1<br>
+								<small>{{ 'invite.step1.small_description'|trans }}</small></span>
 						</a></li>
 						<li><a href="#step-2" class="disabled" isdone="0" rel="2"> <span
-								class="stepNumber">2</span> <span class="stepDesc">{{ "clubs.invite.step"|trans }} 2<br>
-								<small>{{ 'clubs.invite.step2.small_description'|trans }}</small></span>
+								class="stepNumber">2</span> <span class="stepDesc">{{ "invite.step"|trans }} 2<br>
+								<small>{{ 'invite.step2.small_description'|trans }}</small></span>
 						</a></li>
 						<li><a href="#step-3" class="disabled" isdone="0" rel="3"> <span
-								class="stepNumber">2</span> <span class="stepDesc">{{ "clubs.invite.step"|trans }} 3<br>
-								<small>{{ 'clubs.invite.step3.small_description'|trans }}</small></span>
+								class="stepNumber">2</span> <span class="stepDesc">{{ "invite.step"|trans }} 3<br>
+								<small>{{ 'invite.step3.small_description'|trans }}</small></span>
 						</a></li>
 						<li><a href="#step-4" class="disabled" isdone="0" rel="4"> <span
-								class="stepNumber">2</span> <span class="stepDesc">{{ "clubs.invite.step"|trans }} 4<br>
-								<small>{{ 'clubs.invite.step4.small_description'|trans }}</small></span>
+								class="stepNumber">2</span> <span class="stepDesc">{{ "invite.step"|trans }} 4<br>
+								<small>{{ 'invite.step4.small_description'|trans }}</small></span>
 						</a></li>
 					</ul>
 
 					<div class="stepContainer" style="height: 54px;">
 						<div id="step-1" class="content" style="display: block;">
-							<h4>{{ 'clubs.invite.step1.header'|trans }}</h4>
+							<h4>{{ 'invite.step1.header'|trans }}</h4>
 							<p>
-								<table id="clubsInviteList" class="table responsive table-striped" data-cat="0" width="100%">
+								<table id="inviteList" class="table responsive table-striped" data-cat="0" width="100%">
 					               	<thead>
 					               		<tr>
 					               			<th class="all"></th>
@@ -262,10 +262,10 @@
 		        			</p>
 						</div>
 						<div id="step-2" class="content" style="display: none;">
-							<h4>{{ 'clubs.invite.step2.header'|trans }}</h4>
+							<h4>{{ 'invite.step2.header'|trans }}</h4>
 							<p>
-								<form id="clubsInviteMailForm">
-									<table id="clubsInviteMail" name="mailMessage" class="table responsive table-striped" data-cat="0" width="100%">
+								<form id="inviteMailForm">
+									<table id="inviteMail" name="mailMessage" class="table responsive table-striped" data-cat="0" width="100%">
 						               	<thead>
 						               		<tr>
 				                	            <th>{{ 'clubs.table.name'|trans }}</th>
@@ -279,48 +279,48 @@
 							</p>
 						</div>
 						<div id="step-3" class="content" style="display: none;">
-							<h4>{{ 'clubs.invite.step3.header'|trans }}</h4>
+							<h4>{{ 'invite.step3.header'|trans }}</h4>
 							<p>
-								<form id="clubsInviteMessageForm">
-									<span>{{ 'clubs.invite.step3.validtext'|trans }}</span>
+								<form id="inviteMessageForm">
+									<span>{{ 'invite.step3.validtext'|trans }}</span>
 									<div style="margin-bottom: 15px" class="input-group col-md-5">
 	                                 	<input type="text" id="messageValidUntil" name="messageValidUntil" class="form-control datepicker required" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
 	                                	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 	                                </div>
-	                                <p style="margin: 0">{{ 'clubs.invite.step3.checkboxtext'|trans }}</p>
+	                                <p style="margin: 0">{{ 'invite.step3.checkboxtext'|trans }}</p>
 	                                <label class="switch switch-small"><input id="customMessage" type="checkbox" value="0"><span></span></label>
 	                                <div id="mailMessageDiv" style="display: none">
-	                                    <p>{{ 'clubs.invite.step3.text'|trans }}</p>
+	                                    <p>{{ 'invite.step3.text'|trans }}</p>
 										<textarea id="mailMessage" name="mailMessage" style="resize: none" class="form-control required" rows="10"></textarea>
 									</div>
 								</form>
 							</p>
 						</div>
 						<div id="step-4" class="content" style="display: none;">
-							<h4>{{ 'clubs.invite.step4.header'|trans }}</h4>
+							<h4>{{ 'invite.step4.header'|trans }}</h4>
 							<p>
 								<div class="col-md-6">
-									<h5>{{ 'clubs.invite.step4.clubs'|trans }}</h5>
-									<table id="clubsInviteClubsReview" class="table">
+									<h5>{{ 'invite.step4.clubs'|trans }}</h5>
+									<table id="inviteClubsReview" class="table">
                                         <thead>
-                                            <th>{{ 'clubs.invite.step4.club'|trans }}</th>
-                                            <th>{{ 'clubs.invite.step4.email'|trans }}</th>
+                                            <th>{{ 'invite.step4.club'|trans }}</th>
+                                            <th>{{ 'invite.step4.email'|trans }}</th>
                                         </thead>
                                         <tbody>
                                         </tbody>
                                     </table>
 								</div>
 								<div class="col-md-6">
-									<h5>{{ 'clubs.invite.step4.message'|trans }}</h5>
-									<div id="clubsInviteMessage">
-										<div id="clubsInviteMessageReviewValid">
-											<span>{{ 'clubs.invite.step4.validuntil'|trans }}</span>
-											<span id="clubsInviteMessageReviewValidBody" style="font-weight: bold"></span>
+									<h5>{{ 'invite.step4.message'|trans }}</h5>
+									<div id="inviteMessage">
+										<div id="inviteMessageReviewValid">
+											<span>{{ 'invite.step4.validuntil'|trans }}</span>
+											<span id="inviteMessageReviewValidBody" style="font-weight: bold"></span>
 										</div>
-										<div id="clubsInviteMessageReviewText">
+										<div id="inviteMessageReviewText">
 											<p></p>
-											<p>{{ 'clubs.invite.step4.text'|trans }}</p>
-											<p id="clubsInviteMessageReviewTextBody" style="white-space: pre-wrap; font-weight: bold"></p>
+											<p>{{ 'invite.step4.text'|trans }}</p>
+											<p id="inviteMessageReviewTextBody" style="white-space: pre-wrap; font-weight: bold"></p>
 										</div>
 									</div>
 								</div>

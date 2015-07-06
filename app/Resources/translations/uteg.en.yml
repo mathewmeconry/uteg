@@ -79,8 +79,9 @@ nav:
     starters.female: 'Female'
     starters.import: 'Import'
     clubs: 'Clubs'
-    clubs.list: 'Clubs'
-    clubs.invite: 'Invite'
+    invites: 'Invites'
+    invites.invite: 'Invite'
+    invites.list: 'Current Invites'
     competition: 'Competition'
     competitions: 'Competitions'
     permissions: 'Permissions'
@@ -188,47 +189,67 @@ clubs:
         searchPlaceholder: 'Search...'
         zeroRecords: 'No matching clubs found'
         all: 'All'
-    invite:
-        path: 'Invite'
-        header: 'Invite clubs'
-        mail:
-            message: 'Hi<br><br>You got invited to the Competition #COMPETITION#.<br><br>Please click on the following link to sign up your starters:<br><br>#LINK#<br><br>This link is valid until: #VALID#'
-            subject %compname%: 'Inventation %compname%'
-        wizard:
+invite:
+    title: 'Invite'
+    path: 'Invite'
+    header: 'Invite clubs'
+    error: 'Failed to send invites'
+    success: 'Invites sent'
+    mail:
+        message: 'Hi<br><br>You got invited to the Competition #COMPETITION#.<br><br>Please click on the following link to sign up your starters:<br><br>#LINK#<br><br>This link is valid until: #VALID#'
+        subject: %compname%: 'Inventation %compname%'
+    wizard:
+        next: 'Next'
+        previous: 'Previous'
+        finish: 'Send'
+    step: 'Step'
+    step1:
+        small_description: 'Choose your clubs'
+        header: 'Choose the clubs you want to invite'
+        table:
+            name: 'Name'
             next: 'Next'
             previous: 'Previous'
-            finish: 'Send'
-        step: 'Step'
-        step1:
-            small_description: 'Choose your clubs'
-            header: 'Choose the clubs you want to invite'
-            table:
-                name: 'Name'
-                next: 'Next'
-                previous: 'Previous'
-                search: 'Search'
-                searchPlaceholder: 'Search...'
-                zeroRecords: 'No matching clubs found'
-                all: 'All'
-        step2:
-            small_description: 'Configure clubs'
-            header: 'Enter an E-Mail address for each club'
-        step3:
-            small_description: 'Message'
-            header: 'Mail Message'
-            validtext: 'Invite link valid until'
-            checkboxtext: 'Use custom E-Mail message'
-            text: 'Use #LINK# to place the invite link into the text'
-        step4:
-            small_description: 'Review'
-            header: 'Please review the invites'
-            club: 'Club'
-            clubs: 'Clubs'
-            message: 'Message'
-            email: 'E-Mail'
-            default: 'Using default message.'
-            validuntil: 'Link valid until: '
-            text: 'Message text: '        
+            search: 'Search'
+            searchPlaceholder: 'Search...'
+            zeroRecords: 'No matching clubs found'
+            all: 'All'
+    step2:
+        small_description: 'Configure clubs'
+        header: 'Enter an E-Mail address for each club'
+    step3:
+        small_description: 'Message'
+        header: 'Mail Message'
+        validtext: 'Invite link valid until'
+        checkboxtext: 'Use custom E-Mail message'
+        text: 'Use #LINK# to place the invite link into the text'
+    step4:
+        small_description: 'Review'
+        header: 'Please review the invites'
+        club: 'Club'
+        clubs: 'Clubs'
+        message: 'Message'
+        email: 'E-Mail'
+        default: 'Using default message.'
+        validuntil: 'Link valid until: '
+        text: 'Message text: '        
+
+invites:
+    header: 'Current Invites'
+    title: 'Current Invites'
+    table:
+        name: 'Name'
+        validUntil: 'Valid Until'
+        state: 'State'
+        actions: 'Actions'
+        next: 'Next'
+        previous: 'Previous'
+        search: 'Search'
+        searchPlaceholder: 'Search...'
+        zeroRecords: 'No invites sent'
+        all: 'All'
+        expired: 'Expired'
+        valid: 'Valid'
 
 competition:
     title: 'Competition'

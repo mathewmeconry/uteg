@@ -21,10 +21,12 @@ class Builder extends ContainerAware
             ($acl->isGranted('STARTERS_EDIT')) ? $menu['nav.starters']->addChild('nav.starters.import', array('route' => 'starterImport', 'icon' => 'upload')) : '';
         }
 
+        ($acl->isGranted('CLUBS_VIEW')) ? $menu->addChild('nav.clubs', array('route' => 'clubs', 'icon' => 'group')) : '';
+        
         if($acl->isGranted('CLUBS_VIEW')) {
-        	$menu->addChild('nav.clubs', array('uri' => '#', 'icon' => 'users', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
-        	$menu['nav.clubs']->addChild('nav.clubs.list', array('route' => 'clubs', 'icon' => 'bars'));
-        	($acl->isGranted('CLUBS_EDIT')) ? $menu['nav.clubs']->addChild('nav.clubs.invite', array('route' => 'clubsInvite', 'icon' => 'envelope-o')) : '';
+        	$menu->addChild('nav.invites', array('uri' => '#', 'icon' => 'envelope-o', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        	($acl->isGranted('CLUBS_EDIT')) ? $menu['nav.invites']->addChild('nav.invites.invite', array('route' => 'invite', 'icon' => 'envelope-o')) : '';
+        	$menu['nav.invites']->addChild('nav.invites.list', array('route' => 'inviteList', 'icon' => 'bars'));
         }
         
         ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'icon' => 'cogs', 'labelAttributes' => array('class' => 'xn-text'))) : '';
