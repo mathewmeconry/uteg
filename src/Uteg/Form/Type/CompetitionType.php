@@ -68,6 +68,6 @@ class CompetitionType extends AbstractType
      */
     public function getName()
     {
-        return 'appbundle_competition';
+        return 'uteg_competition';
     }
 }

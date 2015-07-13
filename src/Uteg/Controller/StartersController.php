@@ -442,7 +442,7 @@ class StartersController extends Controller
             $em->persist($s2c);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add('success', 'competitionlist.addcomp.success');
+            $this->get('session')->getFlashBag()->add('success', 'starter.edit.success');
 
             return new Response('true');
         }

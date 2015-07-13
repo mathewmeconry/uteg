@@ -25,13 +25,13 @@ services:
         tags:
             - { name: form.type, alias: uteg_profile_edit }
     
-    appbundle.menu_builder:
+    uteg.menu_builder:
         class: uteg\Menu\Breadcrumb
         arguments: ["@doctrine.orm.entity_manager","@knp_menu.factory"]
         
-    appbundle.menu.breadcrumb:
+    uteg.menu.breadcrumb:
         class: uteg\Menu\Breadcrumb
-        factory_service: appbundle.menu_builder # the menu builder service above
+        factory_service: uteg.menu_builder # the menu builder service above
         factory_method: breadcrumb # the method name to generate the menu
         arguments: ["@request"]
         scope: request

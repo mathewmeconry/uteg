@@ -38,7 +38,7 @@ class Clubs2Invites {
     protected $token;
     
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
     protected $valid;
 
@@ -157,6 +157,8 @@ class Clubs2Invites {
     public function removeMember(\uteg\Entity\Starters2Competitions $members)
     {
         $this->members->removeElement($members);
+
+        return $this->members;
     }
 
     /**
@@ -189,7 +191,7 @@ class Clubs2Invites {
      */
     public function getClub()
     {
-        return $this->club;
+        return $this->club->getName();
     }
 
     /**

@@ -134,6 +134,7 @@ starters:
             club: 'Club'
             present: 'Present'
             medicalcert: 'Medical cert.'
+        success: 'Starter successfully changed'
     remove:
         modal:
             question: 'Are you sure you want to remove'
@@ -250,6 +251,19 @@ invites:
         all: 'All'
         expired: 'Expired'
         valid: 'Valid'
+    edit:
+        form:
+            club: 'Club'
+            valid: 'Valid until'
+        modal:
+            save: 'Save'
+            cancel: 'Cancel'
+        success: 'Invite successfully changed'
+    remove:
+        modal:
+            question: 'Do you really want to remove the inventation of '
+            confirm: 'Confirm'
+            cancel: 'Cancel'
 
 competition:
     title: 'Competition'

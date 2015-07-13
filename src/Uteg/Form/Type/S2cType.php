@@ -50,6 +50,6 @@ class S2cType extends AbstractType
      */
     public function getName()
     {
-        return 'appbundle_starter';
+        return 'uteg_starter';
     }
 }

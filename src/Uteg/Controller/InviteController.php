@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Clubs2Invites;
+use uteg\Form\Type\C2iType;
 
 class InviteController extends Controller
 {
@@ -133,11 +134,49 @@ class InviteController extends Controller
 		$c2is = $comp->getC2is();
 		foreach($c2is as $c2i) {
 			$valid = ($c2i->getValid()->format('Y-m-d') < $today) ? 'invites.table.expired' : 'invites.table.valid';
-			$result[] = array("DT_RowId" => $c2i->getId(), "name" => $c2i->getClub()->getName(), "validUntil" => $c2i->getValid(), "state" => $valid);
+			$result[] = array("DT_RowId" => $c2i->getId(), "name" => $c2i->getClub(), "validUntil" => $c2i->getValid(), "state" => $valid);
 		}
 
 		return $this->render('inviteList.json.twig', array(
 				'source' => $result
 		));
 	}
+
+    /**
+     * @Route("/invite/edit/{id}", name="inviteEdit", defaults={"id": ""}, requirements={"id": "\d+"})
+     */
+    public function inviteEditPostAction(Request $request, $id) {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+        $c2i = $this->getDoctrine()->getManager()->find('uteg:Clubs2Invites', $id);
+
+        $form = $this->createForm(new C2iType(), $c2i);
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $c2i = $form->getData();
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $em->persist($c2i);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('success', 'invites.edit.success');
+
+            return new Response('true');
+        }
+
+        return $this->render('form/InviteEdit.html.twig',
+            array('form' => $form->createView(),
+                'target' => 'inviteEdit'
+            )
+        );
+    }
+
+    /**
+     * @Route("/invite/remove/{id}", name="inviteRemove", defaults={"id": ""}, requirements={"id": "\d+"})
+     * @Method("POST")
+     */
+    public function inviteRemovePostAction($id) {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+        return new Response($id);
+    }
 }
