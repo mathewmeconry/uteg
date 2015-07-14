@@ -10,11 +10,6 @@
 {% endblock %}
 
 {% block jsplugins %}
-	<script type="text/javascript" src="{{ asset("js/plugins/noty/jquery.noty.js") }}"></script>
-	<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topCenter.js") }}"></script>
-	<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topLeft.js") }}"></script>
-	<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topRight.js") }}"></script>
-	<script type="text/javascript" src="{{ asset("js/plugins/noty/themes/default.js") }}"></script>
 	<script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
 {% endblock %}
@@ -39,9 +34,10 @@
             },
             "columns": [
                 { "data": "name", 'type': 'string' },
+                { "data": "email", 'type': 'string' },
                 { "data": "validUntil", 'type': 'date'},
                 { "data": "state", 'type': 'string'},
-                { "data": null, "defaultContent": '{% if is_granted('CLUBS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-warning btn-rounded btn-condensed btn-sm btn-icon invites-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon invites-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}' }
+                { "data": null, "defaultContent": '{% if is_granted('CLUBS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-warning btn-rounded btn-condensed btn-sm btn-icon invites-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-info btn-rounded btn-condensed btn-sm btn-icon invites-resend"><i class="glyphicon glyphicon-send"></i><span>Resend</span></button><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon invites-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}' }
             ],
             "columnDefs": [
                 { "orderable": false, "targets": [3] },
@@ -59,16 +55,14 @@
             }
         });
     }
+    
+    function nl2br (str, is_xhtml) {   
+	    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
+	    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
+	}
 {% endblock %}
 
 {% block docready %}
-	{% for flashMessage in app.session.flashbag.get('error') %}
-	    noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'error', timeout: 10000});
-	{% endfor %}
-	{% for flashMessage in app.session.flashbag.get('success') %}
-	    noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'success', timeout: 10000});
-	{% endfor %}
-	
 	dataTable($('#invites'));
 
     $('.table').on('init.dt', function() {
@@ -105,24 +99,32 @@
             $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 0).data());
             $( "#dialog-edit" ).data('c2i_id', c2i_id).modal('show');
         });
+        
+        $('tbody').on('click', 'td div button.invites-resend', function(event) {
+            var table = $(this).parent().parent().parent().parent().parent().DataTable();
+            var c2i_id = $(this).parent().parent().parent().attr('id');
+
+            $('#dialog-resend-modal-title').html("Resend Inventation");
+            $('#dialog-resend-body-name').html(table.cell($(this).parent().parent().parent(), 0).data());
+            $("#dialog-resend").data('c2i_id', c2i_id).modal('show');
+        });
 
         $('tbody').on('click', 'td div button.invites-remove', function(event) {
             var table = $(this).parent().parent().parent().parent().parent().DataTable();
-            var s2c_id = table.cell($(this).parent().parent().parent(), 1).data();
+            var c2i_id = $(this).parent().parent().parent().attr('id');
 
             $('#dialog-remove-modal-title').html("Remove " + table.cell($(this).parent().parent().parent(), 0).data());
             $('#dialog-remove-body-name').html(table.cell($(this).parent().parent().parent(), 0).data());
-            $("#dialog-remove").data('s2c_id', s2c_id).modal('show');
+            $("#dialog-remove").data('c2i_id', c2i_id).modal('show');
         });
 
         $('#invite-save').click(function() {
             var values = {};
-            $.each( $('#invitesEditForm').serializeArray(), function(i, field) {
+            $.each( $('#inviteEditForm').serializeArray(), function(i, field) {
                 values[field.name] = field.value;
             });
 
             var url = ($('#dialog-edit-body form').attr('action').indexOf('edit') > -1) ? $('#dialog-edit-body form').attr('action') + "/" + $( "#dialog-edit" ).data('c2i_id') : $('#dialog-edit-body form').attr('action');
-console.log(url);
             $.ajax({
                 type: "POST",
                 url: url,
@@ -130,9 +132,24 @@ console.log(url);
             }).success(function(data) {
                 if(data == 'true') {
                     $('#dialog-edit').modal('hide');
+                    showFlashbag();
                     $('.panel-refresh').click();
                 } else {
                     $('#dialog-edit-body').html(data);
+                }
+            });
+        });
+        
+        $('#invite-send').click(function() {
+            $.ajax({
+                type: "POST",
+                url: "{{ path('inviteResend') }}/" + $("#dialog-resend").data('c2i_id'),
+                data: { custom: $('#customMessage').is(':checked'), message: nl2br($('#mailMessage').val(), false) }
+            }).success(function(data) {
+                if(data == 'true') {
+                    $('#dialog-resend').modal('hide');
+                    showFlashbag();
+                    $('.panel-refresh').click();
                 }
             });
         });
@@ -140,15 +157,21 @@ console.log(url);
         $('#invite-remove').click(function() {
             $.ajax({
                 type: "POST",
-                url: "{{ path('inviteRemove') }}",
-                data: { id: $( "#dialog-remove" ).data('c2i_id') }
+                url: "{{ path('inviteRemove') }}/" + $("#dialog-remove").data('c2i_id'),
             }).success(function(data) {
                 if(data == 'true') {
-                    $('#dialog-remove').modal('hide');
-                    $('.panel-refresh').click();
+					showFlashbag();
                 }
             });
         });
+        
+        $('#customMessage').change(function() {
+	        if($(this).is(':checked')) {
+	            $('#mailMessageDiv').show();
+	        } else {
+	            $('#mailMessageDiv').hide();
+	        }
+	    });
     {% endif %}
 {% endblock %}
 
@@ -168,9 +191,10 @@ console.log(url);
 		        	<thead>
 		          		<tr>
                 	   		<th class="all">{{ 'invites.table.name'|trans }}</th>
+                	   		<th class="all">{{ 'invites.table.email'|trans }}</th>
                 	       	<th class="all">{{ 'invites.table.validUntil'|trans }}</th>
                 	      	<th class="all">{{ 'invites.table.state'|trans }}</th>
-                	      	<th style="width: 150px;" class="all">{{ 'invites.table.actions'|trans }}</th>
+                	      	<th style="width: 200px;" class="all">{{ 'invites.table.actions'|trans }}</th>
 		               	</tr>
 		           	</thead>
 		      	</table>
@@ -195,6 +219,28 @@ console.log(url);
                     <div class="modal-footer">
                         <button type="button" id="invite-save" class="btn btn-success">{{ 'invites.edit.modal.save'|trans }}</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'invites.edit.modal.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="dialog-resend" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="dialog-resend-modal-title"></h4>
+                    </div>
+                    <div id="dialog-resend-body" class="modal-body">
+	                 	<p style="margin: 0">{{ 'invites.resend.modal.checkboxtext'|trans }}</p>
+	                    <label class="switch switch-small"><input id="customMessage" type="checkbox" value="0"><span></span></label>
+	                   	<div id="mailMessageDiv" style="display: none">
+	                    	<p>{{ 'invites.resend.modal.text'|trans }}</p>
+							<textarea id="mailMessage" name="mailMessage" style="resize: none" class="form-control required" rows="10"></textarea>
+						</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="invite-send" class="btn btn-success">{{ 'invites.resend.modal.send'|trans }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'invites.resend.modal.cancel'|trans }}</button>
                     </div>
                 </div>
             </div>

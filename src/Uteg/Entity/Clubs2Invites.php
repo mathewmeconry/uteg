@@ -15,7 +15,7 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
 class Clubs2Invites {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer", name="club_id")
+     * @ORM\Column(type="integer", name="c2i_id")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -32,6 +32,11 @@ class Clubs2Invites {
      */
     protected $competition;
     
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $email;
+
     /**
      * @ORM\Column(type="string")
      */
@@ -243,7 +248,7 @@ class Clubs2Invites {
     /**
      * Set valid
      *
-     * @param \DateTime $valid
+     * @param \Date $valid
      * @return Clubs2Invites
      */
     public function setValid($valid)
@@ -256,10 +261,33 @@ class Clubs2Invites {
     /**
      * Get valid
      *
-     * @return \DateTime 
+     * @return \Date
      */
     public function getValid()
     {
         return $this->valid;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return Clubs2Invites
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 }

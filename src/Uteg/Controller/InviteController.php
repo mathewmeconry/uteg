@@ -48,6 +48,7 @@ class InviteController extends Controller
 					}
 					$c2i->setClub($clubobj);
 					$c2i->setCompetition($comp);
+					$c2i->setEmail($club['mail']);
 					$c2i->setToken($token);
 					$c2i->setValid(new \DateTime($message['valid']));
 					
@@ -69,14 +70,7 @@ class InviteController extends Controller
 										), true), $message['message']);
 					}
 					
-					$mail = \Swift_Message::newInstance()
-					->setSubject($this->get('translator')->trans('invite.mail.subject %compname%', array('%compname%' => $comp->getName()), 'uteg'))
-					->setFrom('noreply@getu.ch')
-					->setTo($club['mail'])
-					->setBody(
-							$mailmessage,
-							'text/html'
-					);
+					$this->sendMail($message['default'], $message['valid'], $comp, $club['mail'], $token, (isset($message['message']) ? $message['message'] : null));
 	
 					$result = $this->get('mailer')->send($mail);
 	
@@ -128,13 +122,14 @@ class InviteController extends Controller
 		$this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
 		$em = $this->getDoctrine()->getManager();
 		$today = date('Y-m-d');
+		$result = array();
 		
 		$comp = $em->find('uteg:Competition', $request->getSession()->get('comp'));
 		
 		$c2is = $comp->getC2is();
 		foreach($c2is as $c2i) {
 			$valid = ($c2i->getValid()->format('Y-m-d') < $today) ? 'invites.table.expired' : 'invites.table.valid';
-			$result[] = array("DT_RowId" => $c2i->getId(), "name" => $c2i->getClub(), "validUntil" => $c2i->getValid(), "state" => $valid);
+			$result[] = array("DT_RowId" => $c2i->getId(), "name" => $c2i->getClub(), "email" => $c2i->getEmail(), "validUntil" => $c2i->getValid(), "state" => $valid);
 		}
 
 		return $this->render('inviteList.json.twig', array(
@@ -170,13 +165,59 @@ class InviteController extends Controller
             )
         );
     }
+    
+    /**
+     * @Route("/invite/resend/{id}", name="inviteResend", defaults={"id": ""}, requirements={"id": "\d+"})
+     * @Method("POST")
+     */
+    public function inviteResendAction(Request $request, $id) {
+    	$this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+    	
+    	$c2i = $this->getDoctrine()->getManager()->find('uteg:Clubs2Invites', $id);
+    	$comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $request->getSession()->get('comp'));
+    	
+    	$this->sendMail(($request->get('custom') == 'false' ? 'true' : 'false'), $c2i->getValid()->format('Y-m-d'), $comp, $c2i->getEmail(), $c2i->getToken(), $request->get('message'));
+    	$this->get('session')->getFlashBag()->add('success', 'invites.resend.success');
+    	return new Response("true");
+    }
 
     /**
      * @Route("/invite/remove/{id}", name="inviteRemove", defaults={"id": ""}, requirements={"id": "\d+"})
      * @Method("POST")
      */
-    public function inviteRemovePostAction($id) {
+    public function inviteRemovePostAction(Request $request, $id) {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
-        return new Response($id);
+        
+        $em = $this->getDoctrine()->getEntityManager();
+        $c2i = $em->find('uteg:Clubs2Invites', $id);
+        $competition = $em->find('uteg:Competition', $request->getSession()->get('comp'));
+
+        $competition->removeC2i($c2i);
+        $em->persist($competition);
+        $em->flush();
+        return new Response('true');
+    }
+    
+    private function sendMail($default, $validuntil, $comp, $mail, $token, $message = null) {
+    	if($default == 'true') {
+    		$mailmessage = str_replace('#VALID#', $validuntil, str_replace('#COMPETITION#', $comp->getName(), str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
+    				'token' => $token
+    		), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))));
+    	} else {
+    		$mailmessage = str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
+    				'token' => $token
+    		), true), $message);
+    	}
+    		
+    	$mail = \Swift_Message::newInstance()
+    	->setSubject($this->get('translator')->trans('invite.mail.subject %compname%', array('%compname%' => $comp->getName()), 'uteg'))
+    	->setFrom('noreply@getu.ch')
+    	->setTo($mail)
+    	->setBody(
+    			$mailmessage,
+    			'text/html'
+    	);
+    	
+    	$result = $this->get('mailer')->send($mail);
     }
 }

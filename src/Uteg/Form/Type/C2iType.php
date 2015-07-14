@@ -17,9 +17,10 @@ class C2iType extends AbstractType
     {
         $builder
             ->add('club', 'text', array('read_only' => 'true', 'label' => 'invites.edit.form.club', "attr" => array("placeholder" => "invites.edit.form.club", "class" => "form-control"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'))
+            ->add('email', 'text', array('label' => 'invites.edit.form.email', "attr" => array("placeholder" => "invites.edit.form.email", "class" => "form-control"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'))
             ->add('valid', 'date', array(
                 'label' => 'invites.edit.form.valid',
-                "attr" => array("placeholder" => "invites.edit.form.valid", "class" => "form-control"),
+                "attr" => array("placeholder" => "invites.edit.form.valid", "class" => "form-control datepicker"),
                 'translation_domain' => 'uteg',
                 'format' => 'yyyy-MM-dd',
                 'widget' => 'single_text',

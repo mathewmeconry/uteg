@@ -3,6 +3,9 @@
 <form id="inviteEditForm" method="post" action="{{ path(target)}}" class="form-horizontal">
 
     {{ form_row(form.club) }}
+    
+    {{ form_row(form.email) }}
+	{% if error.email is defined %}<label class="error">{{ error.email|trans }}</label>{% endif %}
 
     {{ form_row(form.valid) }}
 	{% if error.valid is defined %}<label class="error">{{ error.valid|trans }}</label>{% endif %}

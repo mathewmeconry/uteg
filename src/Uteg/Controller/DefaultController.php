@@ -15,4 +15,11 @@ class DefaultController extends Controller
     public function rootAction() {
         return $this->forward('uteg:Redirecting:checkAuthentication', array("target" => "/competitions"));
     }
+    
+    /**
+     * @Route("/flashbag", name="parseFlashbag")
+     */
+    public function flashbagAction() {
+    	return $this->render('parseFlashbag.html.twig');
+    }
 }

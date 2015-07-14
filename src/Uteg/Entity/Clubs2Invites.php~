@@ -15,7 +15,7 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
 class Clubs2Invites {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer", name="club_id")
+     * @ORM\Column(type="integer", name="c2i_id")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -35,10 +35,15 @@ class Clubs2Invites {
     /**
      * @ORM\Column(type="string")
      */
+    protected $email;
+    
+    /**
+     * @ORM\Column(type="string")
+     */
     protected $token;
     
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
     protected $valid;
 
@@ -157,6 +162,8 @@ class Clubs2Invites {
     public function removeMember(\uteg\Entity\Starters2Competitions $members)
     {
         $this->members->removeElement($members);
+
+        return $this->members;
     }
 
     /**
@@ -189,7 +196,7 @@ class Clubs2Invites {
      */
     public function getClub()
     {
-        return $this->club;
+        return $this->club->getName();
     }
 
     /**
@@ -236,5 +243,28 @@ class Clubs2Invites {
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * Set valid
+     *
+     * @param \DateTime $valid
+     * @return Clubs2Invites
+     */
+    public function setValid($valid)
+    {
+        $this->valid = $valid;
+    
+        return $this;
+    }
+
+    /**
+     * Get valid
+     *
+     * @return \DateTime 
+     */
+    public function getValid()
+    {
+        return $this->valid;
     }
 }

@@ -131,6 +131,7 @@
             }).success(function(data) {
                 if(data == 'true') {
                     $('#dialog-edit').modal('hide');
+                    showFlashbag();
                     $('.panel-refresh').click();
                 } else {
                 	$('#dialog-edit-body').html(data);
@@ -146,6 +147,7 @@
             }).success(function(data) {
                 if(data == 'true') {
                     $('#dialog-remove').modal('hide');
+                    showFlashbag();
                     $('.panel-refresh').click();
                 }
             });

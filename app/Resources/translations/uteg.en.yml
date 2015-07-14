@@ -198,7 +198,7 @@ invite:
     success: 'Invites sent'
     mail:
         message: 'Hi<br><br>You got invited to the Competition #COMPETITION#.<br><br>Please click on the following link to sign up your starters:<br><br>#LINK#<br><br>This link is valid until: #VALID#'
-        subject: %compname%: 'Inventation %compname%'
+        subject %compname%: 'Inventation %compname%'
     wizard:
         next: 'Next'
         previous: 'Previous'
@@ -240,6 +240,7 @@ invites:
     title: 'Current Invites'
     table:
         name: 'Name'
+        email: 'E-Mail'
         validUntil: 'Valid Until'
         state: 'State'
         actions: 'Actions'
@@ -254,11 +255,19 @@ invites:
     edit:
         form:
             club: 'Club'
+            email: 'E-Mail'
             valid: 'Valid until'
         modal:
             save: 'Save'
             cancel: 'Cancel'
         success: 'Invite successfully changed'
+    resend:
+        modal:
+            checkboxtext: 'Use custom E-Mail message'
+            text: 'Use #LINK# to place the invite link into the text'
+            send: 'Send'
+            cancel: 'Cancel'
+        success: 'Invite successfully resent'
     remove:
         modal:
             question: 'Do you really want to remove the inventation of '

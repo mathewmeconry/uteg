@@ -57,7 +57,7 @@ class StartersController extends Controller
 		} else {
 			$comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $request->getSession()->get('comp'));
 			$s2cs = ($cat == 0) ? $comp->getS2csBySex($sex) : $comp->getS2csBySexCat($sex, $cat);
-			$starters = array();
+			$starters["data"] = array();
 
 			foreach($s2cs as $s2c) {
 				$starters["data"][] = array("id" => $s2c->getId(),
@@ -429,7 +429,6 @@ class StartersController extends Controller
      */
     public function starterEditAction($id, Request $request) {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
-
         $s2c = $this->getDoctrine()->getEntityManager()->find('uteg:Starters2Competitions',$id);
 
         $form = $this->createForm(new S2cType(), $s2c);
@@ -442,7 +441,7 @@ class StartersController extends Controller
             $em->persist($s2c);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add('success', 'starter.edit.success');
+            $this->get('session')->getFlashBag()->add('success', 'starters.edit.success');
 
             return new Response('true');
         }

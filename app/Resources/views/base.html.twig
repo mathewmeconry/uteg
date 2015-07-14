@@ -235,6 +235,12 @@
         <script type='text/javascript' src='{{ asset("js/plugins/bootstrap/bootstrap-datepicker.js") }}'></script>
         <script type="text/javascript" src="{{ asset("js/plugins/owl/owl.carousel.min.js") }}"></script>
         
+        <script type="text/javascript" src="{{ asset("js/plugins/noty/jquery.noty.js") }}"></script>
+		<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topCenter.js") }}"></script>
+		<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topLeft.js") }}"></script>
+		<script type="text/javascript" src="{{ asset("js/plugins/noty/layouts/topRight.js") }}"></script>
+		<script type="text/javascript" src="{{ asset("js/plugins/noty/themes/default.js") }}"></script>
+        
         <script type="text/javascript" src="{{ asset("js/plugins/moment.min.js") }}"></script>
         <script type="text/javascript" src="{{ asset("js/plugins/daterangepicker/daterangepicker.js") }}"></script>
         {% block jsplugins %}{% endblock %}
@@ -248,8 +254,24 @@
         <script>
         {% block jsglobal %}{% endblock %}
         {% block jsfunctions %}{% endblock %}
+
+			function showFlashbag() {
+				$.ajax({
+					type: "POST",
+					url: "{{ path('parseFlashbag') }}",
+				}).success(function(flashbag) {
+					eval(flashbag);
+				});
+			}
         
             $(document).ready(function() {
+            	{% for flashMessage in app.session.flashbag.get('error') %}
+        	    	noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'error', timeout: 5000});
+	        	{% endfor %}
+	        	{% for flashMessage in app.session.flashbag.get('success') %}
+	        	    noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'success', timeout: 5000});
+	        	{% endfor %}
+	        	
                 {% block docready %}{% endblock %}
             });
         </script>
