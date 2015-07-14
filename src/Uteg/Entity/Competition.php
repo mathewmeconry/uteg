@@ -68,12 +68,12 @@ class Competition {
     protected $deletedAt;
 
     /**
-     * @ORM\ManytoMany(targetEntity="User", mappedBy="competitions")
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="competitions")
      */
     protected $users;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Starters2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $s2cs;
 

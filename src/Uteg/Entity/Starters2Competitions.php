@@ -22,35 +22,30 @@ class Starters2Competitions {
     protected $id;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Starter", inversedBy="s2cs", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Starter", inversedBy="s2cs", cascade={"persist"})
      * @ORM\JoinColumn(name="starter_id", referencedColumnName="starter_id")
      */
     protected $starter;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Competition", inversedBy="s2cs")
+     * @ORM\ManyToOne(targetEntity="Competition", inversedBy="s2cs")
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Club", inversedBy="members")
+     * @ORM\ManyToOne(targetEntity="Club", inversedBy="members")
      * @ORM\JoinColumn(name="club_id", referencedColumnName="club_id")
      * @Assert\NotBlank(message="stater.error.club")
      */
     protected $club;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Category", inversedBy="starters")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="starters")
      * @ORM\JoinColumn(name="cat_id", referencedColumnName="cat_id")
      * @Assert\NotBlank(message="stater.error.category")
      */
     protected $category;
-
-    /**
-     * @ORM\OnetoMany(targetEntity="Grade", mappedBy="s2c", cascade={"persist", "remove"}, orphanRemoval=TRUE)
-     */
-    protected $grades;
 
     /**
      * @ORM\Column(type="boolean", name="present", options={"default" = 0})
@@ -74,7 +69,6 @@ class Starters2Competitions {
     protected $deletedAt;
 
     public function __construct() {
-        $this->grades = new ArrayCollection();
         $this->starter = new Starter();
         $this->present = 0;
         $this->medicalcert = 0;
@@ -257,39 +251,6 @@ class Starters2Competitions {
     public function getCategory()
     {
         return $this->category;
-    }
-
-    /**
-     * Add grades
-     *
-     * @param \uteg\Entity\Grade $grades
-     * @return Starters2Competitions
-     */
-    public function addGrade(\uteg\Entity\Grade $grades)
-    {
-        $this->grades[] = $grades;
-
-        return $this;
-    }
-
-    /**
-     * Remove grades
-     *
-     * @param \uteg\Entity\Grade $grades
-     */
-    public function removeGrade(\uteg\Entity\Grade $grades)
-    {
-        $this->grades->removeElement($grades);
-    }
-
-    /**
-     * Get grades
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getGrades()
-    {
-        return $this->grades;
     }
 
     /**

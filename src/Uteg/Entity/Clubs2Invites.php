@@ -21,13 +21,13 @@ class Clubs2Invites {
     protected $id;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Club", inversedBy="c2is", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Club", inversedBy="c2is", cascade={"persist"})
      * @ORM\JoinColumn(name="club_id", referencedColumnName="club_id")
      */
     protected $club;
 
     /**
-     * @ORM\ManytoOne(targetEntity="Competition", inversedBy="c2is", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Competition", inversedBy="c2is", cascade={"persist"})
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
