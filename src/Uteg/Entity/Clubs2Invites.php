@@ -199,6 +199,10 @@ class Clubs2Invites {
         return $this->club->getName();
     }
 
+    public function getClubObj() {
+        return $this->club;
+    }
+
     /**
      * Set competition
      *

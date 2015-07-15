@@ -1,0 +1,77 @@
+{% trans_default_domain 'uteg' %}
+
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'starters.import.title'|trans }}{% endblock %}
+
+{% block docready %}
+{% for starter in starters %}
+{% if starter.sex is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.sex }}");{% endif %}
+{% if starter.category.id is defined %}$('#category{{ loop.index0 }}').val("{{ starter.category.id }}");{% endif %}
+{% endfor %}
+
+$('#submit').click(function() {
+$('#starters').submit();
+});
+
+$('#cancel').click(function() {
+window.location.href = "{{ path('starterImport') }}";
+});
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default" style="min-height: 400px;">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ 'starters.import.header'|trans }}</h3>
+            </div>
+            <div class="panel-body">
+                <form id="starters" method="POST" action="{{ path('starterAddMassive') }}">
+                    <table class="table table-striped" >
+                        <thead>
+                        <tr>
+                            <th>{{ 'starters.import.table.firstname'|trans }}</th>
+                            <th>{{ 'starters.import.table.lastname'|trans }}</th>
+                            <th>{{ 'starters.import.table.birthyear'|trans }}</th>
+                            <th>{{ 'starters.import.table.sex'|trans }}</th>
+                            <th>{{ 'starters.import.table.category'|trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for starter in starters %}
+                        <tr>
+                            <td>
+                                <input name="data[{{ loop.index0 }}][firstname]" type="text" class="form-control" value="{{ starter.firstname }}" >
+                                {% if errors[loop.index0].firstname is defined %}<label class="error">{{ errors[loop.index0].firstname|trans }}</label>{% endif %}
+                            </td>
+                            <td>
+                                <input name="data[{{ loop.index0 }}][lastname]" type="text"  class="form-control"value="{{ starter.lastname }}" >
+                                {% if errors[loop.index0].lastname is defined %}<label class="error">{{ errors[loop.index0].lastname|trans }}</label>{% endif %}
+                            </td>
+                            <td>
+                                <input name="data[{{ loop.index0 }}][birthyear]" type="number" min="1950"  class="form-control"value="{{ starter.birthyear }}" >
+                                {% if errors[loop.index0].birthyear is defined %}<label class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
+                            </td>
+                            <td>
+                                <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]" class="form-control"><option value="male">{{ 'starters.import.table.male'|trans }}</option><option value="female">{{ 'starters.import.table.female'|trans }}</option></select>
+                                {% if errors[loop.index0].sex is defined %}<label class="error">{{ errors[loop.index0].sex|trans }}</label>{% endif %}
+                            </td>
+                            <td>
+                                <select id="category{{ loop.index0 }}" name="data[{{ loop.index0 }}][category]" class="form-control" >{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select>
+                                {% if errors[loop.index0].category is defined %}<label class="error">{{ errors[loop.index0].category|trans }}</label>{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+                <div class="pull-right">
+                    <button id="submit" class="btn btn-success active"><span class="fa fa-save"></span> {{ 'starters.import.save'|trans }}</button>
+                    <button id="cancel" class="btn btn-danger"><span class="fa fa-times"></span> {{ 'starters.import.cancel'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

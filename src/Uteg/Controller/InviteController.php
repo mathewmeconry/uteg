@@ -96,9 +96,31 @@ class InviteController extends Controller
 	 * @Route("/invite/{token}", name="inviteToken")
 	 * @Method("GET")
 	 */
-	public function inviteTokenAction()
+	public function inviteTokenAction($token)
 	{
-		return $this->render('inviteClubView.html.twig');
+		$em = $this->getDoctrine()->getManager();
+		$c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("token" => $token));
+		$today = date('Y-m-d');
+
+		if($c2i->getValid()->format('Y-m-d') > $today) {
+			$categories = $em->getRepository('uteg:Category')->findBy(array(), array('number' => 'asc'));
+			$qb = $em->createQueryBuilder();
+			$qb->select('s2c.starter')
+				->from('uteg\Entity\Starters2Competitions', 's2c')
+				->where('s2c.club = ?1')
+				->distinct()
+				->setParameter(1, $c2i->getClubObj());
+			var_dump($qb->getQuery()->getResult());
+
+			return $this->render('inviteClubView.html.twig',
+				array('categories' => $categories,
+					'starters' => $starters,
+					'club' => $c2i->getClubObj(),
+				)
+			);
+		} else {
+			return new Response('Link expired');
+		}
 	}
 	
 	/**
