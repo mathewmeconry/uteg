@@ -34,7 +34,8 @@ class DefaultController extends Controller
             $result[] = array('id' => $starter->getId(),
                 "firstname" => $starter->getFirstname(),
                 "lastname" => $starter->getLastname(),
-                "birthyear" => $starter->getBirthyear());
+                "birthyear" => $starter->getBirthyear(),
+                "sex" => $starter->getSex());
         }
 
         $response = new Response(json_encode($result));

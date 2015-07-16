@@ -4,24 +4,44 @@
 
 {% block title %}{{ 'invite.club.title'|trans }}{% endblock %}
 
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" id="theme" href='{{ asset("js/plugins/typeahead/typeahead.css") }}' >
+{% endblock %}
+
 {% block jsplugins %}
     <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
-    <script type="text/javascript" src='{{ asset("js/plugins/typeahead/typeahead.min.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/typeahead/typeahead.js") }}'></script>
 {% endblock %}
 
 {% block jsglobal %}
     var category = '{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}';
     var sex = '<option value="male">{{ 'invite.club.table.male'|trans }}</option><option value="female">{{ 'invite.club.table.female'|trans }}</option>';
     var starters = JSON.parse('{{ render(controller("uteg:Default:autocompleteStarters")) }}');
-    var typeaheadArray = [];
+    var substringMatcher = function(starters) {
+        return function findMatches(q, cb) {
+            var matches, substringRegex;
+
+            matches = [];
+
+            substrRegex = new RegExp(q, 'i');
+
+            $.each(starters, function(i, starter) {
+                if (substrRegex.test(starter.firstname) || substrRegex.test(starter.lastname) || substrRegex.test(starter.birthyear)) {
+                    matches.push(starter);
+                }
+            });
+
+            cb(matches);
+        };
+    };
 
     function addNewLineEvent() {
-        $('#starters table tbody tr:last td input').change(function() {
+        $('#starters table tbody tr:last td input.typeahead').bind('typeahead:change typeahead:select', function() {
             if($(this).val() !== '' && $(this).closest("tr").is(":last-child")) {
                 $('#starters table tbody').append('<tr>\
-                    <td><input name="data[][firstname]" type="text" class="form-control typeahead"></td>\
-                    <td><input name="data[][lastname]" type="text" class="form-control typeahead"></td>\
-                    <td><input name="data[][birthyear]" type="number" min="1950" class="form-control typeahead"></td>\
+                    <td><input name="data[][firstname]" type="text" class="form-control typeahead" placeholder="{{ 'invite.club.table.firstname'|trans }}"></td>\
+                    <td><input name="data[][lastname]" type="text" class="form-control typeahead" placeholder="{{ 'invite.club.table.lastname'|trans }}"></td>\
+                    <td><input name="data[][birthyear]" type="number" min="1950" class="form-control typeahead" placeholder="{{ 'invite.club.table.birthyear'|trans }}"></td>\
                     <td><select name="data[][sex]" class="form-control select">' + sex + '</select></td>\
                     <td><select name="data[][category]" class="form-control select">' + category + '</select></td>\
                     <td><div class="btn-group"><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon starter-remove"><i class="fa fa-times"></i><span>Remove</span></button></div></td>\
@@ -35,6 +55,54 @@
                 });
 
                 $('#starters table tbody tr:last td select.select').selectpicker();
+
+
+                $('#starters table tbody tr:last td input.typeahead[name*="firstname"]').typeahead(null, {
+                    name: 'starters',
+                    highlight: true,
+                    limit: 5,
+                    display: 'firstname',
+                    source: substringMatcher(starters),
+                    templates: {
+                        suggestion: function (starter) {
+                            return '<p><strong>' + starter.firstname + ' ' + starter.lastname + '</strong> (' + starter.sex + ') - ' + starter.birthyear + '</p>';
+                        }
+                    }
+                });
+
+                $('#starters table tbody tr:last td input.typeahead[name*="lastname"]').typeahead(null, {
+                    name: 'starters',
+                    highlight: true,
+                    limit: 5,
+                    display: 'lastname',
+                    source: substringMatcher(starters),
+                    templates: {
+                        suggestion: function (starter) {
+                            return '<p><strong>' + starter.firstname + ' ' + starter.lastname + '</strong> (' + starter.sex + ') - ' + starter.birthyear + '</p>';
+                        }
+                    }
+                });
+
+                $('#starters table tbody tr:last td input.typeahead[name*="birthyear"]').typeahead(null, {
+                    name: 'starters',
+                    highlight: true,
+                    limit: 5,
+                    display: 'birthyear',
+                    source: substringMatcher(starters),
+                    templates: {
+                        suggestion: function (starter) {
+                            return '<p><strong>' + starter.firstname + ' ' + starter.lastname + '</strong> (' + starter.sex + ') - ' + starter.birthyear + '</p>';
+                        }
+                    }
+                });
+
+                $('#starters table tbody tr:last td input.typeahead').bind('typeahead:select', function(ev, starter) {
+                    var row = $(this).closest('tr');
+                    row.find('[name*="firstname"]').typeahead('val', starter.firstname);
+                    row.find('[name*="lastname"]').typeahead('val', starter.lastname);
+                    row.find('[name*="birthyear"]').typeahead('val', starter.birthyear);
+                    row.find('[name*="sex"]').selectpicker('val', starter.sex);
+                });
 
                 addNewLineEvent();
             }
@@ -55,11 +123,52 @@
 
     $('.select').selectpicker();
 
-    $.each(starters, function(key, starter) {
-        typeaheadArray.push(starter.firstname + " " + starter.lastname + " - " + starter.birthyear);
+    $('.typeahead[name*="firstname"]').typeahead(null, {
+        name: 'starters',
+        highlight: true,
+        limit: 5,
+        display: 'firstname',
+        source: substringMatcher(starters),
+        templates: {
+            suggestion: function (starter) {
+                return '<p><strong>' + starter.firstname + ' ' + starter.lastname + '</strong> (' + starter.sex + ') - ' + starter.birthyear + '</p>';
+            }
+        }
     });
 
+    $('.typeahead[name*="lastname"]').typeahead(null, {
+        name: 'starters',
+        highlight: true,
+        limit: 5,
+        display: 'lastname',
+        source: substringMatcher(starters),
+        templates: {
+            suggestion: function (starter) {
+                return '<p><strong>' + starter.firstname + ' ' + starter.lastname + '</strong> (' + starter.sex + ') - ' + starter.birthyear + '</p>';
+            }
+        }
+    });
 
+    $('.typeahead[name*="birthyear"]').typeahead(null, {
+        name: 'starters',
+        highlight: true,
+        limit: 5,
+        display: 'birthyear',
+        source: substringMatcher(starters),
+        templates: {
+            suggestion: function (starter) {
+                return '<p><strong>' + starter.firstname + ' ' + starter.lastname + '</strong> (' + starter.sex + ') - ' + starter.birthyear + '</p>';
+            }
+        }
+    });
+
+    $('.typeahead').bind('typeahead:select', function(ev, starter) {
+        var row = $(this).closest('tr');
+        row.find('[name*="firstname"]').typeahead('val', starter.firstname);
+        row.find('[name*="lastname"]').typeahead('val', starter.lastname);
+        row.find('[name*="birthyear"]').typeahead('val', starter.birthyear);
+        row.find('[name*="sex"]').selectpicker('val', starter.sex);
+    });
 
     $('button.starter-remove').click(function(e) {
         e.preventDefault();
@@ -98,15 +207,15 @@
                             {% for starter in starters %}
                                 <tr>
                                     <td>
-                                        <input name="data[{{ loop.index0 }}][firstname]" type="text" class="form-control typeahead" value="{{ starter.firstname }}">
+                                        <input name="data[{{ loop.index0 }}][firstname]" type="text" class="form-control typeahead" value="{{ starter.firstname }}" placeholder="{{ 'invite.club.table.firstname'|trans }}">
                                         {% if errors[loop.index0].firstname is defined %}<label class="error">{{ errors[loop.index0].firstname|trans }}</label>{% endif %}
                                     </td>
                                     <td>
-                                        <input name="data[{{ loop.index0 }}][lastname]" type="text" class="form-control typeahead" value="{{ starter.lastname }}">
+                                        <input name="data[{{ loop.index0 }}][lastname]" type="text" class="form-control typeahead" value="{{ starter.lastname }}" placeholder="{{ 'invite.club.table.lastname'|trans }}">
                                         {% if errors[loop.index0].lastname is defined %}<label class="error">{{ errors[loop.index0].lastname|trans }}</label>{% endif %}
                                     </td>
                                     <td>
-                                        <input name="data[{{ loop.index0 }}][birthyear]" type="number" min="1950" class="form-control typeahead" value="{{ starter.birthyear }}">
+                                        <input name="data[{{ loop.index0 }}][birthyear]" type="number" min="1950" class="form-control typeahead" value="{{ starter.birthyear }}" placeholder="{{ 'invite.club.table.birthyear'|trans }}">
                                         {% if errors[loop.index0].birthyear is defined %}<label class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
                                     </td>
                                     <td>
@@ -121,9 +230,9 @@
                                 </tr>
                             {% endfor %}
                             <tr>
-                                <td><input name="data[][firstname]" type="text" class="form-control typeahead"></td>
-                                <td><input name="data[][lastname]" type="text" class="form-control typeahead"></td>
-                                <td><input name="data[][birthyear]" type="number" min="1950" class="form-control typeahead"></td>
+                                <td><input name="data[][firstname]" type="text" class="form-control typeahead" placeholder="{{ 'invite.club.table.firstname'|trans }}"></td>
+                                <td><input name="data[][lastname]" type="text" class="form-control typeahead" placeholder="{{ 'invite.club.table.lastname'|trans }}"></td>
+                                <td><input name="data[][birthyear]" type="number" min="1950" class="form-control typeahead" placeholder="{{ 'invite.club.table.birthyear'|trans }}"></td>
                                 <td><select name="data[][sex]" class="form-control select"><option value="male">{{ 'invite.club.table.male'|trans }}</option><option value="female">{{ 'invite.club.table.female'|trans }}</option></select></td>
                                 <td><select name="data[][category]" class="form-control select">{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select></td>
                                 <td><div class="btn-group"><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon starter-remove"><i class="fa fa-times"></i><span>Remove</span></button></div></td>
