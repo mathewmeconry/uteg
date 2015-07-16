@@ -5,12 +5,13 @@
 {% block title %}{{ 'starters.title'|trans }}{% endblock %}
 
 {% block cssplugins %}
-    <link rel="stylesheet" type="text/css" href="/js/plugins/datatables/dataTables.responsive.css"/>
+    <link rel="stylesheet" type="text/css" href='{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}'/>
 {% endblock %}
 
 {% block jsplugins %}
-	<script type="text/javascript" src="/js/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="/js/plugins/datatables/dataTables.responsive.js"></script>
+	<script type="text/javascript" src='{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
 {% endblock %}
 
 {% block jsfunctions %}
@@ -101,6 +102,10 @@
                 method: "POST"
             }).success(function(data) {
                 $('#dialog-edit-body').html(data);
+                $('.selectSearch').selectpicker({
+                    liveSearch: true,
+                    size: 10
+                });
             });
 
             $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
@@ -159,6 +164,10 @@
                 method: "POST"
             }).success(function(data) {
                 $('#dialog-edit-body').html(data);
+                $('.selectSearch').selectpicker({
+                    liveSearch: true,
+                    size: 10
+                });
             });
 
             $('#dialog-edit-modal-title').html('Add new');

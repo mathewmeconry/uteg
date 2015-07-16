@@ -15,6 +15,8 @@
     <script type='text/javascript' src='{{ asset("js/plugins/validationengine/languages/jquery.validationEngine-en.js") }}'></script>
     <script type='text/javascript' src='{{ asset("js/plugins/validationengine/jquery.validationEngine.js") }}'></script>        
 	<script type='text/javascript' src='{{ asset("js/plugins/jquery-validation/jquery.validate.js") }}'></script>
+	<script type="text/javascript" src='{{ asset("js/plugins/summernote/summernote.js") }}'></script>
+	<script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-datepicker.js") }}'></script>
 {% endblock %}
 
 {% block jsfunctions %}
@@ -75,7 +77,7 @@
                 $('#inviteMessageReviewValidBody').html($('#messageValidUntil').val());
 
                 if($('#customMessage').is(':checked')) {
-                    $('#inviteMessageReviewTextBody').html($('#mailMessage').val());
+                    $('#inviteMessageReviewTextBody').html($('#mailMessage').code());
                 } else {
                     $('#inviteMessageReviewTextBody').html('{{ 'invite.step4.default'|trans }}');
                 }
@@ -291,7 +293,7 @@
 	                                <label class="switch switch-small"><input id="customMessage" type="checkbox" value="0"><span></span></label>
 	                                <div id="mailMessageDiv" style="display: none">
 	                                    <p>{{ 'invite.step3.text'|trans }}</p>
-										<textarea id="mailMessage" name="mailMessage" style="resize: none" class="form-control required" rows="10"></textarea>
+										<textarea id="mailMessage" name="mailMessage" style="resize: none" class="summernote required" rows="10"></textarea>
 									</div>
 								</form>
 							</p>

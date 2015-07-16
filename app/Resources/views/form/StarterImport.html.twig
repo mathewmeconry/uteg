@@ -4,12 +4,25 @@
 
 {% block title %}{{ 'starters.import.title'|trans }}{% endblock %}
 
+{% block jsplugins %}
+    <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+{% endblock %}
+
 {% block docready %}
     {% for starter in starters %}
         {% if starter.sex is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.sex }}");{% endif %}
         {% if starter.club.id is defined %}$('#club{{ loop.index0 }}').val("{{ starter.club.id }}");{% endif %}
         {% if starter.category.id is defined %}$('#category{{ loop.index0 }}').val("{{ starter.category.id }}");{% endif %}
     {% endfor %}
+
+    $('.selectSearch').selectpicker({
+        liveSearch: true,
+        size: 10
+    });
+
+    $('.select').selectpicker({
+        size: 10
+    });
 
     $('#submit').click(function() {
         $('#starters').submit();
@@ -56,15 +69,15 @@
                                             {% if errors[loop.index0].birthyear is defined %}<label class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
                                         </td>
                                         <td>
-                                            <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]" class="form-control"><option value="male">{{ 'starters.import.table.male'|trans }}</option><option value="female">{{ 'starters.import.table.female'|trans }}</option></select>
+                                            <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]" class="form-control select"><option value="male">{{ 'starters.import.table.male'|trans }}</option><option value="female">{{ 'starters.import.table.female'|trans }}</option></select>
                                             {% if errors[loop.index0].sex is defined %}<label class="error">{{ errors[loop.index0].sex|trans }}</label>{% endif %}
                                         </td>
                                         <td>
-                                            <select id="club{{ loop.index0 }}" name="data[{{ loop.index0 }}][club]" class="form-control" >{% for club in clubs %}<option value="{{ club.id }}">{{ club.name }}</option>{% endfor %}</select>
+                                            <select id="club{{ loop.index0 }}" name="data[{{ loop.index0 }}][club]" class="form-control selectSearch" >{% for club in clubs %}<option value="{{ club.id }}">{{ club.name }}</option>{% endfor %}</select>
                                             {% if errors[loop.index0].club is defined %}<label class="error">{{ errors[loop.index0].club|trans }}</label>{% endif %}
                                         </td>
                                         <td>
-                                            <select id="category{{ loop.index0 }}" name="data[{{ loop.index0 }}][category]" class="form-control" >{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select>
+                                            <select id="category{{ loop.index0 }}" name="data[{{ loop.index0 }}][category]" class="form-control select" >{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select>
                                             {% if errors[loop.index0].category is defined %}<label class="error">{{ errors[loop.index0].category|trans }}</label>{% endif %}
                                         </td>
                                     </tr>

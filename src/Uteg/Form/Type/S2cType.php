@@ -33,7 +33,7 @@ class S2cType extends AbstractType
             }, 'label' => 'starters.edit.form.category', "attr" => array("placeholder" => "starters.edit.form.category", "class" => "form-control"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'))
             ->add('club', 'entity', array('class' => 'uteg:Club', 'query_builder' => function(EntityRepository $er) {
                     return $er->createQueryBuilder('c')->orderBy('c.name', 'ASC');
-                }, 'label' => 'starters.edit.form.club', "attr" => array("placeholder" => "starters.edit.form.club", "class" => "form-control"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'))
+                }, 'label' => 'starters.edit.form.club', "attr" => array("class" => "form-control selectSearch"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'))
             ->add('present', 'checkbox', array('label' => 'starters.edit.form.present', 'required' => false, "attr" => array("placeholder" => "starters.edit.form.present"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'))
             ->add('medicalcert', 'checkbox', array('label' => 'starters.edit.form.medicalcert', 'required' => false, "attr" => array("placeholder" => "starters.edit.form.medicalcert"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'));
     }

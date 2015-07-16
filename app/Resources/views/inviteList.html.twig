@@ -12,6 +12,8 @@
 {% block jsplugins %}
 	<script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/summernote/summernote.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-datepicker.js") }}'></script>
 {% endblock %}
 
 {% block jsfunctions %}
@@ -144,7 +146,7 @@
             $.ajax({
                 type: "POST",
                 url: "{{ path('inviteResend') }}/" + $("#dialog-resend").data('c2i_id'),
-                data: { custom: $('#customMessage').is(':checked'), message: nl2br($('#mailMessage').val(), false) }
+                data: { custom: $('#customMessage').is(':checked'), message: nl2br($('#mailMessage').code(), false) }
             }).success(function(data) {
                 if(data == 'true') {
                     $('#dialog-resend').modal('hide');
@@ -160,7 +162,9 @@
                 url: "{{ path('inviteRemove') }}/" + $("#dialog-remove").data('c2i_id'),
             }).success(function(data) {
                 if(data == 'true') {
+                    $('#dialog-remove').modal('hide');
 					showFlashbag();
+                    $('.panel-refresh').click();
                 }
             });
         });
@@ -235,7 +239,7 @@
 	                    <label class="switch switch-small"><input id="customMessage" type="checkbox" value="0"><span></span></label>
 	                   	<div id="mailMessageDiv" style="display: none">
 	                    	<p>{{ 'invites.resend.modal.text'|trans }}</p>
-							<textarea id="mailMessage" name="mailMessage" style="resize: none" class="form-control required" rows="10"></textarea>
+							<textarea id="mailMessage" name="mailMessage" style="resize: none" class="summernote required" rows="10"></textarea>
 						</div>
                     </div>
                     <div class="modal-footer">

@@ -42,7 +42,7 @@ class InviteController extends Controller
 					$token = sha1(uniqid($club['name'], true));
 					$clubobj = $em->find('uteg:Club', $club['id']);
 					
-					$c2i = $em->find('uteg:Clubs2Invites', $clubobj->getId());
+					$c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("club" => $clubobj, "competition" => $em->find('uteg:Competition', $request->getSession()->get('comp'))));
 					if(!$c2i) {
 						$c2i = new Clubs2Invites();
 					}
@@ -71,9 +71,7 @@ class InviteController extends Controller
 					}
 					
 					$this->sendMail($message['default'], $message['valid'], $comp, $club['mail'], $token, (isset($message['message']) ? $message['message'] : null));
-	
-					$result = $this->get('mailer')->send($mail);
-	
+
 					unset($c2i);
 				}
 			} catch(Exception $e) {
@@ -93,7 +91,7 @@ class InviteController extends Controller
 	}
 	
 	/**
-	 * @Route("/invite/{token}", name="inviteToken")
+	 * @Route("/invite/club/{token}", name="inviteToken")
 	 * @Method("GET")
 	 */
 	public function inviteTokenAction($token)
@@ -102,19 +100,22 @@ class InviteController extends Controller
 		$c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("token" => $token));
 		$today = date('Y-m-d');
 
-		if($c2i->getValid()->format('Y-m-d') > $today) {
+		if($c2i->getValid()->format('Y-m-d') >= $today) {
 			$categories = $em->getRepository('uteg:Category')->findBy(array(), array('number' => 'asc'));
 			$qb = $em->createQueryBuilder();
-			$qb->select('s2c.starter')
-				->from('uteg\Entity\Starters2Competitions', 's2c')
-				->where('s2c.club = ?1')
+			$qb->select('s2c')
 				->distinct()
-				->setParameter(1, $c2i->getClubObj());
-			var_dump($qb->getQuery()->getResult());
+				->from('uteg\Entity\Starters2Competitions', 's2c')
+				->join('uteg\Entity\Competition', 'co', \Doctrine\ORM\Query\Expr\Join::WITH, 's2c.competition = co.id')
+				->where('s2c.club = ?1')
+				->andWhere('co.id = (SELECT MAX(s2c2.competition) FROM uteg\Entity\Starters2Competitions as s2c2 WHERE s2c2.club = ?2 AND s2c2.competition < ?3)')
+				->setParameter(1, $c2i->getClubObj())
+				->setParameter(2, $c2i->getClubObj())
+				->setParameter(3, $c2i->getCompetition());
 
 			return $this->render('inviteClubView.html.twig',
 				array('categories' => $categories,
-					'starters' => $starters,
+					'starters' => $qb->getQuery()->getResult(),
 					'club' => $c2i->getClubObj(),
 				)
 			);

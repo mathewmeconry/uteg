@@ -1,77 +1,141 @@
 {% trans_default_domain 'uteg' %}
 
-{% extends "base.html.twig" %}
+{% extends "baseAnon.html.twig" %}
 
-{% block title %}{{ 'starters.import.title'|trans }}{% endblock %}
+{% block title %}{{ 'invite.club.title'|trans }}{% endblock %}
+
+{% block jsplugins %}
+    <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/typeahead/typeahead.min.js") }}'></script>
+{% endblock %}
+
+{% block jsglobal %}
+    var category = '{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}';
+    var sex = '<option value="male">{{ 'invite.club.table.male'|trans }}</option><option value="female">{{ 'invite.club.table.female'|trans }}</option>';
+    var starters = JSON.parse('{{ render(controller("uteg:Default:autocompleteStarters")) }}');
+    var typeaheadArray = [];
+
+    function addNewLineEvent() {
+        $('#starters table tbody tr:last td input').change(function() {
+            if($(this).val() !== '' && $(this).closest("tr").is(":last-child")) {
+                $('#starters table tbody').append('<tr>\
+                    <td><input name="data[][firstname]" type="text" class="form-control typeahead"></td>\
+                    <td><input name="data[][lastname]" type="text" class="form-control typeahead"></td>\
+                    <td><input name="data[][birthyear]" type="number" min="1950" class="form-control typeahead"></td>\
+                    <td><select name="data[][sex]" class="form-control select">' + sex + '</select></td>\
+                    <td><select name="data[][category]" class="form-control select">' + category + '</select></td>\
+                    <td><div class="btn-group"><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon starter-remove"><i class="fa fa-times"></i><span>Remove</span></button></div></td>\
+                </tr>');
+
+                $('#starters table tbody tr:last td div button.starter-remove').click(function(e) {
+                    e.preventDefault();
+                    if(!$(this).closest("tr").is(":last-child")) {
+                        $(this).closest("tr").remove();
+                    }
+                });
+
+                $('#starters table tbody tr:last td select.select').selectpicker();
+
+                addNewLineEvent();
+            }
+        });
+    }
+{% endblock %}
 
 {% block docready %}
-{% for starter in starters %}
-{% if starter.sex is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.sex }}");{% endif %}
-{% if starter.category.id is defined %}$('#category{{ loop.index0 }}').val("{{ starter.category.id }}");{% endif %}
-{% endfor %}
+    $('select[id*="sex"]').html(sex);
+    $('select[id*="category"]').html(category);
 
-$('#submit').click(function() {
-$('#starters').submit();
-});
+    {% for starter in starters %}
+        {% if starter.sex is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.sex }}");{% endif %}
+        {% if starter.category.id is defined %}$('#category{{ loop.index0 }}').val("{{ starter.category.id }}");{% endif %}
+    {% endfor %}
 
-$('#cancel').click(function() {
-window.location.href = "{{ path('starterImport') }}";
-});
+    addNewLineEvent();
+
+    $('.select').selectpicker();
+
+    $.each(starters, function(key, starter) {
+        typeaheadArray.push(starter.firstname + " " + starter.lastname + " - " + starter.birthyear);
+    });
+
+
+
+    $('button.starter-remove').click(function(e) {
+        e.preventDefault();
+        if(!$(this).closest("tr").is(":last-child")) {
+            $(this).closest("tr").remove();
+        }
+    });
+
+
+    $('#submit').click(function() {
+        $('#starters').submit();
+    });
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default" style="min-height: 400px;">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{ 'starters.import.header'|trans }}</h3>
-            </div>
-            <div class="panel-body">
-                <form id="starters" method="POST" action="{{ path('starterAddMassive') }}">
-                    <table class="table table-striped" >
-                        <thead>
-                        <tr>
-                            <th>{{ 'starters.import.table.firstname'|trans }}</th>
-                            <th>{{ 'starters.import.table.lastname'|trans }}</th>
-                            <th>{{ 'starters.import.table.birthyear'|trans }}</th>
-                            <th>{{ 'starters.import.table.sex'|trans }}</th>
-                            <th>{{ 'starters.import.table.category'|trans }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for starter in starters %}
-                        <tr>
-                            <td>
-                                <input name="data[{{ loop.index0 }}][firstname]" type="text" class="form-control" value="{{ starter.firstname }}" >
-                                {% if errors[loop.index0].firstname is defined %}<label class="error">{{ errors[loop.index0].firstname|trans }}</label>{% endif %}
-                            </td>
-                            <td>
-                                <input name="data[{{ loop.index0 }}][lastname]" type="text"  class="form-control"value="{{ starter.lastname }}" >
-                                {% if errors[loop.index0].lastname is defined %}<label class="error">{{ errors[loop.index0].lastname|trans }}</label>{% endif %}
-                            </td>
-                            <td>
-                                <input name="data[{{ loop.index0 }}][birthyear]" type="number" min="1950"  class="form-control"value="{{ starter.birthyear }}" >
-                                {% if errors[loop.index0].birthyear is defined %}<label class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
-                            </td>
-                            <td>
-                                <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]" class="form-control"><option value="male">{{ 'starters.import.table.male'|trans }}</option><option value="female">{{ 'starters.import.table.female'|trans }}</option></select>
-                                {% if errors[loop.index0].sex is defined %}<label class="error">{{ errors[loop.index0].sex|trans }}</label>{% endif %}
-                            </td>
-                            <td>
-                                <select id="category{{ loop.index0 }}" name="data[{{ loop.index0 }}][category]" class="form-control" >{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select>
-                                {% if errors[loop.index0].category is defined %}<label class="error">{{ errors[loop.index0].category|trans }}</label>{% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </form>
-                <div class="pull-right">
-                    <button id="submit" class="btn btn-success active"><span class="fa fa-save"></span> {{ 'starters.import.save'|trans }}</button>
-                    <button id="cancel" class="btn btn-danger"><span class="fa fa-times"></span> {{ 'starters.import.cancel'|trans }}</button>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" style="min-height: 400px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ 'invite.club.header'|trans }}</h3>
+                </div>
+                <div class="panel-body">
+                    <form id="starters" method="POST" action="{{ path('starterAddMassive') }}">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>{{ 'invite.club.table.firstname'|trans }}</th>
+                                <th>{{ 'invite.club.table.lastname'|trans }}</th>
+                                <th>{{ 'invite.club.table.birthyear'|trans }}</th>
+                                <th>{{ 'invite.club.table.sex'|trans }}</th>
+                                <th>{{ 'invite.club.table.category'|trans }}</th>
+                                <th style="width: 105px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for starter in starters %}
+                                <tr>
+                                    <td>
+                                        <input name="data[{{ loop.index0 }}][firstname]" type="text" class="form-control typeahead" value="{{ starter.firstname }}">
+                                        {% if errors[loop.index0].firstname is defined %}<label class="error">{{ errors[loop.index0].firstname|trans }}</label>{% endif %}
+                                    </td>
+                                    <td>
+                                        <input name="data[{{ loop.index0 }}][lastname]" type="text" class="form-control typeahead" value="{{ starter.lastname }}">
+                                        {% if errors[loop.index0].lastname is defined %}<label class="error">{{ errors[loop.index0].lastname|trans }}</label>{% endif %}
+                                    </td>
+                                    <td>
+                                        <input name="data[{{ loop.index0 }}][birthyear]" type="number" min="1950" class="form-control typeahead" value="{{ starter.birthyear }}">
+                                        {% if errors[loop.index0].birthyear is defined %}<label class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
+                                    </td>
+                                    <td>
+                                        <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]" class="form-control select"></select>
+                                        {% if errors[loop.index0].sex is defined %}<label class="error">{{ errors[loop.index0].sex|trans }}</label>{% endif %}
+                                    </td>
+                                    <td>
+                                        <select id="category{{ loop.index0 }}" name="data[{{ loop.index0 }}][category]" class="form-control select"></select>
+                                        {% if errors[loop.index0].category is defined %}<label class="error">{{ errors[loop.index0].category|trans }}</label>{% endif %}
+                                    </td>
+                                    <td><div class="btn-group"><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon starter-remove"><i class="fa fa-times"></i><span>Remove</span></button></div></td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td><input name="data[][firstname]" type="text" class="form-control typeahead"></td>
+                                <td><input name="data[][lastname]" type="text" class="form-control typeahead"></td>
+                                <td><input name="data[][birthyear]" type="number" min="1950" class="form-control typeahead"></td>
+                                <td><select name="data[][sex]" class="form-control select"><option value="male">{{ 'invite.club.table.male'|trans }}</option><option value="female">{{ 'invite.club.table.female'|trans }}</option></select></td>
+                                <td><select name="data[][category]" class="form-control select">{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select></td>
+                                <td><div class="btn-group"><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon starter-remove"><i class="fa fa-times"></i><span>Remove</span></button></div></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                    <div class="pull-right">
+                        <button id="submit" class="btn btn-success active"><span class="fa fa-save"></span> {{ 'invite.club.save'|trans }}</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

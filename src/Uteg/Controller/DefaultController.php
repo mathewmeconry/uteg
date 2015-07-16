@@ -22,4 +22,24 @@ class DefaultController extends Controller
     public function flashbagAction() {
     	return $this->render('parseFlashbag.html.twig');
     }
+
+    /**
+     * @Route("/autocomplete/starters", name="autocompleteStarters")
+     */
+    public function autocompleteStartersAction() {
+        $em = $this->getDoctrine()->getManager();
+        $starters = $em->getRepository('uteg:Starter')->findAll();
+
+        foreach($starters as $starter) {
+            $result[] = array('id' => $starter->getId(),
+                "firstname" => $starter->getFirstname(),
+                "lastname" => $starter->getLastname(),
+                "birthyear" => $starter->getBirthyear());
+        }
+
+        $response = new Response(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
 }

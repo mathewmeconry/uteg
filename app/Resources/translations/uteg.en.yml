@@ -233,7 +233,19 @@ invite:
         email: 'E-Mail'
         default: 'Using default message.'
         validuntil: 'Link valid until: '
-        text: 'Message text: '        
+        text: 'Message text: '
+    club:
+        title: 'Club Inventation List'
+        header: 'Starter List'
+        save: 'Save'
+        table:
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            birthyear: 'Birth year'
+            sex: 'Sex'
+            category: 'Category'
+            male: 'Male'
+            female: 'Female'
 
 invites:
     header: 'Current Invites'
