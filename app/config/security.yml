@@ -28,7 +28,8 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/invite/club/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/autocomplete/starters, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/autocomplete/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/starters/massive/add, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/_wdt/, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/_profiler/, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, role: IS_AUTHENTICATED_REMEMBERED }

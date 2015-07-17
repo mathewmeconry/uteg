@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ClubsController extends Controller
+class ClubsController extends DefaultController
 {
     /**
      * @Route("/clubs", name="clubs")

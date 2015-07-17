@@ -16,7 +16,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 
-class StartersController extends Controller
+class StartersController extends DefaultController
 {
     /**
      * @Route("/starters/{sex}", name="starters", defaults={"sex": "male"}, requirements={"sex": "male|female"})
@@ -174,84 +174,19 @@ class StartersController extends Controller
     public function starterAddMassiveAction(Request $request)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
-
         $em = $this->getDoctrine()->getEntityManager();
-        $starters = $this->get('request')->request->get('data');
-        $competition = $em->getRepository('uteg:Competition')->find($request->getSession()->get('comp'));
 
-        foreach ($starters as $starterPost) {
-            $starter = $em->getRepository('uteg:Starter')->findOneBy(array("firstname" => $starterPost['firstname'], "lastname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "sex" => $starterPost['sex']));
-            if (!$starter) {
-                $starter = $em->getRepository('uteg:Starter')->findOneBy(array("lastname" => $starterPost['firstname'], "firstname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "sex" => $starterPost['sex']));
-                if (!$starter) {
-                    $starter = new Starter();
-                    $starter->setFirstname($starterPost['firstname']);
-                    $starter->setLastname($starterPost['lastname']);
-                    $starter->setBirthyear($starterPost['birthyear']);
-                    $starter->setSex($starterPost['sex']);
-                    $s2c = false;
-                } else {
-                    $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
-                }
-            } else {
-                $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
-            }
+        $return = $this->addMassivAction($em->getRepository('uteg:Competition')->find($request->getSession()->get('comp')), $request->request->get('data'));
 
-            if (!$s2c) {
-                $s2c = new Starters2Competitions();
-                $s2c->setStarter($starter);
-                $s2c->setCompetition($competition);
-
-                $starter->addS2c($s2c);
-                $competition->addS2c($s2c);
-            }
-
-            $club = $em->getRepository('uteg:Club')->find((array_key_exists('club', $starterPost)) ? $starterPost['club'] : 0);
-            if ($club !== 0 && $club) {
-                $s2c->setClub($club);
-            } else {
-                $errorMessagesRaw['club'] = 'starter.error.club';
-            }
-
-            $category = $em->getRepository('uteg:Category')->find((array_key_exists('category', $starterPost)) ? $starterPost['category'] : 0);
-            if ($category !== 0 && $category) {
-                $s2c->setCategory($category);
-            } else {
-                $errorMessagesRaw['category'] = 'starter.error.category';
-            }
-
-            $validator = $this->get('validator');
-            $errors = $validator->validate($starter);
-            if (count($errors) <= 0 && $club && $category && $club !== 0 && $category !== 0) {
-                $em->persist($starter);
-                $em->persist($s2c);
-                $em->flush($starter);
-                $em->flush($s2c);
-            } else {
-                $array = $starter->__toArray();
-                $array['club']['id'] = (array_key_exists('club', $starterPost)) ? $starterPost['club'] : 0;
-                $array['category']['id'] = (array_key_exists('category', $starterPost)) ? $starterPost['category'] : 0;
-                foreach ($errors as $error) {
-                    $errorMessagesRaw[$error->getPropertyPath()] = $error->getMessage();
-                }
-                $fails[] = $array;
-                $errorMessages[] = $errorMessagesRaw;
-            }
-
-            unset($starter);
-            unset($s2c);
-            unset($errorMessagesRaw);
-        }
-
-        if (isset($fails)) {
+        if (isset($return['fails'])) {
             $clubs = $em->getRepository('uteg:Club')->findBy(array(), array('name' => 'asc'));
             $categories = $em->getRepository('uteg:Category')->findBy(array(), array('number' => 'asc'));
 
             return $this->render('form/StarterImport.html.twig',
                 array('clubs' => $clubs,
                     'categories' => $categories,
-                    'starters' => $fails,
-                    'errors' => $errorMessages
+                    'starters' => $return['fails'],
+                    'errors' => $return['errorMessages']
                 )
             );
         } else {

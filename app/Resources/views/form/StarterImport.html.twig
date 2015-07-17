@@ -4,33 +4,92 @@
 
 {% block title %}{{ 'starters.import.title'|trans }}{% endblock %}
 
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" id="theme" href='{{ asset("js/plugins/typeahead/typeahead.css") }}'>
+{% endblock %}
+
 {% block jsplugins %}
     <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/typeahead/typeahead.js") }}'></script>
 {% endblock %}
 
 {% block script %}
-    {% for starter in starters %}
-        {% if starter.sex is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.sex }}");{% endif %}
-        {% if starter.club.id is defined %}$('#club{{ loop.index0 }}').val("{{ starter.club.id }}");{% endif %}
-        {% if starter.category.id is defined %}$('#category{{ loop.index0 }}').val("{{ starter.category.id }}");{% endif %}
-    {% endfor %}
+    <script>
+        var starters = JSON.parse('{{ render(controller("uteg:Default:autocompleteStarters")) }}');
 
-    $('.selectSearch').selectpicker({
-    liveSearch: true,
-    size: 10
-    });
+        var substringMatcher = function (starters) {
+            return function findMatches(q, cb) {
+                var matches, substringRegex;
 
-    $('.select').selectpicker({
-    size: 10
-    });
+                matches = [];
 
-    $('#submit').click(function() {
-    $('#starters').submit();
-    });
+                substrRegex = new RegExp(q, 'i');
 
-    $('#cancel').click(function() {
-    window.location.href = "{{ path('starterImport') }}";
-    });
+                $.each(starters, function (i, starter) {
+                    if (substrRegex.test(starter.firstname) || substrRegex.test(starter.lastname) || substrRegex.test(starter.birthyear)) {
+                        matches.push(starter);
+                    }
+                });
+
+                cb(matches);
+            };
+        };
+
+        function autoComplete(selector, display) {
+            $(selector).typeahead(null, {
+                name: 'starters',
+                highlight: true,
+                limit: 5,
+                display: display,
+                source: substringMatcher(starters),
+                templates: {
+                    suggestion: function (starter) {
+                        return '<p><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' <span style="color: #A8A8A8; font-size: 10px;">' + starter.birthyear + '</span></p>';
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            {% for starter in starters %}
+            {% if starter.sex is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.sex }}");
+            {% endif %}
+            {% if starter.club.id is defined %}$('#club{{ loop.index0 }}').val("{{ starter.club.id }}");
+            {% endif %}
+            {% if starter.category.id is defined %}$('#category{{ loop.index0 }}').val("{{ starter.category.id }}");
+            {% endif %}
+            {% endfor %}
+
+            $('.selectSearch').selectpicker({
+                liveSearch: true,
+                size: 10
+            });
+
+            $('.select').selectpicker({
+                size: 10
+            });
+
+            $('#submit').click(function () {
+                $('#starters').submit();
+            });
+
+            $('#cancel').click(function () {
+                window.location.href = "{{ path('starterImport') }}";
+            });
+
+            autoComplete('input[name*="firstname"]', 'firstname');
+            autoComplete('input[name*="lastname"]', 'lastname');
+            autoComplete('input[name*="birthyear"]', 'birthyear');
+
+            $('.typeahead').bind('typeahead:select', function (ev, starter) {
+                var row = $(this).closest('tr');
+                row.find('[name*="firstname"]').typeahead('val', starter.firstname);
+                row.find('[name*="lastname"]').typeahead('val', starter.lastname);
+                row.find('[name*="birthyear"]').typeahead('val', starter.birthyear);
+                row.find('[name*="sex"]').selectpicker('val', starter.sex);
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -58,19 +117,20 @@
                                 <tr>
                                     <td>
                                         <input name="data[{{ loop.index0 }}][firstname]" type="text"
-                                               class="form-control" value="{{ starter.firstname }}">
+                                               class="form-control typeahead" value="{{ starter.firstname }}">
                                         {% if errors[loop.index0].firstname is defined %}<label
                                                 class="error">{{ errors[loop.index0].firstname|trans }}</label>{% endif %}
                                     </td>
                                     <td>
-                                        <input name="data[{{ loop.index0 }}][lastname]" type="text" class="form-control"
+                                        <input name="data[{{ loop.index0 }}][lastname]" type="text"
+                                               class="form-control typeahead"
                                                value="{{ starter.lastname }}">
                                         {% if errors[loop.index0].lastname is defined %}<label
                                                 class="error">{{ errors[loop.index0].lastname|trans }}</label>{% endif %}
                                     </td>
                                     <td>
                                         <input name="data[{{ loop.index0 }}][birthyear]" type="number" min="1950"
-                                               class="form-control" value="{{ starter.birthyear }}">
+                                               class="form-control typeahead" value="{{ starter.birthyear }}">
                                         {% if errors[loop.index0].birthyear is defined %}<label
                                                 class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
                                     </td>

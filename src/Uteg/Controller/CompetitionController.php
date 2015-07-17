@@ -16,7 +16,7 @@ use uteg\Form\Type\CompetitionType;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\ArrayLoader;
 
-class CompetitionController extends Controller
+class CompetitionController extends DefaultController
 {
     /**
      * @Route("/competitions", name="competitionlist")

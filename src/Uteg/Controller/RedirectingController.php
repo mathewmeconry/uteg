@@ -6,7 +6,7 @@ namespace uteg\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class RedirectingController extends Controller
+class RedirectingController extends DefaultController
 {
     public function removeTrailingSlashAction(Request $request)
     {

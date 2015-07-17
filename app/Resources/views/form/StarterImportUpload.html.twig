@@ -8,29 +8,33 @@
     <script type="text/javascript" src="/js/plugins/dropzone/dropzone.js"></script>{% endblock %}
 
 {% block script %}
-    Dropzone.autoDiscover = false;
-    var myDropzone = new Dropzone('#starterUpload', {
-    paramName: "file", // The name that will be used to transfer the file
-    autoProcessQueue: false,
-    uploadMultiple: true,
-    parallelUploads: 20,
-    maxFiles: 20,
-    acceptedFiles: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-    });
+    <script>
+        $(document).ready(function () {
+            Dropzone.autoDiscover = false;
+            var myDropzone = new Dropzone('#starterUpload', {
+                paramName: "file", // The name that will be used to transfer the file
+                autoProcessQueue: false,
+                uploadMultiple: true,
+                parallelUploads: 20,
+                maxFiles: 20,
+                acceptedFiles: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            });
 
-    $('#process').click(function() {
-    myDropzone.processQueue();
-    });
+            $('#process').click(function () {
+                myDropzone.processQueue();
+            });
 
-    myDropzone.on("success", function(file, responseText) {
-    if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-    window.location.href = responseText;
-    }
-    });
+            myDropzone.on("success", function (file, responseText) {
+                if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                    window.location.href = responseText;
+                }
+            });
 
-    $('#cancel').click(function() {
-    window.location.href = "{{ path('starters') }}";
-    });
+            $('#cancel').click(function () {
+                window.location.href = "{{ path('starters') }}";
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}

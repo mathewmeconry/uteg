@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Clubs2Invites;
 use uteg\Form\Type\C2iType;
 
-class InviteController extends Controller
+class InviteController extends DefaultController
 {
     /**
      * @Route("/invite", name="invite")
