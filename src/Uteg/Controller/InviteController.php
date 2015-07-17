@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace uteg\Controller;
 
@@ -12,158 +12,159 @@ use uteg\Form\Type\C2iType;
 
 class InviteController extends Controller
 {
-	/**
-	 * @Route("/invite", name="invite")
-	 * @Method("GET")
-	 */
-	public function inviteAction()
-	{
-		$this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
-		return $this->render('invite.html.twig');
-	}
-	
-	/**
-	 * @Route("/invite", name="invitePost")
-	 * @Method("POST")
-	 */
-	public function invitePostAction(Request $request)
-	{
-		$this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
-		$em = $this->getDoctrine()->getManager();
-		$comp = $em->find('uteg:Competition', $request->getSession()->get('comp'));
-		$error = false;
-		
-		$message = $request->request->get('message');
-		$clubs = $request->request->get('clubs');
-		
-		if(is_array($clubs)) {
-			try {
-				foreach($clubs as $club) {
-					$token = sha1(uniqid($club['name'], true));
-					$clubobj = $em->find('uteg:Club', $club['id']);
-					
-					$c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("club" => $clubobj, "competition" => $em->find('uteg:Competition', $request->getSession()->get('comp'))));
-					if(!$c2i) {
-						$c2i = new Clubs2Invites();
-					}
-					$c2i->setClub($clubobj);
-					$c2i->setCompetition($comp);
-					$c2i->setEmail($club['mail']);
-					$c2i->setToken($token);
-					$c2i->setValid(new \DateTime($message['valid']));
-					
-					$clubobj->addC2i($c2i);
-					$comp->addC2i($c2i);
-					
-					$em->persist($c2i);
-					$em->persist($clubobj);
-					$em->persist($comp);
-					$em->flush();
-					
-					if($message['default'] == 'true') {
-						$mailmessage = str_replace('#VALID#', $message['valid'], str_replace('#COMPETITION#', $comp->getName(), str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
-												'token' => $token
-										), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))));
-					} else {
-						$mailmessage = str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
-												'token' => $token
-										), true), $message['message']);
-					}
-					
-					$this->sendMail($message['default'], $message['valid'], $comp, $club['mail'], $token, (isset($message['message']) ? $message['message'] : null));
+    /**
+     * @Route("/invite", name="invite")
+     * @Method("GET")
+     */
+    public function inviteAction()
+    {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+        return $this->render('invite.html.twig');
+    }
 
-					unset($c2i);
-				}
-			} catch(Exception $e) {
-				$error = true;
-			}
-		}
-		
-		if($error) {
-			$request->getSession()->getFlashBag()->add('error', 'invites.error');
-		} else {
-			$request->getSession()->getFlashBag()->add('success', 'invites.success');
-		}
-		
-		return new Response(
-				$this->get('router')->generate('inviteList')
-		);
-	}
-	
-	/**
-	 * @Route("/invite/club/{token}", name="inviteToken")
-	 * @Method("GET")
-	 */
-	public function inviteTokenAction($token)
-	{
-		$em = $this->getDoctrine()->getManager();
-		$c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("token" => $token));
-		$today = date('Y-m-d');
+    /**
+     * @Route("/invite", name="invitePost")
+     * @Method("POST")
+     */
+    public function invitePostAction(Request $request)
+    {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+        $em = $this->getDoctrine()->getManager();
+        $comp = $em->find('uteg:Competition', $request->getSession()->get('comp'));
+        $error = false;
 
-		if($c2i->getValid()->format('Y-m-d') >= $today) {
-			$categories = $em->getRepository('uteg:Category')->findBy(array(), array('number' => 'asc'));
-			$qb = $em->createQueryBuilder();
-			$qb->select('s2c')
-				->distinct()
-				->from('uteg\Entity\Starters2Competitions', 's2c')
-				->join('uteg\Entity\Competition', 'co', \Doctrine\ORM\Query\Expr\Join::WITH, 's2c.competition = co.id')
-				->where('s2c.club = ?1')
-				->andWhere('co.id = (SELECT MAX(s2c2.competition) FROM uteg\Entity\Starters2Competitions as s2c2 WHERE s2c2.club = ?2 AND s2c2.competition < ?3)')
-				->setParameter(1, $c2i->getClubObj())
-				->setParameter(2, $c2i->getClubObj())
-				->setParameter(3, $c2i->getCompetition());
+        $message = $request->request->get('message');
+        $clubs = $request->request->get('clubs');
 
-			return $this->render('inviteClubView.html.twig',
-				array('categories' => $categories,
-					'starters' => $qb->getQuery()->getResult(),
-					'club' => $c2i->getClubObj(),
-				)
-			);
-		} else {
-			return new Response('Link expired');
-		}
-	}
-	
-	/**
-	 * @Route("/invites", name="inviteList")
-	 * @Method("GET")
-	 */
-	public function inviteListAction(Request $request)
-	{
-		$this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
-		return $this->render('inviteList.html.twig', array(
-				"comp" => $this->getDoctrine()->getManager()->find('uteg:Competition', $request->getSession()->get('comp'))
-		));
-	}
-	
-	/**
-	 * @Route("/invites", name="inviteListPost")
-	 * @Method("POST")
-	 */
-	public function inviteListPostAction(Request $request)
-	{
-		$this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
-		$em = $this->getDoctrine()->getManager();
-		$today = date('Y-m-d');
-		$result = array();
-		
-		$comp = $em->find('uteg:Competition', $request->getSession()->get('comp'));
-		
-		$c2is = $comp->getC2is();
-		foreach($c2is as $c2i) {
-			$valid = ($c2i->getValid()->format('Y-m-d') < $today) ? 'invites.table.expired' : 'invites.table.valid';
-			$result[] = array("DT_RowId" => $c2i->getId(), "name" => $c2i->getClub(), "email" => $c2i->getEmail(), "validUntil" => $c2i->getValid(), "state" => $valid);
-		}
+        if (is_array($clubs)) {
+            try {
+                foreach ($clubs as $club) {
+                    $token = sha1(uniqid($club['name'], true));
+                    $clubobj = $em->find('uteg:Club', $club['id']);
 
-		return $this->render('inviteList.json.twig', array(
-				'source' => $result
-		));
-	}
+                    $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("club" => $clubobj, "competition" => $em->find('uteg:Competition', $request->getSession()->get('comp'))));
+                    if (!$c2i) {
+                        $c2i = new Clubs2Invites();
+                    }
+                    $c2i->setClub($clubobj);
+                    $c2i->setCompetition($comp);
+                    $c2i->setEmail($club['mail']);
+                    $c2i->setToken($token);
+                    $c2i->setValid(new \DateTime($message['valid']));
+
+                    $clubobj->addC2i($c2i);
+                    $comp->addC2i($c2i);
+
+                    $em->persist($c2i);
+                    $em->persist($clubobj);
+                    $em->persist($comp);
+                    $em->flush();
+
+                    if ($message['default'] == 'true') {
+                        $mailmessage = str_replace('#VALID#', $message['valid'], str_replace('#COMPETITION#', $comp->getName(), str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
+                            'token' => $token
+                        ), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))));
+                    } else {
+                        $mailmessage = str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
+                            'token' => $token
+                        ), true), $message['message']);
+                    }
+
+                    $this->sendMail($message['default'], $message['valid'], $comp, $club['mail'], $token, (isset($message['message']) ? $message['message'] : null));
+
+                    unset($c2i);
+                }
+            } catch (Exception $e) {
+                $error = true;
+            }
+        }
+
+        if ($error) {
+            $request->getSession()->getFlashBag()->add('error', 'invites.error');
+        } else {
+            $request->getSession()->getFlashBag()->add('success', 'invites.success');
+        }
+
+        return new Response(
+            $this->get('router')->generate('inviteList')
+        );
+    }
+
+    /**
+     * @Route("/invite/club/{token}", name="inviteToken")
+     * @Method("GET")
+     */
+    public function inviteTokenAction($token)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("token" => $token));
+        $today = date('Y-m-d');
+
+        if ($c2i->getValid()->format('Y-m-d') >= $today) {
+            $categories = $em->getRepository('uteg:Category')->findBy(array(), array('number' => 'asc'));
+            $qb = $em->createQueryBuilder();
+            $qb->select('s2c')
+                ->distinct()
+                ->from('uteg\Entity\Starters2Competitions', 's2c')
+                ->join('uteg\Entity\Competition', 'co', \Doctrine\ORM\Query\Expr\Join::WITH, 's2c.competition = co.id')
+                ->where('s2c.club = ?1')
+                ->andWhere('co.id = (SELECT MAX(s2c2.competition) FROM uteg\Entity\Starters2Competitions as s2c2 WHERE s2c2.club = ?2 AND s2c2.competition < ?3)')
+                ->setParameter(1, $c2i->getClubObj())
+                ->setParameter(2, $c2i->getClubObj())
+                ->setParameter(3, $c2i->getCompetition());
+
+            return $this->render('inviteClubView.html.twig',
+                array('categories' => $categories,
+                    'starters' => $qb->getQuery()->getResult(),
+                    'club' => $c2i->getClubObj(),
+                )
+            );
+        } else {
+            return new Response('Link expired');
+        }
+    }
+
+    /**
+     * @Route("/invites", name="inviteList")
+     * @Method("GET")
+     */
+    public function inviteListAction(Request $request)
+    {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
+        return $this->render('inviteList.html.twig', array(
+            "comp" => $this->getDoctrine()->getManager()->find('uteg:Competition', $request->getSession()->get('comp'))
+        ));
+    }
+
+    /**
+     * @Route("/invites", name="inviteListPost")
+     * @Method("POST")
+     */
+    public function inviteListPostAction(Request $request)
+    {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
+        $em = $this->getDoctrine()->getManager();
+        $today = date('Y-m-d');
+        $result = array();
+
+        $comp = $em->find('uteg:Competition', $request->getSession()->get('comp'));
+
+        $c2is = $comp->getC2is();
+        foreach ($c2is as $c2i) {
+            $valid = ($c2i->getValid()->format('Y-m-d') < $today) ? 'invites.table.expired' : 'invites.table.valid';
+            $result[] = array("DT_RowId" => $c2i->getId(), "name" => $c2i->getClub(), "email" => $c2i->getEmail(), "validUntil" => $c2i->getValid(), "state" => $valid);
+        }
+
+        return $this->render('inviteList.json.twig', array(
+            'source' => $result
+        ));
+    }
 
     /**
      * @Route("/invite/edit/{id}", name="inviteEdit", defaults={"id": ""}, requirements={"id": "\d+"})
      */
-    public function inviteEditPostAction(Request $request, $id) {
+    public function inviteEditPostAction(Request $request, $id)
+    {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
         $c2i = $this->getDoctrine()->getManager()->find('uteg:Clubs2Invites', $id);
 
@@ -188,29 +189,31 @@ class InviteController extends Controller
             )
         );
     }
-    
+
     /**
      * @Route("/invite/resend/{id}", name="inviteResend", defaults={"id": ""}, requirements={"id": "\d+"})
      * @Method("POST")
      */
-    public function inviteResendAction(Request $request, $id) {
-    	$this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
-    	
-    	$c2i = $this->getDoctrine()->getManager()->find('uteg:Clubs2Invites', $id);
-    	$comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $request->getSession()->get('comp'));
-    	
-    	$this->sendMail(($request->get('custom') == 'false' ? 'true' : 'false'), $c2i->getValid()->format('Y-m-d'), $comp, $c2i->getEmail(), $c2i->getToken(), $request->get('message'));
-    	$this->get('session')->getFlashBag()->add('success', 'invites.resend.success');
-    	return new Response("true");
+    public function inviteResendAction(Request $request, $id)
+    {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+
+        $c2i = $this->getDoctrine()->getManager()->find('uteg:Clubs2Invites', $id);
+        $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $request->getSession()->get('comp'));
+
+        $this->sendMail(($request->get('custom') == 'false' ? 'true' : 'false'), $c2i->getValid()->format('Y-m-d'), $comp, $c2i->getEmail(), $c2i->getToken(), $request->get('message'));
+        $this->get('session')->getFlashBag()->add('success', 'invites.resend.success');
+        return new Response("true");
     }
 
     /**
      * @Route("/invite/remove/{id}", name="inviteRemove", defaults={"id": ""}, requirements={"id": "\d+"})
      * @Method("POST")
      */
-    public function inviteRemovePostAction(Request $request, $id) {
+    public function inviteRemovePostAction(Request $request, $id)
+    {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
-        
+
         $em = $this->getDoctrine()->getEntityManager();
         $c2i = $em->find('uteg:Clubs2Invites', $id);
         $competition = $em->find('uteg:Competition', $request->getSession()->get('comp'));
@@ -220,27 +223,28 @@ class InviteController extends Controller
         $em->flush();
         return new Response('true');
     }
-    
-    private function sendMail($default, $validuntil, $comp, $mail, $token, $message = null) {
-    	if($default == 'true') {
-    		$mailmessage = str_replace('#VALID#', $validuntil, str_replace('#COMPETITION#', $comp->getName(), str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
-    				'token' => $token
-    		), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))));
-    	} else {
-    		$mailmessage = str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
-    				'token' => $token
-    		), true), $message);
-    	}
-    		
-    	$mail = \Swift_Message::newInstance()
-    	->setSubject($this->get('translator')->trans('invite.mail.subject %compname%', array('%compname%' => $comp->getName()), 'uteg'))
-    	->setFrom('noreply@getu.ch')
-    	->setTo($mail)
-    	->setBody(
-    			$mailmessage,
-    			'text/html'
-    	);
-    	
-    	$result = $this->get('mailer')->send($mail);
+
+    private function sendMail($default, $validuntil, $comp, $mail, $token, $message = null)
+    {
+        if ($default == 'true') {
+            $mailmessage = str_replace('#VALID#', $validuntil, str_replace('#COMPETITION#', $comp->getName(), str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
+                'token' => $token
+            ), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))));
+        } else {
+            $mailmessage = str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
+                'token' => $token
+            ), true), $message);
+        }
+
+        $mail = \Swift_Message::newInstance()
+            ->setSubject($this->get('translator')->trans('invite.mail.subject %compname%', array('%compname%' => $comp->getName()), 'uteg'))
+            ->setFrom('noreply@getu.ch')
+            ->setTo($mail)
+            ->setBody(
+                $mailmessage,
+                'text/html'
+            );
+
+        $result = $this->get('mailer')->send($mail);
     }
 }

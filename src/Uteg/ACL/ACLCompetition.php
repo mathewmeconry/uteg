@@ -8,7 +8,8 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class ACLCompetition {
+class ACLCompetition
+{
     private $em;
     private $aclProvider;
     private $requestStack;
@@ -17,7 +18,8 @@ class ACLCompetition {
     private $comp;
     private $isadmin = false;
 
-    public function __construct(EntityManager $em, $aclProvider, RequestStack  $requestStack, $authorizationChecker) {
+    public function __construct(EntityManager $em, $aclProvider, RequestStack $requestStack, $authorizationChecker)
+    {
         $this->em = $em;
         $this->aclProvider = $aclProvider;
         $this->requestStack = $requestStack;
@@ -36,7 +38,8 @@ class ACLCompetition {
         $this->aclProvider->updateAcl($this->acl);
     }
 
-    public function removePermission($permission, $userSearchArray) {
+    public function removePermission($permission, $userSearchArray)
+    {
         $this->updateAcl();
 
         $securityIdentity = $this->getUserSecurityIdentityBy($userSearchArray);
@@ -49,7 +52,8 @@ class ACLCompetition {
         $this->aclProvider->updateAcl($this->acl);
     }
 
-    public function removeAce($userSearchArray) {
+    public function removeAce($userSearchArray)
+    {
         $this->updateAcl();
 
         $securityIdentity = $this->getUserSecurityIdentityBy($userSearchArray);
@@ -58,29 +62,32 @@ class ACLCompetition {
         $this->aclProvider->updateAcl($this->acl);
     }
 
-    public function removeAcl($comp) {
+    public function removeAcl($comp)
+    {
         $objectIdentity = ObjectIdentity::fromDomainObject($comp);
         $this->aclProvider->deleteAcl($objectIdentity);
     }
 
-    public function isGrantedUrl($permission, $acl = true) {
-        if($this->isGranted($permission, $acl)) {
+    public function isGrantedUrl($permission, $acl = true)
+    {
+        if ($this->isGranted($permission, $acl)) {
             return true;
         } else {
             throw new AccessDeniedException();
         }
     }
 
-    public function isGranted($permission, $acl = true) {
-       if($acl) {
-           $this->updateAcl();
+    public function isGranted($permission, $acl = true)
+    {
+        if ($acl) {
+            $this->updateAcl();
             if ($this->authorizationChecker->isGranted($permission, $this->comp)) {
                 return true;
             } else {
                 return false;
             }
         } else {
-            if($this->authorizationChecker->isGranted($permission)) {
+            if ($this->authorizationChecker->isGranted($permission)) {
                 return true;
             } else {
                 return false;
@@ -88,23 +95,25 @@ class ACLCompetition {
         }
     }
 
-    public function getPossibleRoute() {
+    public function getPossibleRoute()
+    {
         $this->updateAcl();
 
-        if($this->isGranted('DASHBOARD')) {
+        if ($this->isGranted('DASHBOARD')) {
             return "/dashboard";
-        } elseif ($this->isGranted('STARTERS_VIEW')){
+        } elseif ($this->isGranted('STARTERS_VIEW')) {
             return "/starters";
-        } elseif ($this->isGranted('SETTINGS_VIEW')){
+        } elseif ($this->isGranted('SETTINGS_VIEW')) {
             return "/competition";
-        } elseif ($this->isGranted('PERMISSIONS_VIEW')){
+        } elseif ($this->isGranted('PERMISSIONS_VIEW')) {
             return "/permissions";
         } else {
             return "/profile/edit";
         }
     }
 
-    private function grantAdmin() {
+    private function grantAdmin()
+    {
         $admin = $this->em->getRepository('uteg:User')->findOneBy(array('username' => 'admin'));
         $admin->addCompetition($this->comp);
         $this->em->persist($admin);
@@ -115,7 +124,8 @@ class ACLCompetition {
         $this->isadmin = false;
     }
 
-    private function updateAcl() {
+    private function updateAcl()
+    {
         $this->comp = $this->em->find('uteg:Competition', $this->requestStack->getCurrentRequest()->getSession()->get('comp'));
         $objectIdentity = ObjectIdentity::fromDomainObject($this->comp);
 
@@ -127,15 +137,17 @@ class ACLCompetition {
         }
     }
 
-    private function getUserSecurityIdentityBy($searchArray) {
+    private function getUserSecurityIdentityBy($searchArray)
+    {
         $user = $this->em->getRepository('uteg:User')->findOneBy($searchArray);
 
         return \Symfony\Component\Security\Acl\Domain\UserSecurityIdentity::fromAccount($user);
     }
 
-    private function getAce($securityIdentity) {
-        foreach($this->acl->getObjectAces() as $index => $ace) {
-            if($ace->getSecurityIdentity()->equals($securityIdentity)) {
+    private function getAce($securityIdentity)
+    {
+        foreach ($this->acl->getObjectAces() as $index => $ace) {
+            if ($ace->getSecurityIdentity()->equals($securityIdentity)) {
                 return $index;
                 break;
             }

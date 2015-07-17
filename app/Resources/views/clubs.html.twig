@@ -9,66 +9,68 @@
 {% endblock %}
 
 {% block jsplugins %}
-	<script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
 {% endblock %}
 
-{% block jsfunctions %}
-    function dataTable(table) {
+{% block script %}
+    <script>
+        function dataTable(table) {
 
-        $(table).DataTable({
-            "ajax": {
-                "url": "{{ path('clubsPost') }}",
-                "method": "POST"
-            },
-            "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "clubs.table.all"|trans }}"] ],
-            "search": {
-                "regex": true
-            },
-            "order": [[ 0, "asc" ]],
-            responsive: {
-                details: {
-                    type: 'column'
+            $(table).DataTable({
+                "ajax": {
+                    "url": "{{ path('clubsPost') }}",
+                    "method": "POST"
+                },
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "clubs.table.all"|trans }}"]],
+                "search": {
+                    "regex": true
+                },
+                "order": [[0, "asc"]],
+                responsive: {
+                    details: {
+                        type: 'column'
+                    }
+                },
+                "columns": [
+                    {"data": "name", 'type': 'string'},
+                ],
+                "paginate": {
+                    "next": "{{ "clubs.table.next"|trans }}",
+                    "previous": "{{ "clubs.table.previous"|trans }}"
+                },
+                "language": {
+                    "search": "{{ "clubs.table.search"|trans }}",
+                    "searchPlaceholder": "{{ "clubs.table.searchPlaceholder"|trans }}",
+                    "thousands": "'",
+                    "zeroRecords": "{{ "clubs.table.zeroRecords"|trans }}"
                 }
-            },
-            "columns": [
-                { "data": "name", 'type': 'string' },
-            ],
-            "paginate": {
-                "next": "{{ "clubs.table.next"|trans }}",
-                "previous": "{{ "clubs.table.previous"|trans }}"
-            },
-            "language": {
-                "search": "{{ "clubs.table.search"|trans }}",
-                "searchPlaceholder": "{{ "clubs.table.searchPlaceholder"|trans }}",
-                "thousands": "'",
-                "zeroRecords": "{{ "clubs.table.zeroRecords"|trans }}"
-            }
+            });
+        }
+
+        $(document).ready(function () {
+            dataTable($('#clubs'));
+
+            $('.table').on('init.dt', function () {
+                onload();
+            });
+
+            $('select[name*="m_length"]').change(function () {
+                onload();
+            });
+
+            $('.panel-refresh').click(function () {
+                panel_refresh(
+                        $('#panel_clubs'),
+                        $('#clubs').DataTable().ajax.reload(function () {
+                            setTimeout(function () {
+                                panel_refresh($('#panel_clubs'));
+                            }, 500);
+                        }, false)
+                );
+            });
         });
-    }
-{% endblock %}
-
-{% block docready %}
-	dataTable($('#clubs'));
-
-    $('.table').on('init.dt', function() {
-    	onload();
-    });
-    
-    $('select[name*="m_length"]').change(function()  {
-    	onload();
-    });
-    
-    $('.panel-refresh').click(function() {
-    	panel_refresh(
-    		$('#panel_clubs'), 
-    		$('#clubs').DataTable().ajax.reload(function() { 
-    			setTimeout(function() {
-    				panel_refresh($('#panel_clubs')); 
-    			}, 500); 
-    		}, false)
-    	);
-    });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -78,18 +80,19 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ 'clubs.header'|trans }}</h3>
                     <ul class="panel-controls">
-                    	<li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a></li>
+                        <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
+                        </li>
                         <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                     </ul>
                 </div>
                 <div class="panel-body">
-		           	<table id="clubs" class="table responsive table-striped" data-cat="0" width="100%">
-		               	<thead>
-		               		<tr>
-                	            <th class="all">{{ 'clubs.table.name'|trans }}</th>
-		                   	</tr>
-		               	</thead>
-		        	</table>
+                    <table id="clubs" class="table responsive table-striped" data-cat="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th class="all">{{ 'clubs.table.name'|trans }}</th>
+                        </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>

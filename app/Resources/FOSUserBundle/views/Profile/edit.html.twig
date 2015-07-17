@@ -5,15 +5,16 @@
 {% block title %}{{ "profile.edit.title"|trans }}{% endblock %}
 
 {% block content %}
-<div id="profile">
-	<div id="triangle"></div>
-	<h1>{{ 'profile.edit.header'|trans }}</h1>
+    <div id="profile">
+        <div id="triangle"></div>
+        <h1>{{ 'profile.edit.header'|trans }}</h1>
 
-	<form action="{{ path('fos_user_profile_edit') }}" {{ form_enctype(form) }} method="POST" class="fos_user_profile_edit">
-		{{ form_widget(form) }}
-		<div>
-			<input type="submit" value="{{ 'profile.edit.submit'|trans() }}" />
-		</div>
-	</form>
-</div>
+        <form action="{{ path('fos_user_profile_edit') }}" {{ form_enctype(form) }} method="POST"
+              class="fos_user_profile_edit">
+            {{ form_widget(form) }}
+            <div>
+                <input type="submit" value="{{ 'profile.edit.submit'|trans() }}"/>
+            </div>
+        </form>
+    </div>
 {% endblock content %}

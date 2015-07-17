@@ -13,7 +13,8 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
  * @ORM\Table(name="ute_starters2competitions")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
-class Starters2Competitions {
+class Starters2Competitions
+{
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="s2c_id")
@@ -68,7 +69,8 @@ class Starters2Competitions {
      */
     protected $deletedAt;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->starter = new Starter();
         $this->present = 0;
         $this->medicalcert = 0;
@@ -77,7 +79,7 @@ class Starters2Competitions {
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -100,7 +102,7 @@ class Starters2Competitions {
     /**
      * Get present
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPresent()
     {
@@ -123,7 +125,7 @@ class Starters2Competitions {
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -146,7 +148,7 @@ class Starters2Competitions {
     /**
      * Get deletedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDeletedAt()
     {
@@ -175,13 +177,15 @@ class Starters2Competitions {
     {
         return $this->starter;
     }
-    
-    public function getStarterBySex($sex) {
-    	return ($this->starter->getSex() == $sex) ? $this->starter : null;
+
+    public function getStarterBySex($sex)
+    {
+        return ($this->starter->getSex() == $sex) ? $this->starter : null;
     }
-    
-    public function getStarterBySexCat($sex, $category) {
-    	return ($this->starter->getSex() == $sex && $this->category->getNumber() == $category) ? $this->starter : null;
+
+    public function getStarterBySexCat($sex, $category)
+    {
+        return ($this->starter->getSex() == $sex && $this->category->getNumber() == $category) ? $this->starter : null;
     }
 
     /**
@@ -262,49 +266,57 @@ class Starters2Competitions {
     public function setMedicalcert($medicalcert)
     {
         $this->medicalcert = $medicalcert;
-    
+
         return $this;
     }
 
     /**
      * Get medicalcert
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getMedicalcert()
     {
         return $this->medicalcert;
     }
 
-    public function getFirstname() {
+    public function getFirstname()
+    {
         return $this->starter->getFirstname();
     }
 
-    public function setFirstname($firstname) {
+    public function setFirstname($firstname)
+    {
         return $this;
     }
 
-    public function getLastname() {
+    public function getLastname()
+    {
         return $this->starter->getLastname();
     }
 
-    public function setLastname($lastname) {
+    public function setLastname($lastname)
+    {
         return $this;
     }
 
-    public function getBirthyear() {
+    public function getBirthyear()
+    {
         return $this->starter->getBirthyear();
     }
 
-    public function setBirthyear($birthyear) {
+    public function setBirthyear($birthyear)
+    {
         return $this;
     }
-    
-    public function getSex() {
-    	return $this->starter->getSex();
+
+    public function getSex()
+    {
+        return $this->starter->getSex();
     }
-    
-    public function setSex($sex) {
-    	return $this;
+
+    public function setSex($sex)
+    {
+        return $this;
     }
 }

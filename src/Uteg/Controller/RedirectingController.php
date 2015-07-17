@@ -18,7 +18,8 @@ class RedirectingController extends Controller
         return $this->redirect($url, 301);
     }
 
-    public function checkAuthenticationAction($target) {
+    public function checkAuthenticationAction($target)
+    {
         $securityContext = $this->container->get('security.context');
 
         if ($securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {

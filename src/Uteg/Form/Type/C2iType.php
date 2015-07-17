@@ -27,14 +27,14 @@ class C2iType extends AbstractType
                 'html5' => true
             ));
     }
-    
+
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-    	$resolver->setDefaults(array(
-    			'cascade_validation' => true,
-    	));
+        $resolver->setDefaults(array(
+            'cascade_validation' => true,
+        ));
     }
-    
+
     /**
      * @return string
      */

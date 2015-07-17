@@ -23,7 +23,7 @@ class PermissionMap extends BasicPermissionMap
     const PERMISSION_MASTER = 'MASTER';
     const PERMISSION_OWNER = 'OWNER';
 
-    protected  $map;
+    protected $map;
 
     public function __construct()
     {

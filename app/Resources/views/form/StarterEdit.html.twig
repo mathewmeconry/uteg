@@ -1,24 +1,25 @@
 {% trans_default_domain 'uteg' %}
 
-<form id="starterEditForm" method="post" action="{{ path(target)}}" class="form-horizontal">
+
+<form id="starterEditForm" method="post" action="{{ path(target) }}" class="form-horizontal">
 
     {{ form_row(form.firstname) }}
-	{% if error.firstname is defined %}<label class="error">{{ error.firstname|trans }}</label>{% endif %}
+    {% if error.firstname is defined %}<label class="error">{{ error.firstname|trans }}</label>{% endif %}
 
-    {{ form_row(form.lastname) }}	
-	{% if error.lastname is defined %}<label class="error">{{ error.lastname|trans }}</label>{% endif %}
+    {{ form_row(form.lastname) }}
+    {% if error.lastname is defined %}<label class="error">{{ error.lastname|trans }}</label>{% endif %}
 
-    {{ form_row(form.birthyear) }}    
+    {{ form_row(form.birthyear) }}
     {% if error.birthyear is defined %}<label class="error">{{ error.birthyear|trans }}</label>{% endif %}
 
-    {{ form_row(form.sex) }}    
+    {{ form_row(form.sex) }}
     {% if error.sex is defined %}<label class="error">{{ error.sex|trans }}</label>{% endif %}
 
-    {{ form_row(form.category) }}    
+    {{ form_row(form.category) }}
     {% if error.category is defined %}<label class="error">{{ error.category|trans }}</label>{% endif %}
 
-    {{ form_row(form.club) }}	
-	{% if error.club is defined %}<label class="error">{{ error.club|trans }}</label>{% endif %}
+    {{ form_row(form.club) }}
+    {% if error.club is defined %}<label class="error">{{ error.club|trans }}</label>{% endif %}
 
     {{ form_errors(form.present) }}
     {{ form_label(form.present) }}
@@ -40,7 +41,55 @@
     {{ form_row(form._token) }}
 </form>
 <script>
-{% if error.firstname is defined %}$('input[name*="firstname"]').addClass('error');{% endif %}
-{% if error.lastname is defined %}$('input[name*="lastname"]').addClass('error');{% endif %}
-{% if error.birthyear is defined %}$('input[name*="birthyear"]').addClass('error');{% endif %}
+    {% if error.firstname is defined %}$('input[name*="firstname"]').addClass('error');
+    {% endif %}
+    {% if error.lastname is defined %}$('input[name*="lastname"]').addClass('error');
+    {% endif %}
+    {% if error.birthyear is defined %}$('input[name*="birthyear"]').addClass('error');
+    {% endif %}
+
+    var starters = JSON.parse('{{ render(controller("uteg:Default:autocompleteStarters")) }}');
+    var substringMatcher = function (starters) {
+        return function findMatches(q, cb) {
+            var matches, substringRegex;
+
+            matches = [];
+
+            substrRegex = new RegExp(q, 'i');
+
+            $.each(starters, function (i, starter) {
+                if (substrRegex.test(starter.firstname) || substrRegex.test(starter.lastname) || substrRegex.test(starter.birthyear)) {
+                    matches.push(starter);
+                }
+            });
+
+            cb(matches);
+        };
+    };
+
+    function autoComplete(selector, display) {
+        $(selector).typeahead(null, {
+            name: 'starters',
+            highlight: true,
+            limit: 5,
+            display: display,
+            source: substringMatcher(starters),
+            templates: {
+                suggestion: function (starter) {
+                    return '<p><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' <span style="color: #A8A8A8; font-size: 10px;">' + starter.birthyear + '</span></p>';
+                }
+            }
+        });
+    }
+
+    $('input').bind('typeahead:select', function (ev, starter) {
+        $('#uteg_starter_firstname').typeahead('val', starter.firstname);
+        $('#uteg_starter_lastname').typeahead('val', starter.lastname);
+        $('#uteg_starter_birthyear').typeahead('val', starter.birthyear);
+        $('#uteg_starter_sex').selectpicker('val', starter.sex);
+    });
+
+    autoComplete('#uteg_starter_firstname', 'firstname');
+    autoComplete('#uteg_starter_lastname', 'lastname');
+    autoComplete('#uteg_starter_birthyear', 'birthyear');
 </script>

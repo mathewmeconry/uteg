@@ -12,7 +12,8 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
  * @ORM\Table(name="ute_club2invites")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
-class Clubs2Invites {
+class Clubs2Invites
+{
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="c2i_id")
@@ -31,7 +32,7 @@ class Clubs2Invites {
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
-    
+
     /**
      * @ORM\Column(type="string")
      */
@@ -41,7 +42,7 @@ class Clubs2Invites {
      * @ORM\Column(type="string")
      */
     protected $token;
-    
+
     /**
      * @ORM\Column(type="date")
      */
@@ -58,14 +59,15 @@ class Clubs2Invites {
      */
     protected $deletedAt;
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->name;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -88,7 +90,7 @@ class Clubs2Invites {
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -111,7 +113,7 @@ class Clubs2Invites {
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -134,7 +136,7 @@ class Clubs2Invites {
     /**
      * Get deletedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDeletedAt()
     {
@@ -169,7 +171,7 @@ class Clubs2Invites {
     /**
      * Get members
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getMembers()
     {
@@ -185,21 +187,22 @@ class Clubs2Invites {
     public function setClub(\uteg\Entity\Club $club = null)
     {
         $this->club = $club;
-    
+
         return $this;
     }
 
     /**
      * Get club
      *
-     * @return \uteg\Entity\Club 
+     * @return \uteg\Entity\Club
      */
     public function getClub()
     {
         return $this->club->getName();
     }
 
-    public function getClubObj() {
+    public function getClubObj()
+    {
         return $this->club;
     }
 
@@ -212,14 +215,14 @@ class Clubs2Invites {
     public function setCompetition(\uteg\Entity\Competition $competition = null)
     {
         $this->competition = $competition;
-    
+
         return $this;
     }
 
     /**
      * Get competition
      *
-     * @return \uteg\Entity\Competition 
+     * @return \uteg\Entity\Competition
      */
     public function getCompetition()
     {
@@ -235,14 +238,14 @@ class Clubs2Invites {
     public function setToken($token)
     {
         $this->token = $token;
-    
+
         return $this;
     }
 
     /**
      * Get token
      *
-     * @return string 
+     * @return string
      */
     public function getToken()
     {
@@ -258,7 +261,7 @@ class Clubs2Invites {
     public function setValid($valid)
     {
         $this->valid = $valid;
-    
+
         return $this;
     }
 
@@ -281,14 +284,14 @@ class Clubs2Invites {
     public function setEmail($email)
     {
         $this->email = $email;
-    
+
         return $this;
     }
 
     /**
      * Get email
      *
-     * @return string 
+     * @return string
      */
     public function getEmail()
     {

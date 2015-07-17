@@ -21,38 +21,38 @@ class CompetitionType extends AbstractType
             ->add('location', null, array('label' => 'competitionlist.addcomp.location', "attr" => array("placeholder" => "competitionlist.addcomp.location"), 'translation_domain' => 'uteg'))
             ->add('zipcode', 'number', array('label' => 'competitionlist.addcomp.zipcode', "attr" => array("placeholder" => "competitionlist.addcomp.zipcode"), 'translation_domain' => 'uteg'))
             ->add('startdate', 'date', array(
-                    'label' => 'competitionlist.addcomp.startdate',
-                    "attr" => array("placeholder" => "competitionlist.addcomp.startdate"),
-                    'translation_domain' => 'uteg',
-            		'input' => 'string',
-            		'format' => 'yyyy-MM-dd',
-            		'widget' => 'single_text',
-            		'html5' => true
+                'label' => 'competitionlist.addcomp.startdate',
+                "attr" => array("placeholder" => "competitionlist.addcomp.startdate"),
+                'translation_domain' => 'uteg',
+                'input' => 'string',
+                'format' => 'yyyy-MM-dd',
+                'widget' => 'single_text',
+                'html5' => true
             ))
             ->add('enddate', 'date', array(
-                    'label' => 'competitionlist.addcomp.enddate',
-                    "attr" => array("placeholder" => "competitionlist.addcomp.enddate"),
-                    'translation_domain' => 'uteg',
-            		'input' => 'string',
-            		'format' => 'yyyy-MM-dd',
-            		'widget' => 'single_text',
-            		'html5' => true
+                'label' => 'competitionlist.addcomp.enddate',
+                "attr" => array("placeholder" => "competitionlist.addcomp.enddate"),
+                'translation_domain' => 'uteg',
+                'input' => 'string',
+                'format' => 'yyyy-MM-dd',
+                'widget' => 'single_text',
+                'html5' => true
             ))
             ->add('recaptcha', 'ewz_recaptcha', array(
                 'attr' => array(
                     'options' => array(
                         'theme' => 'light',
-                        'type'  => 'image'
+                        'type' => 'image'
                     ),
                 ),
                 'mapped' => false,
-                'constraints'   => array(
+                'constraints' => array(
                     new True()
                 ),
                 'error_bubbling' => true
             ));
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */

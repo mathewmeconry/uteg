@@ -21,7 +21,8 @@ class CompetitionController extends Controller
     /**
      * @Route("/competitions", name="competitionlist")
      */
-    public function comptetitionListAction(Request $request) {
+    public function comptetitionListAction(Request $request)
+    {
         $this->get('acl_competition')->isGrantedUrl('IS_AUTHENTICATED_FULLY', false);
 
         $comps = array();
@@ -29,9 +30,9 @@ class CompetitionController extends Controller
         $user = $this->getUser();
         $authorizationChecker = $this->get('security.authorization_checker');
 
-        foreach($user->getCompetitions() as $comp) {
+        foreach ($user->getCompetitions() as $comp) {
             $request->getSession()->set('comp', $comp->getId());
-            if($authorizationChecker->isGranted('VIEW', $comp)) {
+            if ($authorizationChecker->isGranted('VIEW', $comp)) {
                 $comps[] = $comp;
             }
         }
@@ -44,42 +45,44 @@ class CompetitionController extends Controller
     /**
      * @Route("/competition", name="competition")
      */
-	public function competitionAction()
-	{
-		$this->get('acl_competition')->isGrantedUrl('SETTINGS_VIEW');
-		
-		return $this->render('competition.html.twig');
-	}
+    public function competitionAction()
+    {
+        $this->get('acl_competition')->isGrantedUrl('SETTINGS_VIEW');
+
+        return $this->render('competition.html.twig');
+    }
 
     /**
      * @Route("/comp/set", name="setCompSession")
      * @Method("POST")
      */
-    public function setCompSessionAction(Request $request) {
+    public function setCompSessionAction(Request $request)
+    {
         $this->get('acl_competition')->isGrantedUrl('IS_AUTHENTICATED_REMEMBERED', false);
 
         $em = $this->getDoctrine()->getEntityManager();
         $comp = $em->getRepository('uteg:Competition')->findOneBy(array('id' => $request->request->get('compid')));
 
         $aclcomp = $this->get('acl_competition');
-        
+
         $request->getSession()->set('comp', $comp->getId());
-        
+
         $response = new Response(
             $aclcomp->getPossibleRoute()
         );
-        
+
         $cookie = new Cookie('cid', $comp->getId(), (time() + 3600 * 24 * 7), '/');
-        
+
         $response->headers->setCookie($cookie);
         return $response;
     }
-    
-    
+
+
     /**
      * @Route("/comp/new", name="addNewComp")
      */
-    public function addCompAction(Request $request) {
+    public function addCompAction(Request $request)
+    {
         $aclcomp = $this->get('acl_competition');
 
         $aclcomp->isGrantedUrl('IS_AUTHENTICATED_REMEMBERED', false);
@@ -111,25 +114,26 @@ class CompetitionController extends Controller
             return new RedirectResponse($this->generateUrl('competitionlist'));
         }
 
-    	return $this->render('addComp.html.twig', array(
-    		'form' => $form->createView()
-    	));
-	}
+        return $this->render('addComp.html.twig', array(
+            'form' => $form->createView()
+        ));
+    }
 
     /**
      * @Route("/comp/del", name="delComp")
      * @Method("POST")
      */
-    public function delCompAction(Request $request) {
+    public function delCompAction(Request $request)
+    {
         $aclcomp = $this->get('acl_competition');
 
         $aclcomp->isGrantedUrl('IS_AUTHENTICATED_REMEMBERED', false);
 
-        if(isset($_POST['compid'])) {
+        if (isset($_POST['compid'])) {
             $em = $this->getDoctrine()->getManager();
             $comp = $em->getRepository('uteg:Competition')->findOneBy(array("id" => $_POST['compid']));
             $request->getSession()->set('comp', $comp->getId());
-            if($aclcomp->isGranted('DELETE')) {
+            if ($aclcomp->isGranted('DELETE')) {
                 $em->remove($comp);
                 $em->flush();
 
@@ -144,10 +148,10 @@ class CompetitionController extends Controller
                 );
             }
         } else {
-        	$this->get('session')->getFlashBag()->add('error', 'competitionlist.delcomp.compnotset');
-        	return new Response(
-        			'false'
-        	);
+            $this->get('session')->getFlashBag()->add('error', 'competitionlist.delcomp.compnotset');
+            return new Response(
+                'false'
+            );
         }
     }
 }

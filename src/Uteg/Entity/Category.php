@@ -13,7 +13,8 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
  * @ORM\Table(name="ute_category")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
-class Category {
+class Category
+{
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="cat_id")
@@ -25,7 +26,7 @@ class Category {
      * @ORM\Column(type="integer", name="number")
      */
     protected $number;
-    
+
     /**
      * @ORM\Column(type="string", name="name")
      */
@@ -47,18 +48,20 @@ class Category {
      */
     protected $deletedAt;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->starters = new ArrayCollection();
     }
-    
-    public function __toString() {
-    	return $this->name;
+
+    public function __toString()
+    {
+        return $this->name;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -81,7 +84,7 @@ class Category {
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -104,7 +107,7 @@ class Category {
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -127,7 +130,7 @@ class Category {
     /**
      * Get deletedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDeletedAt()
     {
@@ -160,7 +163,7 @@ class Category {
     /**
      * Get starters
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getStarters()
     {
@@ -176,14 +179,14 @@ class Category {
     public function setNumber($number)
     {
         $this->number = $number;
-    
+
         return $this;
     }
 
     /**
      * Get number
      *
-     * @return integer 
+     * @return integer
      */
     public function getNumber()
     {

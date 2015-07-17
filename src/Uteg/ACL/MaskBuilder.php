@@ -5,7 +5,8 @@ namespace uteg\ACL;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder as BaseMaskBuilder;
 
 
-class MaskBuilder extends BaseMaskBuilder {
+class MaskBuilder extends BaseMaskBuilder
+{
     const MASK_DASHBOARD = 256; // 1 << 8
     const MASK_STARTERS_VIEW = 512; // 1 << 9
     const MASK_STARTERS_EDIT = 1024; // 1 << 10

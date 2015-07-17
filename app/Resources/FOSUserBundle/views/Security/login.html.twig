@@ -5,20 +5,23 @@
 {% block title %}{{ 'login.title'|trans }}{% endblock %}
 
 {% block fos_user_content %}
-<div id="login">
-    <div id="triangle"></div>
-    <h1>{{ 'login.header'|trans() }}</h1>
-    <form action="{{ path("fos_user_security_check") }}" method="post">
-        {% if error %}
-            <div class="error">{{ error|trans({}, 'FOSUserBundle') }}</div>
-        {% endif %}
-        <input type="username" id="username" name="_username" placeholder="{{ "login.username"|trans }}" required="required" />
-        <input type="password" id="password" name="_password" placeholder="{{ "login.password"|trans }}" required="required" />
-        <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
-        <label for="remember_me">{{ 'login.remember_me'|trans }}</label>
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
-        <input type="hidden" name="_target_path" value="/competitions" />
-        <input type="submit" id="_submit" name="_submit" value="{{ "login.button"|trans }}" />
-    </form>
-</div>
+    <div id="login">
+        <div id="triangle"></div>
+        <h1>{{ 'login.header'|trans() }}</h1>
+
+        <form action="{{ path("fos_user_security_check") }}" method="post">
+            {% if error %}
+                <div class="error">{{ error|trans({}, 'FOSUserBundle') }}</div>
+            {% endif %}
+            <input type="username" id="username" name="_username" placeholder="{{ "login.username"|trans }}"
+                   required="required"/>
+            <input type="password" id="password" name="_password" placeholder="{{ "login.password"|trans }}"
+                   required="required"/>
+            <input type="checkbox" id="remember_me" name="_remember_me" value="on"/>
+            <label for="remember_me">{{ 'login.remember_me'|trans }}</label>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"/>
+            <input type="hidden" name="_target_path" value="/competitions"/>
+            <input type="submit" id="_submit" name="_submit" value="{{ "login.button"|trans }}"/>
+        </form>
+    </div>
 {% endblock %}

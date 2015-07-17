@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace uteg\Menu;
 
@@ -6,43 +6,44 @@ use Knp\Menu\FactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManager;
 
-class Breadcrumb 
+class Breadcrumb
 {
-	private $factory;
-	private $em;
-	
-	public function __construct(EntityManager $em, FactoryInterface $factory) {
-		$this->em = $em;
-		$this->factory = $factory;
-	}
-	
-	public function breadcrumb(Request $request) {
-		$comp = $this->em->find('uteg:Competition', $request->getSession()->get('comp'));
-		
-		$menu = $this->factory->createItem('root', array(
-		    'childrenAttributes'    => array(
-		        'class'             => 'breadcrumb',
-		    )
+    private $factory;
+    private $em;
+
+    public function __construct(EntityManager $em, FactoryInterface $factory)
+    {
+        $this->em = $em;
+        $this->factory = $factory;
+    }
+
+    public function breadcrumb(Request $request)
+    {
+        $comp = $this->em->find('uteg:Competition', $request->getSession()->get('comp'));
+
+        $menu = $this->factory->createItem('root', array(
+            'childrenAttributes' => array(
+                'class' => 'breadcrumb',
+            )
         ));
-		// this item will always be displayed
-		$menu->addChild($comp->getName()." ".$comp->getStartdate()->format("Y"));
-		 
-		// create the menu according to the route
-		switch($request->get('_route')){
-			case 'dashboard':
-				$menu
-				->addChild('dashboard.path')
-				->setCurrent(true)
-				// setCurrent is use to add a "current" css class
-				;
-				break;
-			case 'starters':
+        // this item will always be displayed
+        $menu->addChild($comp->getName() . " " . $comp->getStartdate()->format("Y"));
+
+        // create the menu according to the route
+        switch ($request->get('_route')) {
+            case 'dashboard':
+                $menu
+                    ->addChild('dashboard.path')
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
+                ;
+                break;
+            case 'starters':
                 $uri = $request->getRequestUri();
 
                 $menu->addChild('starters.path');
                 $menu->addChild((strpos($uri, 'female') == false) ? 'starters.path.male' : 'starters.path.female')
-				        ->setCurrent(true);
-				break;
+                    ->setCurrent(true);
+                break;
             case 'starterImport':
                 $menu->addChild('starters.path');
                 $menu
@@ -61,34 +62,30 @@ class Breadcrumb
             case 'clubs':
                 $menu
                     ->addChild('clubs.path')
-                    ->setCurrent(true)
-                    // setCurrent is use to add a "current" css class
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
             case 'clubsInvite':
                 $menu->addChild('clubs.path');
                 $menu
                     ->addChild('clubs.invite.path')
-                    ->setCurrent(true)
-                    // setCurrent is use to add a "current" css class
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
-			case 'competition':
+            case 'competition':
                 $menu
                     ->addChild('competition.path')
-                    ->setCurrent(true)
-                    // setCurrent is use to add a "current" css class
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
-			case 'permissions':
+            case 'permissions':
                 $menu
                     ->addChild('permissions.path')
-                    ->setCurrent(true)
-                    // setCurrent is use to add a "current" css class
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
-		}
-		 
-		return $menu;
-	}
+        }
+
+        return $menu;
+    }
 }

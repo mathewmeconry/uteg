@@ -14,7 +14,8 @@ use Doctrine\Common\Collections\Criteria;
  * @ORM\Table(name="ute_competition")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
-class Competition {
+class Competition
+{
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="comp_id")
@@ -88,8 +89,8 @@ class Competition {
      */
     public function __construct()
     {
-    	$this->users = new ArrayCollection();
-    	$this->s2cs = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->s2cs = new ArrayCollection();
         $this->c2is = new ArrayCollection();
     }
 
@@ -119,7 +120,7 @@ class Competition {
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -142,7 +143,7 @@ class Competition {
     /**
      * Get gym
      *
-     * @return string 
+     * @return string
      */
     public function getGym()
     {
@@ -165,7 +166,7 @@ class Competition {
     /**
      * Get location
      *
-     * @return string 
+     * @return string
      */
     public function getLocation()
     {
@@ -188,7 +189,7 @@ class Competition {
     /**
      * Get zipcode
      *
-     * @return integer 
+     * @return integer
      */
     public function getZipcode()
     {
@@ -211,7 +212,7 @@ class Competition {
     /**
      * Get startdate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getStartdate()
     {
@@ -234,7 +235,7 @@ class Competition {
     /**
      * Get enddate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getEnddate()
     {
@@ -267,7 +268,7 @@ class Competition {
     /**
      * Get users
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getUsers()
     {
@@ -290,7 +291,7 @@ class Competition {
     /**
      * Get deleted
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getDeleted()
     {
@@ -313,7 +314,7 @@ class Competition {
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -336,7 +337,7 @@ class Competition {
     /**
      * Get deletedAt
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getDeletedAt()
     {
@@ -369,37 +370,39 @@ class Competition {
     /**
      * Get s2cs
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getS2cs()
     {
         return $this->s2cs;
     }
-    
-    public function getS2csBySex($sex) {
-    	$return = array();
-    	
-    	foreach($this->s2cs as $s2c) {
-    		if($s2c->getStarterBySex($sex) !== null) {
-    			$return[] = $s2c;
-    		}
-    	}
-    	
-    	return $return;
-    }
-    
-    public function getS2csBySexCat($sex, $category) {
-    	$return = array();
 
-    	foreach($this->s2cs as $s2c) {
-    		if($s2c->getStarterBySexCat($sex, $category) !== null) {
-    			$return[] = $s2c;
-    		}
-    	}
-    	 
-    	return $return;
+    public function getS2csBySex($sex)
+    {
+        $return = array();
+
+        foreach ($this->s2cs as $s2c) {
+            if ($s2c->getStarterBySex($sex) !== null) {
+                $return[] = $s2c;
+            }
+        }
+
+        return $return;
     }
-    
+
+    public function getS2csBySexCat($sex, $category)
+    {
+        $return = array();
+
+        foreach ($this->s2cs as $s2c) {
+            if ($s2c->getStarterBySexCat($sex, $category) !== null) {
+                $return[] = $s2c;
+            }
+        }
+
+        return $return;
+    }
+
     /**
      * Add c2is
      *
@@ -409,7 +412,7 @@ class Competition {
     public function addC2i(\uteg\Entity\Clubs2Invites $c2is)
     {
         $this->c2is[] = $c2is;
-    
+
         return $this;
     }
 
@@ -426,7 +429,7 @@ class Competition {
     /**
      * Get c2is
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getC2is()
     {

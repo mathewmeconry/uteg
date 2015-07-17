@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace uteg\Controller;
 
@@ -8,11 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class PermissionsController extends Controller
 {
-	/**
-	 * @Route("/permissions", name="permissions")
-	 */
-	public function permissionsAction()
-	{
-		return $this->render('permissions.html.twig');
-	}
+    /**
+     * @Route("/permissions", name="permissions")
+     */
+    public function permissionsAction()
+    {
+        return $this->render('permissions.html.twig');
+    }
 }

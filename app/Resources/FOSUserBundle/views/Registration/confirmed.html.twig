@@ -7,9 +7,11 @@
     <div id="register">
         <div id="triangle"></div>
         <h1>{{ 'register.header'|trans({}, 'uteg') }}</h1>
+
         <div class="content">
             <i class="icon icon-success-green">{{ 'register.succeed'|trans({}, 'uteg') }}</i>
-            <span href="/login" class="button" id="toggle-login" style="display: block; margin: 5% auto;">{{ 'login.nav_button'|trans({}, 'uteg') }}</span>
+            <span href="/login" class="button" id="toggle-login"
+                  style="display: block; margin: 5% auto;">{{ 'login.nav_button'|trans({}, 'uteg') }}</span>
         </div>
     </div>
 {% endblock fos_user_content %}
