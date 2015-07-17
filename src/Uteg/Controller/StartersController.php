@@ -174,9 +174,9 @@ class StartersController extends DefaultController
     public function starterAddMassiveAction(Request $request)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
-        $return = $this->addMassivAction($em->getRepository('uteg:Competition')->find($request->getSession()->get('comp')), $request->request->get('data'));
+        $return = $this->addMassiveAction($em->getRepository('uteg:Competition')->find($request->getSession()->get('comp')), $request->request->get('data'));
 
         if (isset($return['fails'])) {
             $clubs = $em->getRepository('uteg:Club')->findBy(array(), array('name' => 'asc'));
@@ -190,7 +190,7 @@ class StartersController extends DefaultController
                 )
             );
         } else {
-            $this->get('session')->getFlashBag()->add('success', 'competitionlist.addcomp.success');
+            $this->get('session')->getFlashBag()->add('success', 'starters.import.success');
             return $this->redirectToRoute('starters');
         }
     }

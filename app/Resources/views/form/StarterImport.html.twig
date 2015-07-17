@@ -44,8 +44,7 @@
                 source: substringMatcher(starters),
                 templates: {
                     suggestion: function (starter) {
-                        return '<p><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' <span style="color: #A8A8A8; font-size: 10px;">' + starter.birthyear + '</span></p>';
-                    }
+                        return '<p><span class="' + starter.sex + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';                    }
                 }
             });
         }

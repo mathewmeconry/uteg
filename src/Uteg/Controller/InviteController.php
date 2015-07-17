@@ -115,10 +115,45 @@ class InviteController extends DefaultController
 
             return $this->render('inviteClubView.html.twig',
                 array('categories' => $categories,
-                    'starters' => $qb->getQuery()->getResult(),
-                    'club' => $c2i->getClubObj(),
+                    'starters' => $qb->getQuery()->getResult()
                 )
             );
+        } else {
+            return new Response('Link expired');
+        }
+    }
+
+    /**
+     * @Route("/invite/club/add/{token}", name="inviteAddToken")
+     */
+    public function inviteAddTokenAction(Request $request, $token)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("token" => $token));
+        $today = date("Y-m-d");
+
+        if ($c2i->getValid()->format('Y-m-d') >= $today) {
+            $starters = $request->request->get('data');
+
+            if (isset($starters[0])) {
+                $starters = array_pop($starters);
+                $categories = $em->getRepository('uteg:Category')->findBy(array(), array('number' => 'asc'));
+
+                $return = $this->addMassiveAction($em->find('uteg:Competition', $request->getSession()->get('comp')), $request->request->get('data'), $c2i->getClubObj());
+
+                if(isset($return['fails'])) {
+                    return $this->render('inviteClubView.html.twig',
+                        array('categories' => $categories,
+                            'starters' => $return['fails'],
+                            'errors' => $return['errorMessages']
+                        )
+                    );
+                } else {
+                    return $this->render('inviteClubSuccess.html.twig');
+                }
+            } else {
+                return $this->redirectToRoute("inviteToken", array("token" => $token));
+            }
         } else {
             return new Response('Link expired');
         }
