@@ -1,11 +1,11 @@
 <?php
-// src/uteg/Menu/Builder.php
+// src/uteg/Menu/MainMenu.php
 namespace uteg\Menu;
 
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
-class Builder extends ContainerAware
+class MainMenu extends ContainerAware
 {
 
     public function mainMenu(FactoryInterface $factory, array $options)
@@ -21,7 +21,7 @@ class Builder extends ContainerAware
             ($acl->isGranted('STARTERS_EDIT')) ? $menu['nav.starters']->addChild('nav.starters.import', array('route' => 'starterImport', 'icon' => 'upload')) : '';
         }
 
-        ($acl->isGranted('CLUBS_VIEW')) ? $menu->addChild('nav.clubs', array('route' => 'clubs', 'icon' => 'group')) : '';
+        ($acl->isGranted('CLUBS_VIEW')) ? $menu->addChild('nav.clubs', array('route' => 'clubs', 'icon' => 'group', 'labelAttributes' => array('class' => 'xn-text'))) : '';
 
         if ($acl->isGranted('CLUBS_VIEW')) {
             $menu->addChild('nav.invites', array('uri' => '#', 'icon' => 'envelope-o', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
