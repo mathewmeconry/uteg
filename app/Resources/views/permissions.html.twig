@@ -3,3 +3,95 @@
 {% extends "base.html.twig" %}
 
 {% block title %}{{ 'permissions.title'|trans }}{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            $('#permissions').DataTable({
+                "ajax": {
+                    "url": "{{ path('permissionsPost') }}",
+                    "method": "POST"
+                },
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "starters.table.all"|trans }}"]],
+                "search": {
+                    "regex": true
+                },
+                "order": [[2, "asc"]],
+                responsive: {
+                    details: {
+                        type: 'column'
+                    }
+                },
+                "columns": [
+                    {"data": null, "defaultContent": ""},
+                    {"data": "id", 'type': 'integer'},
+                    {"data": "firstname", 'type': 'string'},
+                    {"data": "lastname", 'type': 'string'},
+                    {"data": "birthyear", 'type': 'integer'},
+                    {"data": "club", 'type': 'string'},
+                    {"data": "category", 'type': 'string'},
+                    {"data": "present", 'type': 'bool'},
+                    {"data": "medicalcert", 'type': 'bool'},
+                    {
+                        "data": null,
+                        "defaultContent": '{% if is_granted('STARTERS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-warning btn-rounded btn-condensed btn-sm btn-icon starters-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon starters-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}'
+                    }
+                ],
+                "columnDefs": [
+                    {"visible": false, "targets": [1, 6]},
+                    {"orderable": false, "targets": [0, 9]},
+                    {"searchable": false, "targets": [0, 1, 6, 9]},
+                    {"className": 'control', "targets": 0}
+                ],
+                "paginate": {
+                    "next": "{{ "starters.table.next"|trans }}",
+                    "previous": "{{ "starters.table.previous"|trans }}"
+                },
+                "language": {
+                    "search": "{{ "starters.table.search"|trans }}",
+                    "searchPlaceholder": "{{ "starters.table.searchPlaceholder"|trans }}",
+                    "thousands": "'",
+                    "zeroRecords": "{{ "starters.table.zeroRecords"|trans }}"
+                }
+            });
+        });</script>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" style="min-height: 400px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ 'permissions.header'|trans }}</h3>
+                    <ul class="panel-controls">
+                        {% if is_granted("PERMISSIONS_EDIT", comp) %}
+                            <li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a>
+                            </li>
+                        {% endif %}
+                        <li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
+                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table id="permissions" class="table table-striped" width="100%">
+                        <thead>
+                        <tr>
+                            <th class="max-tablet-p"></th>
+                            <th class="never">id</th>
+                            <th class="all">{{ 'permissions.table.username'|trans }}</th>
+                            <th class="all">{{ 'permissions.table.email'|trans }}</th>
+                            <th class="all">{{ 'starters.table.dashboard'|trans }}</th>
+                            <th class="all">{{ 'starters.table.starters'|trans }}</th>
+                            <th class="all">{{ 'starters.table.clubs'|trans }}</th>
+                            <th class="all">{{ 'starters.table.settings'|trans }}</th>
+                            <th class="all">{{ 'starters.table.permissions'|trans }}</th>
+                            <th class="all">{{ 'starters.table.owner'|trans }}</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

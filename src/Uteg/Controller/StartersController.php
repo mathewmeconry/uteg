@@ -186,7 +186,8 @@ class StartersController extends DefaultController
                 array('clubs' => $clubs,
                     'categories' => $categories,
                     'starters' => $return['fails'],
-                    'errors' => $return['errorMessages']
+                    'errors' => $return['
+                    errorMessages']
                 )
             );
         } else {

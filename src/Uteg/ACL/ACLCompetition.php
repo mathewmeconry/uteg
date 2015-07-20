@@ -112,6 +112,19 @@ class ACLCompetition
         }
     }
 
+    public function getPermissionsByComp()
+    {
+        $users = array();
+
+        $this->updateAcl();
+        foreach ($this->acl->getObjectAces() as $ace) {
+            $users[$ace->getSecurityIdentity()->getUsername()]['username'] = $ace->getSecurityIdentity()->getUsername();
+            $users[$ace->getSecurityIdentity()->getUsername()]['email'] = $this->em->getRepository('uteg:User')->findOneBy(array("username" => $ace->getSecurityIdentity()->getUsername()))->getEmail();
+            $users[$ace->getSecurityIdentity()->getUsername()] = array_merge($users[$ace->getSecurityIdentity()->getUsername()], $this->getPermissionsByMask($ace->getMask()));
+        }
+        var_dump($users);
+    }
+
     private function grantAdmin()
     {
         $admin = $this->em->getRepository('uteg:User')->findOneBy(array('username' => 'admin'));
@@ -152,5 +165,48 @@ class ACLCompetition
                 break;
             }
         }
+    }
+
+    private function getPermissionsByMask($mask) {
+        $permissions = array();
+
+        switch($mask) {
+            case 256:
+                $permissions['dashboard'] = 1;
+                break;
+            case 512:
+                $permissions['starters_view'] = 1;
+                break;
+            case 1024:
+                $permissions['starters_view'] = 1;
+                $permissions['starters_edit'] = 1;
+                break;
+            case 2048:
+                $permissions['clubs_view'] = 1;
+                break;
+            case 4096:
+                $permissions['clubs_view'] = 1;
+                $permissions['clubs_edit'] = 1;
+                break;
+            case 8192:
+                $permissions['settings_view'] = 1;
+                break;
+            case 16384:
+                $permissions['settings_view'] = 1;
+                $permissions['settings_edit'] = 1;
+                break;
+            case 32768:
+                $permissions['permissions_view'] = 1;
+                break;
+            case 65536:
+                $permissions['permissions_view'] = 1;
+                $permissions['permissions_edit'] = 1;
+                break;
+            case 131072:
+                $permissions['owner'] = 1;
+                break;
+        }
+
+        return $permissions;
     }
 }

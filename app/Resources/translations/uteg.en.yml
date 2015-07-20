@@ -295,7 +295,19 @@ competition:
     
 permissions:
     title: 'Permissions'
+    header: 'Permissions'
     path: 'Permissions'
+    table:
+        username: 'Username'
+        email: 'E-Mail'
+        dashboard: 'Dashboard'
+        starters: 'Starters'
+        clubs: 'Clubs'
+        settings: 'Settings'
+        permissions: 'Permissions'
+        owner: 'Owner'
+        read: 'Read'
+        write: 'Write'
 
 
 
