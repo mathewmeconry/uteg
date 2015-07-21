@@ -36,13 +36,13 @@
             </li>
             <li class="xn-profile">
                 <a href="#" class="profile-mini">
-                    <img src="{% if app.user.profilepicturepath is defined %}{% if app.user.profilepicturepath %}{{ asset('profilepictures/' ~ app.user.profilepicturepath)| imagine_filter('profilepic') }}{% else %}{{ asset('/profilepictures/default')| imagine_filter('profilepic') }}{% endif %}{% endif %}"
+                    <img src="{% if app.user.profilepicturepath is defined %}{% if app.user.profilepicturepath %}{{ asset('/profilepictures/' ~ app.user.profilepicturepath)| imagine_filter('profilepic') }}{% else %}{{ asset('/profilepictures/default')| imagine_filter('profilepic') }}{% endif %}{% endif %}"
                          alt="{% if app.user.firstname is defined %}{{ app.user.firstname }}{% endif %}{% if app.user.lastname is defined %}{{ app.user.lastname }}{% endif %}"/>
                 </a>
 
                 <div class="profile">
                     <div class="profile-image">
-                        <img src="{% if app.user.profilepicturepath is defined %}{% if app.user.profilepicturepath %}{{ asset('profilepictures/' ~ app.user.profilepicturepath)| imagine_filter('profilepic') }}{% else %}{{ asset('/profilepictures/default')| imagine_filter('profilepic') }}{% endif %}{% endif %}"
+                        <img src="{% if app.user.profilepicturepath is defined %}{% if app.user.profilepicturepath %}{{ asset('/profilepictures/' ~ app.user.profilepicturepath)| imagine_filter('profilepic') }}{% else %}{{ asset('/profilepictures/default')| imagine_filter('profilepic') }}{% endif %}{% endif %}"
                              alt="{% if app.user.firstname is defined %}{{ app.user.firstname }}{% endif %}{% if app.user.lastname is defined %}{{ app.user.lastname }}{% endif %}"/>
                     </div>
                     <div class="profile-data">

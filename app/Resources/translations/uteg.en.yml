@@ -172,8 +172,8 @@ starter:
         firstname: 'Please enter a firstname'
         lastname: 'Please enter a lastname'
         birthyear: 'Please enter a birth year'
-        birthyearMin: 'Please enter the year with 4 numbers'
-        birthyearMax: 'Please enter the year with 4 numbers'
+        birthyearMin: 'Please enter the year with 4 digits'
+        birthyearMax: 'Please enter the year with 4 digits'
         club: 'Please choose a club'
         category: 'Please choose a category'
 
@@ -183,7 +183,7 @@ clubs:
     path: 'Clubs'
     table:
         name: 'Name'
-        mail: 'E-Mail'
+        info: "Info's"
         next: 'Next'
         previous: 'Previous'
         search: 'Search'
@@ -197,7 +197,7 @@ invite:
     error: 'Failed to send invites'
     success: 'Invites sent'
     mail:
-        message: 'Hi<br><br>You got invited to the Competition #COMPETITION#.<br><br>Please click on the following link to sign up your starters:<br><br>#LINK#<br><br>This link is valid until: #VALID#'
+        message: 'Hi #FIRSTNAME# #LASTNAME#<br><br>You got invited to the Competition #COMPETITION#.<br><br>Please click on the following link to sign up your starters:<br><br>#INVITELINK#<br><br>This link is valid until: #VALID#'
         subject %compname%: 'Inventation %compname%'
     wizard:
         next: 'Next'
@@ -223,7 +223,7 @@ invite:
         header: 'Mail Message'
         validtext: 'Invite link valid until'
         checkboxtext: 'Use custom E-Mail message'
-        text: 'Use #LINK# to place the invite link into the text'
+        text: 'Use #FIRSTNAME#, #LASTNAME#, #INVITELINK# to place the dynamic values into the mail'
     step4:
         small_description: 'Review'
         header: 'Please review the invites'
@@ -254,7 +254,8 @@ invites:
     title: 'Current Invites'
     table:
         name: 'Name'
-        email: 'E-Mail'
+        firstname: 'Firstname'
+        lastname: 'Lastname'
         validUntil: 'Valid Until'
         state: 'State'
         actions: 'Actions'
@@ -269,7 +270,12 @@ invites:
     edit:
         form:
             club: 'Club'
+            firstname: 'Firstname'
+            lastname: 'Lastname'
             email: 'E-Mail'
+            street: 'Street / Housenumber'
+            city: 'City'
+            zipcode: 'Zip code'
             valid: 'Valid until'
         modal:
             save: 'Save'
@@ -278,7 +284,7 @@ invites:
     resend:
         modal:
             checkboxtext: 'Use custom E-Mail message'
-            text: 'Use #LINK# to place the invite link into the text'
+            text: 'Use #FIRSTNAME#, #LASTNAME#, #INVITELINK# to place the dynamic values into the mail'
             send: 'Send'
             cancel: 'Cancel'
         success: 'Invite successfully resent'
@@ -288,6 +294,15 @@ invites:
             confirm: 'Confirm'
             cancel: 'Cancel'
     success: 'Invites succesfully sent'
+    error:
+        firstname: 'Please enter a firstname'
+        lastname: 'Please enter a lastname'
+        email: 'Please enter a email address'
+        street: 'Please enter a street with housenumber'
+        city: 'Please enter a city'
+        zipcode: 'Please enter a zip code'
+        zipcodeMin: 'A zipcode has 4 digits'
+        zipcodeMax: 'A zipcode has 4 digits'
 
 competition:
     title: 'Competition'
@@ -305,9 +320,13 @@ permissions:
         clubs: 'Clubs'
         settings: 'Settings'
         permissions: 'Permissions'
+        actions: 'Actions'
         owner: 'Owner'
-        read: 'Read'
-        write: 'Write'
+        next: 'Next'
+        previous: 'Previous'
+        search: 'Search'
+        searchPlaceholder: 'Search...'
+        zeroRecords: 'No Permissions given'
 
 
 

@@ -23,6 +23,66 @@ class InviteController extends DefaultController
     }
 
     /**
+     * @Route("/invite/form", name="inviteForm")
+     * @Method("POST")
+     */
+    public function inviteFormAction(Request $request)
+    {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+        $em = $this->getDoctrine()->getManager();
+        $comp = $em->find('uteg:Competition', $request->getSession()->get('comp'));
+
+
+        if ($request->request->get('id') !== null) {
+            $club = $em->find('uteg:Club', $request->request->get('id'));
+            $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("club" => $club, "competition" => $comp));
+            if(!$c2i) {
+                $c2i = new Clubs2Invites();
+                $c2i->setClub($club);
+                $c2i->setCompetition($comp);
+            }
+        } else {
+            $club = $em->getRepository('uteg:Club')->findOneByName($request->request->get('uteg_invite')['club']);
+            $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("club" => $club, "competition" => $comp));
+            if(!$c2i) {
+                $c2i = new Clubs2Invites();
+                $c2i->setClub($club);
+                $c2i->setCompetition($comp);
+            }
+        }
+
+        $form = $this->createForm(new C2iType(), $c2i);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $c2i = $form->getData();
+            $em = $this->getDoctrine()->getEntityManager();
+            $token = sha1(uniqid($c2i->getClub(), true));
+
+            if (!$c2i) {
+                $c2i = new Clubs2Invites();
+            }
+
+            $c2i->setToken($token);
+            $c2i->setValid(new \DateTime('0000-00-00'));
+
+            $club->addC2i($c2i);
+            $comp->addC2i($c2i);
+            $em->persist($c2i);
+            $em->persist($club);
+            $em->persist($comp);
+            $em->flush();
+
+            return new Response('true');
+        }
+
+        return $this->render('form/inviteNewForm.html.twig',
+            array('form' => $form->createView(),
+                'target' => 'inviteForm'
+            )
+        );
+    }
+
+    /**
      * @Route("/invite", name="invitePost")
      * @Method("POST")
      */
@@ -39,38 +99,14 @@ class InviteController extends DefaultController
         if (is_array($clubs)) {
             try {
                 foreach ($clubs as $club) {
-                    $token = sha1(uniqid($club['name'], true));
                     $clubobj = $em->find('uteg:Club', $club['id']);
-
                     $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("club" => $clubobj, "competition" => $em->find('uteg:Competition', $request->getSession()->get('comp'))));
-                    if (!$c2i) {
-                        $c2i = new Clubs2Invites();
-                    }
-                    $c2i->setClub($clubobj);
-                    $c2i->setCompetition($comp);
-                    $c2i->setEmail($club['mail']);
-                    $c2i->setToken($token);
                     $c2i->setValid(new \DateTime($message['valid']));
-
-                    $clubobj->addC2i($c2i);
-                    $comp->addC2i($c2i);
-
                     $em->persist($c2i);
-                    $em->persist($clubobj);
-                    $em->persist($comp);
                     $em->flush();
 
-                    if ($message['default'] == 'true') {
-                        $mailmessage = str_replace('#VALID#', $message['valid'], str_replace('#COMPETITION#', $comp->getName(), str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
-                            'token' => $token
-                        ), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))));
-                    } else {
-                        $mailmessage = str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
-                            'token' => $token
-                        ), true), $message['message']);
-                    }
-
-                    $this->sendMail($message['default'], $message['valid'], $comp, $club['mail'], $token, (isset($message['message']) ? $message['message'] : null));
+                    $token = $c2i->getToken();
+                    $this->sendMail($message['default'], $comp, $c2i, (isset($message['message']) ? $message['message'] : null));
 
                     unset($c2i);
                 }
@@ -141,7 +177,7 @@ class InviteController extends DefaultController
 
                 $return = $this->addMassiveAction($em->find('uteg:Competition', $request->getSession()->get('comp')), $request->request->get('data'), $c2i->getClubObj());
 
-                if(isset($return['fails'])) {
+                if (isset($return['fails'])) {
                     return $this->render('inviteClubView.html.twig',
                         array('categories' => $categories,
                             'starters' => $return['fails'],
@@ -187,7 +223,7 @@ class InviteController extends DefaultController
         $c2is = $comp->getC2is();
         foreach ($c2is as $c2i) {
             $valid = ($c2i->getValid()->format('Y-m-d') < $today) ? 'invites.table.expired' : 'invites.table.valid';
-            $result[] = array("DT_RowId" => $c2i->getId(), "name" => $c2i->getClub(), "email" => $c2i->getEmail(), "validUntil" => $c2i->getValid(), "state" => $valid);
+            $result[] = array("DT_RowId" => $c2i->getId(), "name" => $c2i->getClub(), "firstname" => $c2i->getFirstname(), "lastname" => $c2i->getLastname(), "email" => $c2i->getEmail(), "validUntil" => $c2i->getValid(), "state" => $valid);
         }
 
         return $this->render('inviteList.json.twig', array(
@@ -218,7 +254,7 @@ class InviteController extends DefaultController
             return new Response('true');
         }
 
-        return $this->render('form/InviteEdit.html.twig',
+        return $this->render('form/inviteEditForm.html.twig',
             array('form' => $form->createView(),
                 'target' => 'inviteEdit'
             )
@@ -236,7 +272,7 @@ class InviteController extends DefaultController
         $c2i = $this->getDoctrine()->getManager()->find('uteg:Clubs2Invites', $id);
         $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $request->getSession()->get('comp'));
 
-        $this->sendMail(($request->get('custom') == 'false' ? 'true' : 'false'), $c2i->getValid()->format('Y-m-d'), $comp, $c2i->getEmail(), $c2i->getToken(), $request->get('message'));
+        $this->sendMail(($request->get('custom') == 'false' ? 'true' : 'false'), $comp, $c2i, $request->get('message'));
         $this->get('session')->getFlashBag()->add('success', 'invites.resend.success');
         return new Response("true");
     }
@@ -259,22 +295,22 @@ class InviteController extends DefaultController
         return new Response('true');
     }
 
-    private function sendMail($default, $validuntil, $comp, $mail, $token, $message = null)
+    private function sendMail($default, $comp, $c2i, $message = null)
     {
         if ($default == 'true') {
-            $mailmessage = str_replace('#VALID#', $validuntil, str_replace('#COMPETITION#', $comp->getName(), str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
-                'token' => $token
-            ), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))));
+            $mailmessage = str_replace("#FIRSTNAME#", $c2i->getFirstname(), str_replace("#LASTNAME#", $c2i->getLastname(), str_replace('#VALID#', $c2i->getValid()->format('Y-m-d'), str_replace('#COMPETITION#', $comp->getName(), str_replace("#INVITELINK#", $this->get('router')->generate('inviteToken', array(
+                'token' => $c2i->getToken()
+            ), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))))));
         } else {
-            $mailmessage = str_replace("#LINK#", $this->get('router')->generate('inviteToken', array(
-                'token' => $token
-            ), true), $message);
+            $mailmessage = str_replace("#FIRSTNAME#", $c2i->getFirstname(), str_replace("#LASTNAME#", $c2i->getLastname(), str_replace("#INVITELINK#", $this->get('router')->generate('inviteToken', array(
+                'token' => $c2i->getToken()
+            ), true), $message)));
         }
 
         $mail = \Swift_Message::newInstance()
             ->setSubject($this->get('translator')->trans('invite.mail.subject %compname%', array('%compname%' => $comp->getName()), 'uteg'))
             ->setFrom('noreply@getu.ch')
-            ->setTo($mail)
+            ->setTo($c2i->getEMail())
             ->setBody(
                 $mailmessage,
                 'text/html'

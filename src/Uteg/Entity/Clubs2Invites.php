@@ -4,6 +4,7 @@ namespace uteg\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
 
 
@@ -35,8 +36,45 @@ class Clubs2Invites
 
     /**
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="invites.error.firstname")
+     */
+    protected $firstname;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="invites.error.lastname")
+     */
+    protected $lastname;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="invites.error.email")
      */
     protected $email;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="invites.error.street")
+     */
+    protected $street;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="invites.error.city")
+     */
+    protected $city;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="invites.error.zipcode")
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 4,
+     *      minMessage="invites.error.zipcodeMin",
+     *      maxMessage="invites.error.zipcodeMax"
+     * )
+     */
+    protected $zipcode;
 
     /**
      * @ORM\Column(type="string")
@@ -296,5 +334,120 @@ class Clubs2Invites
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Set firstname
+     *
+     * @param string $firstname
+     * @return Clubs2Invites
+     */
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+    
+        return $this;
+    }
+
+    /**
+     * Get firstname
+     *
+     * @return string 
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * Set lastname
+     *
+     * @param string $lastname
+     * @return Clubs2Invites
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+    
+        return $this;
+    }
+
+    /**
+     * Get lastname
+     *
+     * @return string 
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * Set street
+     *
+     * @param string $street
+     * @return Clubs2Invites
+     */
+    public function setStreet($street)
+    {
+        $this->street = $street;
+    
+        return $this;
+    }
+
+    /**
+     * Get street
+     *
+     * @return string 
+     */
+    public function getStreet()
+    {
+        return $this->street;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     * @return Clubs2Invites
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+    
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string 
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Set zipcode
+     *
+     * @param integer $zipcode
+     * @return Clubs2Invites
+     */
+    public function setZipcode($zipcode)
+    {
+        $this->zipcode = $zipcode;
+    
+        return $this;
+    }
+
+    /**
+     * Get zipcode
+     *
+     * @return integer 
+     */
+    public function getZipcode()
+    {
+        return $this->zipcode;
     }
 }

@@ -16,11 +16,16 @@ class C2iType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('club', 'text', array('read_only' => 'true', 'label' => 'invites.edit.form.club', "attr" => array("placeholder" => "invites.edit.form.club", "class" => "form-control"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'))
-            ->add('email', 'text', array('label' => 'invites.edit.form.email', "attr" => array("placeholder" => "invites.edit.form.email", "class" => "form-control"), "label_attr" => array("class" => "control-label"), 'translation_domain' => 'uteg'))
+            ->add('club', 'text', array('read_only' => 'true', 'label' => 'invites.edit.form.club', "attr" => array("placeholder" => "invites.edit.form.club"), 'translation_domain' => 'uteg'))
+            ->add('firstname', null, array('label' => 'invites.edit.form.firstname', "attr" => array("placeholder" => "invites.edit.form.firstname"), 'translation_domain' => 'uteg'))
+            ->add('lastname', null, array('label' => 'invites.edit.form.lastname', "attr" => array("placeholder" => "invites.edit.form.lastname"), 'translation_domain' => 'uteg'))
+            ->add('email', 'email', array('label' => 'invites.edit.form.email', "attr" => array("placeholder" => "invites.edit.form.email"), 'translation_domain' => 'uteg'))
+            ->add('street', null, array('label' => 'invites.edit.form.street', "attr" => array("placeholder" => "invites.edit.form.street"), 'translation_domain' => 'uteg'))
+            ->add('city', null, array('label' => 'invites.edit.form.city', "attr" => array("placeholder" => "invites.edit.form.city"), 'translation_domain' => 'uteg'))
+            ->add('zipcode', null, array('label' => 'invites.edit.form.zipcode', "attr" => array("placeholder" => "invites.edit.form.zipcode"), 'translation_domain' => 'uteg'))
             ->add('valid', 'date', array(
                 'label' => 'invites.edit.form.valid',
-                "attr" => array("placeholder" => "invites.edit.form.valid", "class" => "form-control datepicker"),
+                "attr" => array("placeholder" => "invites.edit.form.valid", "class" => "datepicker"),
                 'translation_domain' => 'uteg',
                 'format' => 'yyyy-MM-dd',
                 'widget' => 'single_text',

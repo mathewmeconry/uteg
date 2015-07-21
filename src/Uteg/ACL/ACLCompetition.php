@@ -120,9 +120,10 @@ class ACLCompetition
         foreach ($this->acl->getObjectAces() as $ace) {
             $users[$ace->getSecurityIdentity()->getUsername()]['username'] = $ace->getSecurityIdentity()->getUsername();
             $users[$ace->getSecurityIdentity()->getUsername()]['email'] = $this->em->getRepository('uteg:User')->findOneBy(array("username" => $ace->getSecurityIdentity()->getUsername()))->getEmail();
-            $users[$ace->getSecurityIdentity()->getUsername()] = array_merge($users[$ace->getSecurityIdentity()->getUsername()], $this->getPermissionsByMask($ace->getMask()));
+            (!isset($users[$ace->getSecurityIdentity()->getUsername()]['permissions'])) ? $users[$ace->getSecurityIdentity()->getUsername()]['permissions'] = array() : '';
+            $users[$ace->getSecurityIdentity()->getUsername()]['permissions'] = array_merge($users[$ace->getSecurityIdentity()->getUsername()]['permissions'], $this->getPermissionsByMask($ace->getMask()));
         }
-        var_dump($users);
+        return $users;
     }
 
     private function grantAdmin()

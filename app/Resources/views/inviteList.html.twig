@@ -37,7 +37,8 @@
                 },
                 "columns": [
                     {"data": "name", 'type': 'string'},
-                    {"data": "email", 'type': 'string'},
+                    {"data": "firstname", 'type': 'string'},
+                    {"data": "lastname", 'type': 'string'},
                     {"data": "validUntil", 'type': 'date'},
                     {"data": "state", 'type': 'string'},
                     {
@@ -201,7 +202,8 @@
                         <thead>
                         <tr>
                             <th class="all">{{ 'invites.table.name'|trans }}</th>
-                            <th class="all">{{ 'invites.table.email'|trans }}</th>
+                            <th class="all">{{ 'invites.table.firstname'|trans }}</th>
+                            <th class="all">{{ 'invites.table.lastname'|trans }}</th>
                             <th class="all">{{ 'invites.table.validUntil'|trans }}</th>
                             <th class="all">{{ 'invites.table.state'|trans }}</th>
                             <th style="width: 200px;" class="all">{{ 'invites.table.actions'|trans }}</th>

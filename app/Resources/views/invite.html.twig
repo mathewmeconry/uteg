@@ -12,6 +12,7 @@
     <script type="text/javascript" src="{{ asset("js/plugins/smartwizard/jquery.smartWizard.min.js") }}"></script>
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/ajaxform/ajaxForm.min.js") }}"></script>
     <script type='text/javascript'
             src='{{ asset("js/plugins/validationengine/languages/jquery.validationEngine-en.js") }}'></script>
     <script type='text/javascript' src='{{ asset("js/plugins/validationengine/jquery.validationEngine.js") }}'></script>
@@ -34,23 +35,18 @@
                     if (context.fromStep == 1) {
                         $('#inviteMail tbody').html('');
 
-                        var inviteMailForm = $("#inviteMailForm").validate({
-                            ignore: []
-                        });
-
-                        var counter = 0;
                         $.each($('.inviteCheckbox:checked', $('#inviteList').dataTable().fnGetNodes()), function (key, value) {
                             var id = $(value).parent().parent().parent().attr('id');
                             var name = $(value).parent().parent().next().html();
 
-                            $('#inviteMail tbody').append('<tr id="' + id + '"><td style="white-space:nowrap;">' + name + '</td><td><input name="email[' + counter + ']" type="text" class="form-control"/></td></tr>');
-
-                            $('input[name="email[' + counter + ']"]').rules("add", {
-                                required: true,
-                                email: true
+                            $.ajax({
+                                url: "{{ path('inviteForm') }}",
+                                method: "POST",
+                                data: {id: id}
+                            }).success(function (form) {
+                                $('#inviteMail tbody').append('<tr id="' + id + '"><td style="white-space:nowrap;">' + name + '</td><td>' + form + '</td></tr>');
+                                $('.wizard').smartWizard("fixHeight");
                             });
-
-                            counter += 1;
                         });
                     }
                     $('.wizard').smartWizard("fixHeight");
@@ -73,7 +69,7 @@
                     $('#inviteMessageReview').html('');
 
                     $.each($('#inviteMail tbody tr'), function (key, tr) {
-                        $('#inviteClubsReview tbody').append('<tr id="' + $(tr).attr('id') + '"><td>' + $(tr).children().eq(0).html() + '</td><td>' + $(tr).children().eq(1).children().eq(0).val() + '</td></tr>');
+                        $('#inviteClubsReview tbody').append('<tr id="' + $(tr).attr('id') + '"><td>' + $(tr).children().eq(0).html() + '</td><td>' + $(tr).children().eq(1).find('input[name*="uteg_invite[firstname]"]').val() + ' ' + $(tr).children().eq(1).find('input[name*="uteg_invite[lastname]"]').val() + '</td></tr>');
                     });
 
                     $('#inviteMessageReviewValidBody').html($('#messageValidUntil').val());
@@ -102,7 +98,18 @@
             if (context.fromStep < context.toStep) {
                 switch (context.fromStep) {
                     case 2:
-                        (!$("#inviteMailForm").valid()) ? isStepValid = false : '';
+                        $.each($('.inviteNewForm'), function (key, form) {
+                            $(form).ajaxSubmit({
+                                async: false,
+                                success: function (data) {
+                                    if (data != 'true') {
+                                        isStepValid = false;
+                                        $(form).html(data);
+                                        $('.wizard').smartWizard("fixHeight");
+                                    }
+                                }
+                            });
+                        });
                         break;
                     case 3:
                         (!$("#inviteMessageForm").valid()) ? isStepValid = false : '';
@@ -111,7 +118,6 @@
             }
 
             $('.wizard').smartWizard("fixHeight");
-
             return isStepValid;
         }
 
@@ -196,7 +202,6 @@
 
             $('.table').on('init.dt', function () {
                 $(".wizard").smartWizard({
-                    //This is important part of wizard init
                     onShowStep: showStepWizard,
                     onLeaveStep: leaveStepWizard,
                     onFinish: finishWizard,
@@ -283,20 +288,17 @@
                                 <h4>{{ 'invite.step2.header'|trans }}</h4>
 
                                 <p>
-
-                                <form id="inviteMailForm">
-                                    <table id="inviteMail" name="mailMessage" class="table responsive table-striped"
-                                           data-cat="0" width="100%">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ 'clubs.table.name'|trans }}</th>
-                                            <th>{{ 'clubs.table.mail'|trans }}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </form>
+                                <table id="inviteMail" name="mailMessage" class="table responsive table-striped"
+                                       data-cat="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'clubs.table.name'|trans }}</th>
+                                        <th>{{ 'clubs.table.info'|trans }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                                 </p>
                             </div>
                             <div id="step-3" class="content" style="display: none;">
