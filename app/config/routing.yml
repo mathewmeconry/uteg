@@ -1,6 +1,10 @@
-app:
-    resource: "@uteg/Controller/"
+BaseBundle:
+    resource: "@UtegBaseBundle/Controller"
     type:     annotation
+
+ModLoader:
+    resource: init
+    type:     module
 
 _liip_imagine:
     resource: "@LiipImagineBundle/Resources/config/routing.xml"

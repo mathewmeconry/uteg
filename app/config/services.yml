@@ -10,28 +10,33 @@ services:
             - { name: twig.extension }
 
     acl_competition:
-        class:     uteg\ACL\ACLCompetition
+        class:     Uteg\BaseBundle\ACL\ACLCompetition
         arguments: ["@doctrine.orm.entity_manager","@security.acl.provider","@request_stack", "@security.authorization_checker"]
 
+    UtegBaseBundle.module_loader:
+        class: Uteg\BaseBundle\Loader\ModuleLoader
+        tags:
+            - { name: routing.loader }
+
     uteg_user.registration.form.type:
-        class: uteg\Form\Type\RegistrationFormType
+        class: Uteg\BaseBundle\Form\Type\RegistrationFormType
         arguments: [%fos_user.model.user.class%]
         tags:
             - { name: form.type, alias: uteg_user_registration }
 
     uteg_user.profile_edit.form.type:
-        class: uteg\Form\Type\ProfileFormType
+        class: Uteg\BaseBundle\Form\Type\ProfileFormType
         arguments: [%fos_user.model.user.class%]
         tags:
             - { name: form.type, alias: uteg_profile_edit }
     
-    uteg.menu_builder:
-        class: uteg\Menu\Breadcrumb
+    UtegBaseBundle.menu_builder:
+        class: Uteg\BaseBundle\Menu\Breadcrumb
         arguments: ["@doctrine.orm.entity_manager","@knp_menu.factory"]
         
-    uteg.menu.breadcrumb:
-        class: uteg\Menu\Breadcrumb
-        factory_service: uteg.menu_builder # the menu builder service above
+    UtegBaseBundle.menu.breadcrumb:
+        class: Uteg\BaseBundle\Menu\Breadcrumb
+        factory_service: UtegBaseBundle\menu_builder # the menu builder service above
         factory_method: breadcrumb # the method name to generate the menu
         arguments: ["@request"]
         scope: request

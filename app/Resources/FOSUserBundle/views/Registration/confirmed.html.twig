@@ -1,17 +1,17 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
 
-{% block title %}{{ 'register.title'|trans({}, 'uteg') }}{% endblock %}
+{% block title %}{{ 'register.title'|trans({}, 'UtegBase') }}{% endblock %}
 
 {% block fos_user_content %}
 
     <div id="register">
         <div id="triangle"></div>
-        <h1>{{ 'register.header'|trans({}, 'uteg') }}</h1>
+        <h1>{{ 'register.header'|trans({}, 'UtegBase') }}</h1>
 
         <div class="content">
-            <i class="icon icon-success-green">{{ 'register.succeed'|trans({}, 'uteg') }}</i>
+            <i class="icon icon-success-green">{{ 'register.succeed'|trans({}, 'UtegBase') }}</i>
             <span href="/login" class="button" id="toggle-login"
-                  style="display: block; margin: 5% auto;">{{ 'login.nav_button'|trans({}, 'uteg') }}</span>
+                  style="display: block; margin: 5% auto;">{{ 'login.nav_button'|trans({}, 'UtegBase') }}</span>
         </div>
     </div>
 {% endblock fos_user_content %}

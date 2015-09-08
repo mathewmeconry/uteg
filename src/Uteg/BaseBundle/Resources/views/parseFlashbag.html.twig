@@ -1,0 +1,8 @@
+{% trans_default_domain 'UtegBase' %}
+
+{% for flashMessage in app.session.flashbag.get('error') %}
+    noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'error', timeout: 5000});
+{% endfor %}
+{% for flashMessage in app.session.flashbag.get('success') %}
+    noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'success', timeout: 5000});
+{% endfor %}

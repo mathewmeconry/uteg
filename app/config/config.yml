@@ -5,7 +5,7 @@ imports:
     - { resource: doctrine_extensions.yml }
 
 parameters:
-    security.acl.permission.map.class: uteg\ACL\PermissionMap
+    security.acl.permission.map.class: Uteg\BaseBundle\ACL\PermissionMap
 
 framework:
     #esi:             ~
@@ -84,6 +84,9 @@ doctrine:
                 alias: Gedmo
                 prefix: Gedmo\Tree\Entity
                 dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Tree/Entity"
+            UtegBaseBundle:
+                type: annotation
+                prefix: Uteg\BaseBundle\Entity
         filters:
              soft-deleteable:
                 class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
@@ -102,7 +105,7 @@ swiftmailer:
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
-    user_class: uteg\Entity\User
+    user_class: Uteg\BaseBundle\Entity\User
     registration:
            form:
                 type: uteg_user_registration

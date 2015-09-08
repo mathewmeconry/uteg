@@ -27,7 +27,7 @@ html, body {
 
 .btn-icon span {
     padding-left: 10px;
-    display: none;
+    visibility: hidden;
 }
 
 .btn-icon:hover {
@@ -36,7 +36,7 @@ html, body {
 
 .btn-icon:hover span{
     padding-left: 2px;
-    display: inline;
+    visibility: visible;
 }
 
 .fa-user-settings:before {

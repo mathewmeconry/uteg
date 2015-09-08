@@ -23,7 +23,8 @@ class AppKernel extends Kernel
             new JMS\TranslationBundle\JMSTranslationBundle(),
         	new Liip\ImagineBundle\LiipImagineBundle(),
         	new BCC\ExtraToolsBundle\BCCExtraToolsBundle(),
-            new uteg\uteg(),
+            new Uteg\BaseBundle\UtegBaseBundle(),
+            new Uteg\EGTBundle\UtegEGTBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
