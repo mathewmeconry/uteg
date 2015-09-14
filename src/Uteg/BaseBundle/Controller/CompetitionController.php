@@ -67,8 +67,6 @@ class CompetitionController extends DefaultController
 
         $request->getSession()->set('comp', $comp->getId());
 
-        $this->get('UtegBaseBundle.module_loader')->load($comp->getModule()->getBundName());
-
         $response = new Response(
             $aclcomp->getPossibleRoute()
         );

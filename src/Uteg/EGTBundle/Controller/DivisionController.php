@@ -9,6 +9,12 @@ use Uteg\BaseBundle\ACL\ACLCompetition;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+/**
+ * Class DivisionController
+ * @package Uteg\EGTBundle\Controller
+ *
+ * @Route("EGT", name="EGT")
+ */
 class DivisionController extends Controller
 {
     /**
@@ -16,7 +22,7 @@ class DivisionController extends Controller
      */
     public function squadsAction(Request $request)
     {
-
+        return $this->render('UtegEGTBundle::divisionsSquad.html.twig');
     }
 
     /**
