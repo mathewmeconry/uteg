@@ -20,7 +20,7 @@ class ModuleLoader extends Loader
         $collection = new RouteCollection();
 
         if ($bundName != 'init') {
-            $resource = "@UtegEGTBundle/Controller";
+            $resource = "@$bundName/Controller";
             $type = 'annotation';
 
             $importedRoutes = $this->import($resource, $type);
