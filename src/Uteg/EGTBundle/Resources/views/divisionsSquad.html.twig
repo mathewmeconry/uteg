@@ -3,3 +3,136 @@
 {% extends "UtegBaseBundle::base.html.twig" %}
 
 {% block title %}{{ 'divisions.squad.title'|trans }}{% endblock %}
+
+{% block jsplugins %}
+    <script type="text/javascript" src='{{ asset("/js/plugins/sortable/jquery.sortable.min.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("/js/plugins/jquery/jquery-ui.min.js") }}'></script>
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('.list-group-item').click(function() {
+            $('.' + $(this).data('cat') + '-' + $(this).data('sex') + '.active').removeClass('active');
+            $(this).addClass('active');
+
+            $('.starters-source-' + $(this).data('cat') + '-' + $(this).data('sex')).removeClass('show');
+            $('#src-' + $(this).data('cat') + '-' + $(this).data('sex') + '-' + $(this).data('club')).addClass('show');
+        });
+
+        $(".starters-source, .starters-target").sortable({
+            connectWith: ".connected",
+            placeholder: "sortable-placeholder",
+            cursor: "pointer",
+            scroll: true
+        });
+
+        $(".starters-target").sortable({
+            receive: function (event, ui) {
+                var sender = ui.sender[0];
+                var starter = ui.item[0];
+
+                if($(sender).hasClass('starters-source'))  {
+                    $('#' + $(starter).data('cat') + '-' + $(starter).data('sex') + '-' + $(starter).data('club') + ' span.badge').html(parseInt($('#' + $(starter).data('cat') + '-' + $(starter).data('sex') + '-' + $(starter).data('club') + ' span.badge').html()) - 1)
+                }
+            }
+        });
+
+        $(".starters-source").sortable({
+            receive: function (event, ui) {
+                var sender = ui.sender[0];
+                var starter = ui.item[0];
+                var id = $(starter).data('cat') + '-' + $(starter).data('sex') + '-' + $(starter).data('club');
+
+                if($(sender).hasClass('starters-target'))  {
+                    $('#' + id + ' span.badge').html(parseInt($('#' + id + ' span.badge').html()) + 1)
+                }
+
+                if($(this).attr('id') !== "src-" + id) {
+                    $('#src-' + id).append(starter);
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel" class="panel panel-default" style="min-height: 400px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ 'divisions.squad.title'|trans }}</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
+                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-tabs-vertical">
+                    <div class="tabs">
+                        <ul class="nav nav-tabs tabs-left">
+                            {% for i in 1..8 %}
+                                <li {% if i == 1 %}class="active"{% endif %}>
+                                    <a href="#tab{{ i }}" data-toggle="tab"
+                                       aria-expanded="true">K{% if i == 8 %}D/H{% else %}{{ i }}{% endif %}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body tab-content tabs-level-2">
+                    {% for i in 1..8 %}
+                        <div id="tab{{ i }}" class="tab-pane {% if i == 1 %} active{% endif %}">
+                            <div class="tabs">
+                                <ul class="nav nav-pills nav-justified">
+                                    <li class="active">
+                                        <a href="#female{{ i }}" data-toggle="tab"
+                                           aria-expanded="true">{{ 'divisions.squad.female'|trans }}</a>
+                                    </li>
+                                    <li>
+                                        <a href="#male{{ i }}" data-toggle="tab"
+                                           aria-expanded="true">{{ 'divisions.squad.male'|trans }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="tab-content">
+                                <div id="female{{ i }}" class="tab-pane{% if i == 1 %} active{% endif %}">
+                                    <div id="clubs-{{ i }}" class="clubs list-group pull-left">
+                                        {% for club in clubs %}
+                                            {% if club.catCount.female[i] != 0 %}
+                                                <a href="#" class="list-group-item {{ i }}-female" id="{{ i }}-female-{{ club.id }}" data-club="{{ club.id }}" data-cat="{{ i }}"  data-sex="female">{{ club.name }} ({{ club.catCount.female[i] }})</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <button id="save-female-{{ i }}" class="btn btn-success active pull-right">{{ 'divisions.squad.save'|trans }}</button>
+                                </div>
+                                <div id="male{{ i }}" class="tab-pane">
+                                    <div id="clubs-{{ i }}" class="clubs list-group pull-left">
+                                        {% for club in clubs %}
+                                            {% if club.catCount.male[i] != 0 %}
+                                                <a href="#" class="list-group-item {{ i }}-male" id="{{ i }}-male-{{ club.id }}" data-club="{{ club.id }}" data-cat="{{ i }}"  data-sex="male">{{ club.name }} <span class="badge">{{ club.catCount.male[i] }}</span></a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="starters-source-div">
+                                        {% for club in clubs %}
+                                            <ul class="starters-source starters-source-{{ i }}-male connected" id="src-{{ i }}-male-{{ club.id }}">
+                                                {% for starter in club.starters.male[i] %}
+                                                    <li data-cat="{{ i }}" data-sex="male" data-club="{{ club.id }}">{{ starter.firstname }} {{ starter.lastname }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="starters-target-div">
+                                        <ul class="starters-target connected"></ul>
+                                    </div>
+                                    <button id="save-male-{{ i }}" class="btn btn-success active pull-right">{{ 'divisions.squad.save'|trans }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

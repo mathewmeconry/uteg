@@ -332,5 +332,11 @@ permissions:
         searchPlaceholder: 'Search...'
         zeroRecords: 'No Permissions given'
 
+divisions:
+  path: 'Divisions'
+  squad:
+    title: 'Divisions'
+    path: 'Squad'
+
 modules:
     egt: 'EGT'

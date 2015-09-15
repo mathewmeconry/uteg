@@ -84,6 +84,13 @@ class Breadcrumb
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
+            case 'divSquad':
+                $menu->addChild('divisions.path');
+                $menu
+                    ->addChild('divisions.squad.path')
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
+                ;
+                break;
         }
 
         return $menu;
