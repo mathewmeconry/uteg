@@ -42,24 +42,15 @@ class DefaultController extends Controller
                 "sex" => $starter->getSex());
         }
 
-        if(!$starters) {
-            $result = array(array('id' => '',
-                "firstname" => '',
-                "lastname" => '',
-                "birthyear" => '',
-                "sex" => ''));
-        }
-
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
     }
 
-    public function addMassiveAction($competition, $starters, $clubSrc = null)
+    public function addMassiveAction($competition, $starters, $club = null)
     {
         $em = $this->getDoctrine()->getManager();
-        $club = $clubSrc;
         $return = array();
 
         foreach ($starters as $starterPost) {
@@ -97,7 +88,6 @@ class DefaultController extends Controller
                     } else {
                         $errorMessagesRaw['club'] = 'starter.error.club';
                     }
-
                 } else {
                     $s2c->setClub($club);
                 }
@@ -127,7 +117,6 @@ class DefaultController extends Controller
                     $errorMessages[] = $errorMessagesRaw;
                 }
 
-                $club = $clubSrc;
                 unset($starter);
                 unset($s2c);
                 unset($errorMessagesRaw);

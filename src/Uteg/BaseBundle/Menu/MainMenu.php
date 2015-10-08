@@ -21,7 +21,7 @@ class MainMenu extends ContainerAware
             ($acl->isGranted('STARTERS_EDIT')) ? $menu['nav.starters']->addChild('nav.starters.import', array('route' => 'starterImport', 'icon' => 'upload')) : '';
 
             $menu->addChild('nav.divisions', array('uri' => '#', 'icon' => 'sitemap', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
-            $menu['nav.divisions']->addChild('nav.divisions.squads', array('route' => 'divSquad', 'icon' => 'users'));
+            $menu['nav.divisions']->addChild('nav.divisions.squads', array('route' => 'divSquads', 'icon' => 'users'));
             $menu['nav.divisions']->addChild('nav.divisions.settings', array('route' => 'divSettings', 'icon' => 'cogs'));
         }
 

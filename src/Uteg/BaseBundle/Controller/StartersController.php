@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Uteg\BaseBundle\Entity\Club;
 
 
 class StartersController extends DefaultController
@@ -187,7 +186,8 @@ class StartersController extends DefaultController
                 array('clubs' => $clubs,
                     'categories' => $categories,
                     'starters' => $return['fails'],
-                    'errors' => $return['errorMessages']
+                    'errors' => $return['
+                    errorMessages']
                 )
             );
         } else {

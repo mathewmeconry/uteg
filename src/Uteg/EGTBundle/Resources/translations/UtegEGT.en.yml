@@ -1,6 +1,3 @@
 divisions:
   squad:
     title: 'Divisions'
-    save: 'Save'
-    female: 'Female'
-    male: 'Male'
