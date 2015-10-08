@@ -133,7 +133,7 @@ class CompetitionController extends DefaultController
 
         if (isset($_POST['compid'])) {
             $em = $this->getDoctrine()->getManager();
-            $comp = $em->getRepository('UtegBaseBundle:Competition')->findOneBy(array("id" => $_POST['compid']));
+            $comp = $em->getRepository('Uteg\BaseBundle:Competition')->findOneBy(array("id" => $_POST['compid']));
             $request->getSession()->set('comp', $comp->getId());
             if ($aclcomp->isGranted('DELETE')) {
                 $em->remove($comp);
