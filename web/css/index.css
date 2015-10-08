@@ -27,7 +27,11 @@ html, body {
 
 .btn-icon span {
     padding-left: 10px;
+<<<<<<< HEAD
     visibility: hidden;
+=======
+    display: none;
+>>>>>>> 12b605f... fixed button display
 }
 
 .btn-icon:hover {
@@ -36,7 +40,11 @@ html, body {
 
 .btn-icon:hover span{
     padding-left: 2px;
+<<<<<<< HEAD
     visibility: visible;
+=======
+    display: inline;
+>>>>>>> 12b605f... fixed button display
 }
 
 .fa-user-settings:before {
