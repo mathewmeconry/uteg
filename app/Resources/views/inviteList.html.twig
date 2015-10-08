@@ -1,0 +1,290 @@
+{% trans_default_domain 'uteg' %}
+
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'invites.title'|trans }}{% endblock %}
+
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
+{% endblock %}
+
+{% block jsplugins %}
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/summernote/summernote.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-datepicker.js") }}'></script>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function dataTable(table) {
+
+            $(table).DataTable({
+                "ajax": {
+                    "url": "{{ path('inviteListPost') }}",
+                    "method": "POST"
+                },
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "invites.table.all"|trans }}"]],
+                "search": {
+                    "regex": true
+                },
+                "order": [[0, "asc"]],
+                responsive: {
+                    details: {
+                        type: 'column'
+                    }
+                },
+                "columns": [
+                    {"data": "name", 'type': 'string'},
+                    {"data": "firstname", 'type': 'string'},
+                    {"data": "lastname", 'type': 'string'},
+                    {"data": "validUntil", 'type': 'date'},
+                    {"data": "state", 'type': 'string'},
+                    {
+                        "data": null,
+                        "defaultContent": '{% if is_granted('CLUBS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-warning btn-rounded btn-condensed btn-sm btn-icon invites-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-info btn-rounded btn-condensed btn-sm btn-icon invites-resend"><i class="glyphicon glyphicon-send"></i><span>Resend</span></button><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon invites-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}'
+                    }
+                ],
+                "columnDefs": [
+                    {"orderable": false, "targets": [3]},
+                    {"searchable": false, "targets": [3]},
+                ],
+                "paginate": {
+                    "next": "{{ "invites.table.next"|trans }}",
+                    "previous": "{{ "invites.table.previous"|trans }}"
+                },
+                "language": {
+                    "search": "{{ "invites.table.search"|trans }}",
+                    "searchPlaceholder": "{{ "invites.table.searchPlaceholder"|trans }}",
+                    "thousands": "'",
+                    "zeroRecords": "{{ "invites.table.zeroRecords"|trans }}"
+                }
+            });
+        }
+
+        function nl2br(str, is_xhtml) {
+            var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+            return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+        }
+
+        $(document).ready(function () {
+            dataTable($('#invites'));
+
+            $('.table').on('init.dt', function () {
+                onload();
+            });
+
+            $('select[name*="m_length"]').change(function () {
+                onload();
+            });
+
+            $('.panel-refresh').click(function () {
+                panel_refresh(
+                        $('#panel_invites'),
+                        $('#invites').DataTable().ajax.reload(function () {
+                            setTimeout(function () {
+                                panel_refresh($('#panel_invites'));
+                            }, 500);
+                        }, false)
+                );
+            });
+
+            {% if is_granted('CLUBS_EDIT', comp) %}
+            $('tbody').on('click', 'td div button.invites-edit', function (event) {
+                var table = $(this).parent().parent().parent().parent().parent().DataTable();
+                var c2i_id = $(this).parent().parent().parent().attr('id');
+
+                $.ajax({
+                    url: "{{ path('inviteEdit') }}/" + c2i_id,
+                    method: "POST"
+                }).success(function (data) {
+                    $('#dialog-edit-body').html(data);
+                });
+
+                $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 0).data());
+                $("#dialog-edit").data('c2i_id', c2i_id).modal('show');
+            });
+
+            $('tbody').on('click', 'td div button.invites-resend', function (event) {
+                var table = $(this).parent().parent().parent().parent().parent().DataTable();
+                var c2i_id = $(this).parent().parent().parent().attr('id');
+
+                $('#dialog-resend-modal-title').html("Resend Inventation");
+                $('#dialog-resend-body-name').html(table.cell($(this).parent().parent().parent(), 0).data());
+                $("#dialog-resend").data('c2i_id', c2i_id).modal('show');
+            });
+
+            $('tbody').on('click', 'td div button.invites-remove', function (event) {
+                var table = $(this).parent().parent().parent().parent().parent().DataTable();
+                var c2i_id = $(this).parent().parent().parent().attr('id');
+
+                $('#dialog-remove-modal-title').html("Remove " + table.cell($(this).parent().parent().parent(), 0).data());
+                $('#dialog-remove-body-name').html(table.cell($(this).parent().parent().parent(), 0).data());
+                $("#dialog-remove").data('c2i_id', c2i_id).modal('show');
+            });
+
+            $('#invite-save').click(function () {
+                var values = {};
+                $.each($('#inviteEditForm').serializeArray(), function (i, field) {
+                    values[field.name] = field.value;
+                });
+
+                var url = ($('#dialog-edit-body form').attr('action').indexOf('edit') > -1) ? $('#dialog-edit-body form').attr('action') + "/" + $("#dialog-edit").data('c2i_id') : $('#dialog-edit-body form').attr('action');
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: values
+                }).success(function (data) {
+                    if (data == 'true') {
+                        $('#dialog-edit').modal('hide');
+                        showFlashbag();
+                        $('.panel-refresh').click();
+                    } else {
+                        $('#dialog-edit-body').html(data);
+                    }
+                });
+            });
+
+            $('#invite-send').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('inviteResend') }}/" + $("#dialog-resend").data('c2i_id'),
+                    data: {custom: $('#customMessage').is(':checked'), message: nl2br($('#mailMessage').code(), false)}
+                }).success(function (data) {
+                    if (data == 'true') {
+                        $('#dialog-resend').modal('hide');
+                        showFlashbag();
+                        $('.panel-refresh').click();
+                    }
+                });
+            });
+
+            $('#invite-remove').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('inviteRemove') }}/" + $("#dialog-remove").data('c2i_id'),
+                }).success(function (data) {
+                    if (data == 'true') {
+                        $('#dialog-remove').modal('hide');
+                        showFlashbag();
+                        $('.panel-refresh').click();
+                    }
+                });
+            });
+
+            $('#customMessage').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#mailMessageDiv').show();
+                } else {
+                    $('#mailMessageDiv').hide();
+                }
+            });
+            {% endif %}
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel_invites" class="panel panel-default" style="min-height: 400px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ 'invites.header'|trans }}</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
+                        </li>
+                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table id="invites" class="table responsive table-striped" data-cat="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th class="all">{{ 'invites.table.name'|trans }}</th>
+                            <th class="all">{{ 'invites.table.firstname'|trans }}</th>
+                            <th class="all">{{ 'invites.table.lastname'|trans }}</th>
+                            <th class="all">{{ 'invites.table.validUntil'|trans }}</th>
+                            <th class="all">{{ 'invites.table.state'|trans }}</th>
+                            <th style="width: 200px;" class="all">{{ 'invites.table.actions'|trans }}</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block dialog %}
+    {% if is_granted('CLUBS_EDIT', comp) %}
+        <div class="modal fade" id="dialog-edit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="dialog-edit-modal-title"></h4>
+                    </div>
+                    <div id="dialog-edit-body" class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="invite-save"
+                                class="btn btn-success">{{ 'invites.edit.modal.save'|trans }}</button>
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">{{ 'invites.edit.modal.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="dialog-resend" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="dialog-resend-modal-title"></h4>
+                    </div>
+                    <div id="dialog-resend-body" class="modal-body">
+                        <p style="margin: 0">{{ 'invites.resend.modal.checkboxtext'|trans }}</p>
+                        <label class="switch switch-small"><input id="customMessage" type="checkbox"
+                                                                  value="0"><span></span></label>
+
+                        <div id="mailMessageDiv" style="display: none">
+                            <p>{{ 'invites.resend.modal.text'|trans }}</p>
+                            <textarea id="mailMessage" name="mailMessage" style="resize: none"
+                                      class="summernote required" rows="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="invite-send"
+                                class="btn btn-success">{{ 'invites.resend.modal.send'|trans }}</button>
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">{{ 'invites.resend.modal.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="dialog-remove" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="dialog-remove-modal-title"></h4>
+                    </div>
+                    <div id="dialog-remove-body" class="modal-body">
+                        {{ 'invites.remove.modal.question'|trans }} <span id="dialog-remove-body-name"></span>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="invite-remove"
+                                class="btn btn-danger">{{ 'invites.remove.modal.confirm'|trans }}</button>
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">{{ 'invites.remove.modal.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
