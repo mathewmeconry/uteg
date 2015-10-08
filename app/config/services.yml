@@ -13,6 +13,11 @@ services:
         class:     Uteg\BaseBundle\ACL\ACLCompetition
         arguments: ["@doctrine.orm.entity_manager","@security.acl.provider","@request_stack", "@security.authorization_checker"]
 
+    UtegBaseBundle.module_loader:
+        class: Uteg\BaseBundle\Loader\ModuleLoader
+        tags:
+            - { name: routing.loader }
+
     uteg_user.registration.form.type:
         class: Uteg\BaseBundle\Form\Type\RegistrationFormType
         arguments: [%fos_user.model.user.class%]

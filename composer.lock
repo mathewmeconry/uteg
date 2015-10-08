@@ -792,7 +792,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/excelwebzone/EWZRecaptchaBundle/zipball/bd27cf1026eae84cb979d381e478c884a9f0d46e",
+                "url": "https://api.github.com/repos/excelwebzone/EWZRecaptchaBundle/zipball/bd0c0be526ff8ae3a251512cef713a60b522f804",
                 "reference": "bd0c0be526ff8ae3a251512cef713a60b522f804",
                 "shasum": ""
             },
@@ -1471,7 +1471,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/371b6e6e83ebf76474011f5c8f4084175d35bc23",
+                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/6fd9dd18c22a6de68c979d54baee62e537af44db",
                 "reference": "0f05ff637e91144f1d05a43af29f2bfef6ec2b27",
                 "shasum": ""
             },
@@ -2261,7 +2261,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig-extensions/zipball/449e3c8a9ffad7c2479c7864557275a32b037499",
+                "url": "https://api.github.com/repos/twigphp/Twig-extensions/zipball/a155ec01555ffa3aab3e7e042d55aab549c83b75",
                 "reference": "a155ec01555ffa3aab3e7e042d55aab549c83b75",
                 "shasum": ""
             },

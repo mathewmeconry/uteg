@@ -1,21 +1,13 @@
 BaseBundle:
     resource: "@UtegBaseBundle/Controller"
     type:     annotation
-    host: uteg.%domain%
 
-EGTBundle:
-    resource: "@UtegEGTBundle/Controller"
-    type: annotation
-    host: uteg.%domain%
+ModLoader:
+    resource: init
+    type:     module
 
 _liip_imagine:
     resource: "@LiipImagineBundle/Resources/config/routing.xml"
-    host: uteg.%domain%
-
+    
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
-    host: uteg.%domain%
-
-login_route:
-    path: /login
-    host: uteg.%domain%

@@ -14,24 +14,23 @@ security:
         main:
             pattern: ^/
             form_login:
-                login_path: login_route
                 provider: fos_userbundle
                 csrf_provider: security.csrf.token_manager # Use form.csrf_provider instead for Symfony <2.4
+                default_target_path: /competitions
             logout:       true
             anonymous:    true
-            host: %domain%
 
     acl:
         connection: default
 
     access_control:
-        - { host: %domain%, path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: %domain%, path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: %domain%, path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: %domain%, path: ^/invite/club/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: %domain%, path: ^/autocomplete/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: %domain%, path: ^/starters/massive/add, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: %domain%, path: ^/_wdt/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: %domain%, path: ^/_profiler/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: %domain%, path: ^/, role: IS_AUTHENTICATED_REMEMBERED }
-        - { host: %domain%, path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/invite/club/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/autocomplete/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/starters/massive/add, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/_wdt/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/_profiler/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, role: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/admin/, role: ROLE_ADMIN }
