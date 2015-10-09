@@ -27,12 +27,12 @@ class Club
     protected $name;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="club", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Starters2Competitions", mappedBy="club", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $members;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Clubs2Invites", mappedBy="club", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Clubs2Invites", mappedBy="club", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $c2is;
 

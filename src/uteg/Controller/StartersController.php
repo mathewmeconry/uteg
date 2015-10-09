@@ -2,6 +2,7 @@
 
 namespace uteg\Controller;
 
+use uteg\Entity\Club;
 use uteg\Form\Type\StarterType;
 use uteg\Form\Type\S2cType;
 use uteg\Entity\Starters2Competitions;
@@ -177,8 +178,8 @@ class StartersController extends DefaultController
         $em = $this->getDoctrine()->getManager();
 
         $return = $this->addMassiveAction($em->getRepository('uteg:Competition')->find($request->getSession()->get('comp')), $request->request->get('data'));
-
-        if (isset($return['fails'])) {
+var_dump($return);
+        if (count($return['fails']) > 0) {
             $clubs = $em->getRepository('uteg:Club')->findBy(array(), array('name' => 'asc'));
             $categories = $em->getRepository('uteg:Category')->findBy(array(), array('number' => 'asc'));
 
@@ -186,8 +187,7 @@ class StartersController extends DefaultController
                 array('clubs' => $clubs,
                     'categories' => $categories,
                     'starters' => $return['fails'],
-                    'errors' => $return['
-                    errorMessages']
+                    'errors' => $return['errorMessages']
                 )
             );
         } else {

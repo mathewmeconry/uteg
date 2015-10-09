@@ -44,7 +44,8 @@
                 source: substringMatcher(starters),
                 templates: {
                     suggestion: function (starter) {
-                        return '<p><span class="' + starter.sex + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';                    }
+                        return '<p><span class="' + starter.sex + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';
+                    }
                 }
             });
         }
@@ -136,6 +137,7 @@
                                     <td>
                                         <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]"
                                                 class="form-control select">
+                                            <option value="">{{ 'starters.import.choose'|trans }}</option>
                                             <option value="male">{{ 'starters.import.table.male'|trans }}</option>
                                             <option value="female">{{ 'starters.import.table.female'|trans }}</option>
                                         </select>
@@ -144,15 +146,20 @@
                                     </td>
                                     <td>
                                         <select id="club{{ loop.index0 }}" name="data[{{ loop.index0 }}][club]"
-                                                class="form-control selectSearch">{% for club in clubs %}
-                                                <option value="{{ club.id }}">{{ club.name }}</option>{% endfor %}
+                                                class="form-control selectSearch">
+                                            <option value="">{{ 'starters.import.choose'|trans }}</option>
+                                            {% for club in clubs %}
+                                                <option value="{{ club.id }}">{{ club.name }}</option>
+                                            {% endfor %}
                                         </select>
                                         {% if errors[loop.index0].club is defined %}<label
                                                 class="error">{{ errors[loop.index0].club|trans }}</label>{% endif %}
                                     </td>
                                     <td>
                                         <select id="category{{ loop.index0 }}" name="data[{{ loop.index0 }}][category]"
-                                                class="form-control select">{% for category in categories %}
+                                                class="form-control select">
+                                            <option value="">{{ 'starters.import.choose'|trans }}</option>
+                                            {% for category in categories %}
                                                 <option
                                                 value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
                                         </select>

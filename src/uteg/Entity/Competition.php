@@ -79,7 +79,7 @@ class Competition
     protected $s2cs;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Clubs2Invites", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Clubs2Invites", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $c2is;
 

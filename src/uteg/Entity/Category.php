@@ -33,7 +33,7 @@ class Category
     protected $name;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="category")
+     * @ORM\OneToMany(targetEntity="Starters2Competitions", mappedBy="category")
      */
     protected $starters;
 

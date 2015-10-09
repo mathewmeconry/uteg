@@ -5,7 +5,7 @@ parameters:
     database_port: null
     database_name: uteg
     database_user: root
-    database_password: null
+    database_password: 1234
     mailer_transport: smtp
     mailer_host: smtp.zoho.com
     mailer_port: 465

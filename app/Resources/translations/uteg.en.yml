@@ -151,6 +151,8 @@ starters:
         header: 'Import'
         save: 'Save'
         cancel: 'Cancel'
+        choose: 'Please choose'
+        success: 'Starters successfully imported'
         table:
             firstname: 'Firstname'
             lastname: 'Lastname'

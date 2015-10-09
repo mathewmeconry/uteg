@@ -37,14 +37,14 @@ class Starters2Competitions
     /**
      * @ORM\ManyToOne(targetEntity="Club", inversedBy="members")
      * @ORM\JoinColumn(name="club_id", referencedColumnName="club_id")
-     * @Assert\NotBlank(message="stater.error.club")
+     * @Assert\NotBlank(message="starter.error.club")
      */
     protected $club;
 
     /**
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="starters")
      * @ORM\JoinColumn(name="cat_id", referencedColumnName="cat_id")
-     * @Assert\NotBlank(message="stater.error.category")
+     * @Assert\NotBlank(message="starter.error.category")
      */
     protected $category;
 
