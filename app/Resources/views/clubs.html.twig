@@ -70,6 +70,54 @@
                 );
             });
         });
+
+        {% if is_granted('CLUBS_EDIT', comp) %}
+
+
+        $('#club-save').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "{{ path('clubAdd') }}",
+                data: $('#clubForm').serialize(),
+            }).success(function (data) {
+                if (data == 'true') {
+                    $('#dialog-edit').modal('hide');
+                    showFlashbag();
+                    $('.panel-refresh').click();
+                } else {
+                    $('#dialog-edit-body').html(data);
+                }
+            });
+        });
+
+        $('#club-remove').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "{{ path('starterRemove') }}",
+                data: {id: $("#dialog-remove").data('s2c_id')}
+            }).success(function (data) {
+                if (data == 'true') {
+                    $('#dialog-remove').modal('hide');
+                    showFlashbag();
+                    $('.panel-refresh').click();
+                } else {
+                    $('#dialog-edit-body').html(data);
+                }
+            });
+        });
+
+        $('.control-add').click(function () {
+            $.ajax({
+                url: "{{ path('clubAdd') }}",
+                method: "POST"
+            }).success(function (data) {
+                $('#dialog-edit-body').html(data);
+            });
+
+            $('#dialog-edit-modal-title').html('Add new');
+            $('#dialog-edit').modal('show');
+        });
+        {% endif %}
     </script>
 {% endblock %}
 
@@ -80,6 +128,10 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ 'clubs.header'|trans }}</h3>
                     <ul class="panel-controls">
+                        {% if is_granted("CLUBS_EDIT", comp) %}
+                            <li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a>
+                            </li>
+                        {% endif %}
                         <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
                         </li>
                         <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
@@ -97,4 +149,29 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block dialog %}
+    {% if is_granted('CLUBS_EDIT', comp) %}
+        <div class="modal fade" id="dialog-edit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="dialog-edit-modal-title"></h4>
+                    </div>
+                    <div id="dialog-edit-body" class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="club-save"
+                                class="btn btn-success">{{ 'clubs.add.save'|trans }}</button>
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">{{ 'clubs.add.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

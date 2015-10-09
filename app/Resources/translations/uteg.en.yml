@@ -183,6 +183,12 @@ clubs:
     title: 'Clubs'
     header: 'Clubs'
     path: 'Clubs'
+    add:
+        save: 'Save'
+        cancel: 'Cancel'
+        success: 'Club successfully added'
+        name: 'Name'
+        placeholder: 'Club name'
     table:
         name: 'Name'
         info: "Info's"

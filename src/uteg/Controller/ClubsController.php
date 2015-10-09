@@ -7,6 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use uteg\Entity\Club;
+use uteg\Form\Type\ClubType;
 
 class ClubsController extends DefaultController
 {
@@ -14,10 +16,46 @@ class ClubsController extends DefaultController
      * @Route("/clubs", name="clubs")
      * @Method("GET")
      */
-    public function clubsAction()
+    public function clubsAction(Request $request)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
-        return $this->render('clubs.html.twig');
+        return $this->render('clubs.html.twig', array(
+            "comp" => $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $request->getSession()->get('comp'))
+        ));
+    }
+
+    /**
+     * @Route("/club/add", name="clubAdd")
+     * @Method("POST")
+     */
+    public function clubAddAction(Request $request)
+    {
+        $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+
+        $form = $this->createForm(new clubType(false));
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $formdata = $form->getData();
+
+            $club = $em->getRepository('uteg:Club')->findOneBy(array("name" => $formdata->getName()));
+            if (!$club) {
+                $club = new Club();
+                $club->setName($formdata->getName());
+            }
+
+            $em->persist($club);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('success', 'clubs.add.success');
+
+            return new Response('true');
+        }
+
+        return $this->render('form/clubAdd.html.twig', array(
+            'form' => $form->createView()
+        ));
     }
 
     /**
