@@ -31,7 +31,7 @@
             });
 
             $('#cancel').click(function () {
-                window.location.href = "{{ path('starters') }}";
+                window.location.href = "{{ path('starters', { 'compid': app.request.get('compid')}) }}";
             });
         });
     </script>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="panel-body">
                     <form enctype="multipart/form-data" id="starterUpload" name="starterUpload"
-                          class="dropzone dz-clickable" action="{{ path('starterProcess') }}" method="POST">
+                          class="dropzone dz-clickable" action="{{ path('starterProcess', { 'compid': app.request.get('compid')}) }}" method="POST">
                     </form>
                     <div class="pull-right">
                         <button id="process" class="btn btn-success active"><span

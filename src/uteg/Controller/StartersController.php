@@ -20,10 +20,10 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 class StartersController extends DefaultController
 {
     /**
-     * @Route("/starters/{sex}", name="starters", defaults={"sex": "male"}, requirements={"sex": "male|female"})
+     * @Route("/{compid}/starters/{sex}", name="starters", defaults={"sex": "male"}, requirements={"sex": "male|female"})
      * @Method("GET")
      */
-    public function startersGetAction($sex, Request $request)
+    public function startersGetAction($sex, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
 
@@ -44,10 +44,10 @@ class StartersController extends DefaultController
     }
 
     /**
-     * @Route("/starters/{sex}/{cat}", name="starterspost", defaults={"sex": "male", "cat": "0"}, requirements={"sex": "male|female", "cat": "\d+"})
+     * @Route("/{compid}/starters/{sex}/{cat}", name="starterspost", defaults={"sex": "male", "cat": "0"}, requirements={"sex": "male|female", "cat": "\d+"})
      * @Method("POST")
      */
-    public function startersPostAction($sex, $cat, Request $request)
+    public function startersPostAction($sex, $cat, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
         setlocale(LC_TIME, $request->getLocale());
@@ -81,9 +81,9 @@ class StartersController extends DefaultController
     }
 
     /**
-     * @Route("/starter/{id}/{name}", name="starter", defaults={"name": ""}, requirements={"id": "\d+"})
+     * @Route("/{compid}/starter/{id}/{name}", name="starter", defaults={"name": ""}, requirements={"id": "\d+"})
      */
-    public function starterAction($id, $name, Request $request)
+    public function starterAction($id, $name, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
         if ($name === "") {
@@ -97,9 +97,9 @@ class StartersController extends DefaultController
     }
 
     /**
-     * @Route("/starter/add", name="starterAdd")
+     * @Route("/{compid}/starter/add", name="starterAdd")
      */
-    public function starterAddAction(Request $request)
+    public function starterAddAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
@@ -169,16 +169,16 @@ class StartersController extends DefaultController
     }
 
     /**
-     * @Route("/starter/add/massive", name="starterAddMassive")
+     * @Route("/{compid}/starter/add/massive", name="starterAddMassive")
      * @Method("POST")
      */
-    public function starterAddMassiveAction(Request $request)
+    public function starterAddMassiveAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
         $em = $this->getDoctrine()->getManager();
 
         $return = $this->addMassiveAction($em->getRepository('uteg:Competition')->find($request->getSession()->get('comp')), $request->request->get('data'));
-var_dump($return);
+
         if (count($return['fails']) > 0) {
             $clubs = $em->getRepository('uteg:Club')->findBy(array(), array('name' => 'asc'));
             $categories = $em->getRepository('uteg:Category')->findBy(array(), array('number' => 'asc'));
@@ -192,15 +192,15 @@ var_dump($return);
             );
         } else {
             $this->get('session')->getFlashBag()->add('success', 'starters.import.success');
-            return $this->redirectToRoute('starters');
+            return $this->redirectToRoute('starters', array("compid" => $compid));
         }
     }
 
     /**
-     * @Route("/starter/import", name="starterImport")
+     * @Route("/{compid}/starter/import", name="starterImport")
      * Increase max_input_vars in php.ini from 1000 to 6000 to import max. 1000 starters at once
      */
-    public function starterImportAction(Request $request)
+    public function starterImportAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
@@ -337,10 +337,10 @@ var_dump($return);
     }
 
     /**
-     * @Route("/starter/import/process", name="starterProcess")
+     * @Route("/{compid}/starter/import/process", name="starterProcess")
      * @Method("POST")
      */
-    public function starterUploadAction(Request $request)
+    public function starterUploadAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
@@ -362,13 +362,13 @@ var_dump($return);
         $request->getSession()->set('import', $sessionFiles);
 
         // return data to the frontend
-        return new Response($this->get('router')->generate('starterImport'));
+        return new Response($this->get('router')->generate('starterImport', array("compid" => $compid)));
     }
 
     /**
-     * @Route("/starter/edit/{id}", name="starterEdit", defaults={"id": ""}, requirements={"id": "\d+"})
+     * @Route("/{compid}/starter/edit/{id}", name="starterEdit", defaults={"id": ""}, requirements={"id": "\d+"})
      */
-    public function starterEditAction($id, Request $request)
+    public function starterEditAction($id, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
         $s2c = $this->getDoctrine()->getEntityManager()->find('uteg:Starters2Competitions', $id);
@@ -398,7 +398,7 @@ var_dump($return);
     /**
      * @Route("/starter/remove", name="starterRemove")
      */
-    public function starterRemoveAction(Request $request)
+    public function starterRemoveAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 

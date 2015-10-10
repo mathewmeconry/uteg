@@ -24,13 +24,22 @@ services:
         arguments: [%fos_user.model.user.class%]
         tags:
             - { name: form.type, alias: uteg_profile_edit }
-    
+
     uteg.menu_builder:
-        class: uteg\Menu\Breadcrumb
+        class: uteg\Menu\MenuBuilder
         arguments: ["@doctrine.orm.entity_manager","@knp_menu.factory"]
+
+    uteg.menu.mainmenu:
+        class: uteg\Menu\MenuBuilder
+        factory_service: uteg.menu_builder # the menu builder service above
+        factory_method: mainMenu # the method name to generate the menu
+        arguments: ["@request","@acl_competition"]
+        scope: request
+        tags:
+            - { name: knp_menu.menu, alias: mainMenu } # The alias is used in the template
         
     uteg.menu.breadcrumb:
-        class: uteg\Menu\Breadcrumb
+        class: uteg\Menu\MenuBuilder
         factory_service: uteg.menu_builder # the menu builder service above
         factory_method: breadcrumb # the method name to generate the menu
         arguments: ["@request"]

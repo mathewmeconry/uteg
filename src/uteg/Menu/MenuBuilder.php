@@ -5,8 +5,11 @@ namespace uteg\Menu;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\DependencyInjection\ContainerAware;
+use uteg\ACL\ACLCompetition;
 
-class Breadcrumb
+
+class MenuBuilder extends ContainerAware
 {
     private $factory;
     private $em;
@@ -15,6 +18,32 @@ class Breadcrumb
     {
         $this->em = $em;
         $this->factory = $factory;
+    }
+
+    public function mainMenu(Request $request, ACLCompetition $acl)
+    {
+        $menu = $this->factory->createItem('root');
+
+        ($acl->isGranted('DASHBOARD')) ? $menu->addChild('nav.dashboard', array('route' => 'dashboard', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'dashboard', 'labelAttributes' => array('class' => 'xn-text'))) : '';
+        if ($acl->isGranted('STARTERS_VIEW')) {
+            $menu->addChild('nav.starters', array('uri' => '#', 'icon' => 'user', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+            $menu['nav.starters']->addChild('nav.starters.male', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'sex' => 'male'), 'icon' => 'male'));
+            $menu['nav.starters']->addChild('nav.starters.female', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'sex' => 'female'), 'icon' => 'female'));
+            ($acl->isGranted('STARTERS_EDIT')) ? $menu['nav.starters']->addChild('nav.starters.import', array('route' => 'starterImport', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'upload')) : '';
+        }
+
+        ($acl->isGranted('CLUBS_VIEW')) ? $menu->addChild('nav.clubs', array('route' => 'clubs', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'group', 'labelAttributes' => array('class' => 'xn-text'))) : '';
+
+        if ($acl->isGranted('CLUBS_VIEW')) {
+            $menu->addChild('nav.invites', array('uri' => '#', 'icon' => 'envelope-o', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+            ($acl->isGranted('CLUBS_EDIT')) ? $menu['nav.invites']->addChild('nav.invites.invite', array('route' => 'invite', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'send')) : '';
+            $menu['nav.invites']->addChild('nav.invites.list', array('route' => 'inviteList', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'bars'));
+        }
+
+        ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'cogs', 'labelAttributes' => array('class' => 'xn-text'))) : '';
+        ($acl->isGranted('PERMISSIONS_VIEW')) ? $menu->addChild('nav.permissions', array('route' => 'permissions', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'lock', 'labelAttributes' => array('class' => 'xn-text'))) : '';
+
+        return $menu;
     }
 
     public function breadcrumb(Request $request)

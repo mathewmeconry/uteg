@@ -13,20 +13,20 @@ use uteg\Form\Type\C2iType;
 class InviteController extends DefaultController
 {
     /**
-     * @Route("/invite", name="invite")
+     * @Route("/{compid}/invite", name="invite")
      * @Method("GET")
      */
-    public function inviteAction()
+    public function inviteAction($compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
         return $this->render('invite.html.twig');
     }
 
     /**
-     * @Route("/invite/form", name="inviteForm")
+     * @Route("/{compid}/invite/form", name="inviteForm")
      * @Method("POST")
      */
-    public function inviteFormAction(Request $request)
+    public function inviteFormAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
         $em = $this->getDoctrine()->getManager();
@@ -83,10 +83,10 @@ class InviteController extends DefaultController
     }
 
     /**
-     * @Route("/invite", name="invitePost")
+     * @Route("/{compid}/invite", name="invitePost")
      * @Method("POST")
      */
-    public function invitePostAction(Request $request)
+    public function invitePostAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
         $em = $this->getDoctrine()->getManager();
@@ -122,15 +122,15 @@ class InviteController extends DefaultController
         }
 
         return new Response(
-            $this->get('router')->generate('inviteList')
+            $this->get('router')->generate('inviteList', array('compid' => $compid))
         );
     }
 
     /**
-     * @Route("/invite/club/{token}", name="inviteToken")
+     * @Route("/{compid}/invite/club/{token}", name="inviteToken")
      * @Method("GET")
      */
-    public function inviteTokenAction($token)
+    public function inviteTokenAction($token, $compid)
     {
         $em = $this->getDoctrine()->getManager();
         $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("token" => $token));
@@ -160,9 +160,9 @@ class InviteController extends DefaultController
     }
 
     /**
-     * @Route("/invite/club/add/{token}", name="inviteAddToken")
+     * @Route("/{compid}/invite/club/add/{token}", name="inviteAddToken")
      */
-    public function inviteAddTokenAction(Request $request, $token)
+    public function inviteAddTokenAction(Request $request, $token, $compid)
     {
         $em = $this->getDoctrine()->getManager();
         $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("token" => $token));
@@ -188,7 +188,7 @@ class InviteController extends DefaultController
                     return $this->render('inviteClubSuccess.html.twig');
                 }
             } else {
-                return $this->redirectToRoute("inviteToken", array("token" => $token));
+                return $this->redirectToRoute("inviteToken", array("token" => $token, "compid" => $compid));
             }
         } else {
             return new Response('Link expired');
@@ -196,10 +196,10 @@ class InviteController extends DefaultController
     }
 
     /**
-     * @Route("/invites", name="inviteList")
+     * @Route("/{compid}/invites", name="inviteList")
      * @Method("GET")
      */
-    public function inviteListAction(Request $request)
+    public function inviteListAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
         return $this->render('inviteList.html.twig', array(
@@ -208,10 +208,10 @@ class InviteController extends DefaultController
     }
 
     /**
-     * @Route("/invites", name="inviteListPost")
+     * @Route("/{compid}/invites", name="inviteListPost")
      * @Method("POST")
      */
-    public function inviteListPostAction(Request $request)
+    public function inviteListPostAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
         $em = $this->getDoctrine()->getManager();
@@ -232,9 +232,9 @@ class InviteController extends DefaultController
     }
 
     /**
-     * @Route("/invite/edit/{id}", name="inviteEdit", defaults={"id": ""}, requirements={"id": "\d+"})
+     * @Route("/{compid}/invite/edit/{id}", name="inviteEdit", defaults={"id": ""}, requirements={"id": "\d+"})
      */
-    public function inviteEditPostAction(Request $request, $id)
+    public function inviteEditPostAction(Request $request, $id, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
         $c2i = $this->getDoctrine()->getManager()->find('uteg:Clubs2Invites', $id);
@@ -262,10 +262,10 @@ class InviteController extends DefaultController
     }
 
     /**
-     * @Route("/invite/resend/{id}", name="inviteResend", defaults={"id": ""}, requirements={"id": "\d+"})
+     * @Route("/{compid}/invite/resend/{id}", name="inviteResend", defaults={"id": ""}, requirements={"id": "\d+"})
      * @Method("POST")
      */
-    public function inviteResendAction(Request $request, $id)
+    public function inviteResendAction(Request $request, $id, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
 
@@ -278,10 +278,10 @@ class InviteController extends DefaultController
     }
 
     /**
-     * @Route("/invite/remove/{id}", name="inviteRemove", defaults={"id": ""}, requirements={"id": "\d+"})
+     * @Route("/{compid}/invite/remove/{id}", name="inviteRemove", defaults={"id": ""}, requirements={"id": "\d+"})
      * @Method("POST")
      */
-    public function inviteRemovePostAction(Request $request, $id)
+    public function inviteRemovePostAction(Request $request, $id, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
 
@@ -299,11 +299,13 @@ class InviteController extends DefaultController
     {
         if ($default == 'true') {
             $mailmessage = str_replace("#FIRSTNAME#", $c2i->getFirstname(), str_replace("#LASTNAME#", $c2i->getLastname(), str_replace('#VALID#', $c2i->getValid()->format('Y-m-d'), str_replace('#COMPETITION#', $comp->getName(), str_replace("#INVITELINK#", $this->get('router')->generate('inviteToken', array(
-                'token' => $c2i->getToken()
+                'token' => $c2i->getToken(),
+                'compid' => $comp->getId()
             ), true), $this->get('translator')->trans('invite.mail.message', array(), 'uteg'))))));
         } else {
             $mailmessage = str_replace("#FIRSTNAME#", $c2i->getFirstname(), str_replace("#LASTNAME#", $c2i->getLastname(), str_replace("#INVITELINK#", $this->get('router')->generate('inviteToken', array(
-                'token' => $c2i->getToken()
+                'token' => $c2i->getToken(),
+                'compid' => $comp->getId()
             ), true), $message)));
         }
 

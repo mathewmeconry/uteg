@@ -100,15 +100,15 @@ class ACLCompetition
         $this->updateAcl();
 
         if ($this->isGranted('DASHBOARD')) {
-            return "/dashboard";
+            return "dashboard";
         } elseif ($this->isGranted('STARTERS_VIEW')) {
-            return "/starters";
+            return "starters";
         } elseif ($this->isGranted('SETTINGS_VIEW')) {
-            return "/competition";
+            return "competition";
         } elseif ($this->isGranted('PERMISSIONS_VIEW')) {
-            return "/permissions";
+            return "permissions";
         } else {
-            return "/profile/edit";
+            return "fos_user_profile_edit";
         }
     }
 

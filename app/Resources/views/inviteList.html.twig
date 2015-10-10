@@ -22,7 +22,7 @@
 
             $(table).DataTable({
                 "ajax": {
-                    "url": "{{ path('inviteListPost') }}",
+                    "url": "{{ path('inviteListPost', { 'compid': app.request.get('compid')}) }}",
                     "method": "POST"
                 },
                 "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "invites.table.all"|trans }}"]],
@@ -96,7 +96,7 @@
                 var c2i_id = $(this).parent().parent().parent().attr('id');
 
                 $.ajax({
-                    url: "{{ path('inviteEdit') }}/" + c2i_id,
+                    url: "{{ path('inviteEdit', { 'compid': app.request.get('compid')}) }}/" + c2i_id,
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
@@ -149,7 +149,7 @@
             $('#invite-send').click(function () {
                 $.ajax({
                     type: "POST",
-                    url: "{{ path('inviteResend') }}/" + $("#dialog-resend").data('c2i_id'),
+                    url: "{{ path('inviteResend', { 'compid': app.request.get('compid')}) }}/" + $("#dialog-resend").data('c2i_id'),
                     data: {custom: $('#customMessage').is(':checked'), message: nl2br($('#mailMessage').code(), false)}
                 }).success(function (data) {
                     if (data == 'true') {
@@ -163,7 +163,7 @@
             $('#invite-remove').click(function () {
                 $.ajax({
                     type: "POST",
-                    url: "{{ path('inviteRemove') }}/" + $("#dialog-remove").data('c2i_id'),
+                    url: "{{ path('inviteRemove', { 'compid': app.request.get('compid')}) }}/" + $("#dialog-remove").data('c2i_id'),
                 }).success(function (data) {
                     if (data == 'true') {
                         $('#dialog-remove').modal('hide');

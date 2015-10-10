@@ -62,15 +62,7 @@
     <script>
         $(document).ready(function () {
             $('i[class*="icon-view-"]').click(function () {
-                $.ajax({
-                    url: '{{ asset("/comp/set") }}',
-                    method: 'POST',
-                    data: {compid: $(this).parent().parent().data('id')}
-                }).success(function (url) {
-                    if (url) {
-                        window.location.href = url;
-                    }
-                });
+                window.location.href = '/' + $(this).parent().parent().data('id') + '/show';
             });
 
             $('i[class*="icon-delete-"]').click(function () {
@@ -97,7 +89,7 @@
 
             $('#comp-del').click(function () {
                 $.ajax({
-                    url: '/comp/del',
+                    url: '/' + $("#dialog-confirm").data('compid') + '/comp/del',
                     method: 'POST',
                     data: {compid: $("#dialog-confirm").data('compid')}
                 }).success(function (data) {

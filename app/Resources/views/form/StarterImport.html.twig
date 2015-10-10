@@ -74,7 +74,7 @@
             });
 
             $('#cancel').click(function () {
-                window.location.href = "{{ path('starterImport') }}";
+                window.location.href = "{{ path('starterImport', { 'compid': app.request.get('compid')}) }}";
             });
 
             autoComplete('input[name*="firstname"]', 'firstname');
@@ -100,7 +100,7 @@
                     <h3 class="panel-title">{{ 'starters.import.header'|trans }}</h3>
                 </div>
                 <div class="panel-body">
-                    <form id="starters" method="POST" action="{{ path('starterAddMassive') }}">
+                    <form id="starters" method="POST" action="{{ path('starterAddMassive', { 'compid': app.request.get('compid')}) }}">
                         <table class="table table-striped">
                             <thead>
                             <tr>

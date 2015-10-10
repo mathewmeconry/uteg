@@ -1,7 +1,7 @@
 {% trans_default_domain 'uteg' %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
-<form id="inviteEditForm" method="post" action="{{ path(target) }}" class="form-horizontal">
+<form id="inviteEditForm" method="post" action="{{ path(target, { 'compid': app.request.get('compid')}) }}" class="form-horizontal">
     {{ form_row(form.club) }}
     {{ form_row(form.firstname) }}
     {{ form_row(form.lastname) }}

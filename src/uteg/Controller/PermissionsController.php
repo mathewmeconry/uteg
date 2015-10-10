@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 class PermissionsController extends DefaultController
 {
     /**
-     * @Route("/permissions", name="permissions")
+     * @Route("/{compid}/permissions", name="permissions")
      * @Method("GET")
      */
-    public function permissionsAction(Request $request)
+    public function permissionsAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('PERMISSIONS_VIEW');
 
@@ -24,10 +24,10 @@ class PermissionsController extends DefaultController
     }
 
     /**
-     * @Route("/permissions", name="permissionsPost")
+     * @Route("/{compid}/permissions", name="permissionsPost")
      * @Method("POST")
      */
-    public function permissionsPostAction(Request $request)
+    public function permissionsPostAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('PERMISSIONS_VIEW');
 

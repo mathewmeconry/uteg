@@ -1,7 +1,7 @@
 {% trans_default_domain 'uteg' %}
 {% form_theme form 'form/formTheme_horizontal.html.twig' %}
 
-<form id="starterEditForm" method="post" action="{{ path(target) }}" class="form-horizontal">
+<form id="starterEditForm" method="post" action="{{ path(target, { 'compid': app.request.get('compid')}) }}" class="form-horizontal">
 
     {{ form_row(form.firstname) }}
 

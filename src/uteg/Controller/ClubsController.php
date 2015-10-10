@@ -13,10 +13,10 @@ use uteg\Form\Type\ClubType;
 class ClubsController extends DefaultController
 {
     /**
-     * @Route("/clubs", name="clubs")
+     * @Route("{compid}/clubs", name="clubs")
      * @Method("GET")
      */
-    public function clubsAction(Request $request)
+    public function clubsAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
         return $this->render('clubs.html.twig', array(
@@ -25,10 +25,10 @@ class ClubsController extends DefaultController
     }
 
     /**
-     * @Route("/club/add", name="clubAdd")
+     * @Route("/{compid}/club/add", name="clubAdd")
      * @Method("POST")
      */
-    public function clubAddAction(Request $request)
+    public function clubAddAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
 
@@ -59,10 +59,10 @@ class ClubsController extends DefaultController
     }
 
     /**
-     * @Route("/clubs", name="clubsPost")
+     * @Route("/{compid}/clubs", name="clubsPost")
      * @Method("POST")
      */
-    public function clubsPostAction()
+    public function clubsPostAction($compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
 

@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 class DashboardController extends DefaultController
 {
     /**
-     * @Route("/dashboard", name="dashboard")
+     * @Route("/{compid}/dashboard", name="dashboard")
      */
-    public function dashboardAction(Request $request)
+    public function dashboardAction(Request $request, $compid)
     {
         $comp = $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $request->getSession()->get('comp'));
 

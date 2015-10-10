@@ -29,6 +29,22 @@ class DefaultController extends Controller
         return $this->render('parseFlashbag.html.twig');
     }
 
+    /**
+     * @Route("/{compid}/show", name="showComp")
+     */
+    public function showComp(Request $request, $compid) {
+        $this->get('acl_competition')->isGrantedUrl('IS_AUTHENTICATED_REMEMBERED', false);
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $comp = $em->getRepository('uteg:Competition')->findOneBy(array('id' => $compid));
+
+        $aclcomp = $this->get('acl_competition');
+
+        $request->getSession()->set('comp', $comp->getId());
+
+        return $this->redirectToRoute($aclcomp->getPossibleRoute(), array("compid" => $compid));
+    }
+
     public function autocompleteStartersAction()
     {
         $em = $this->getDoctrine()->getManager();

@@ -23,7 +23,7 @@
 
             $(table).DataTable({
                 "ajax": {
-                    "url": "{{ path('starterspost') }}/" + sex + "/" + $(table).data('cat'),
+                    "url": "{{ path('starterspost', { 'compid': app.request.get('compid')}) }}/" + sex + "/" + $(table).data('cat'),
                     "method": "POST"
                 },
                 "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "starters.table.all"|trans }}"]],
@@ -103,7 +103,7 @@
                 var s2c_id = table.cell($(this).parent().parent().parent(), 1).data();
 
                 $.ajax({
-                    url: "{{ path('starterEdit') }}/" + s2c_id,
+                    url: "{{ path('starterEdit', { 'compid': app.request.get('compid')}) }}/" + s2c_id,
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
@@ -156,7 +156,7 @@
             $('#starter-remove').click(function () {
                 $.ajax({
                     type: "POST",
-                    url: "{{ path('starterRemove') }}",
+                    url: "{{ path('starterRemove', { 'compid': app.request.get('compid')}) }}",
                     data: {id: $("#dialog-remove").data('s2c_id')}
                 }).success(function (data) {
                     if (data == 'true') {
@@ -169,7 +169,7 @@
 
             $('.control-add').click(function () {
                 $.ajax({
-                    url: "{{ path('starterAdd') }}",
+                    url: "{{ path('starterAdd', { 'compid': app.request.get('compid')}) }}",
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
@@ -201,7 +201,7 @@
                         {% if is_granted("STARTERS_EDIT", comp) %}
                             <li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a>
                             </li>
-                            <li><a href="{{ path('starterImport') }}" class="control-primary"><span
+                            <li><a href="{{ path('starterImport', { 'compid': app.request.get('compid')}) }}" class="control-primary"><span
                                             class="fa fa-upload"></span></a></li>
                         {% endif %}
                         <li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
