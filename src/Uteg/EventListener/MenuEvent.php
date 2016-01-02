@@ -6,11 +6,12 @@
  * Time: 20:23
  */
 
-namespace uteg\Menu;
+namespace uteg\EventListener;
 
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\HttpFoundation\Request;
 
 
 class MenuEvent extends Event
@@ -19,11 +20,13 @@ class MenuEvent extends Event
 
     private $factory;
     private $menu;
+    private $request;
 
-    public function __construct(FactoryInterface $factory, ItemInterface $menu)
+    public function __construct(FactoryInterface $factory, ItemInterface $menu, Request $request)
     {
         $this->factory = $factory;
         $this->menu = $menu;
+        $this->request = $request;
     }
 
     public function getFactory()
@@ -34,5 +37,10 @@ class MenuEvent extends Event
     public function getMenu()
     {
         return $this->menu;
+    }
+
+    public function getRequest()
+    {
+        return $this->request;
     }
 }

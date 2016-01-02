@@ -338,3 +338,9 @@ permissions:
         zeroRecords: 'No Permissions given'
 service:
     egt: 'EGT'
+
+egt:
+    nav:
+        mapping: 'Starter Mapping'
+    mapping:
+        title: 'Starter Mapping'

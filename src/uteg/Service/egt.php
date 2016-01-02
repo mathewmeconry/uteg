@@ -10,7 +10,9 @@ namespace uteg\Service;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use uteg\Menu\MenuEvent;
+use Symfony\Component\HttpFoundation\Request;
+use uteg\Entity\Competition;
+use uteg\EventListener\MenuEvent;
 
 class egt
 {
@@ -31,6 +33,13 @@ class egt
     public function onAddServiceMenu(MenuEvent $event)
     {
         $menu = $event->getMenu();
-        $menu->addChild('nav.asdf', array('uri' => '#', 'icon' => 'user', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        $menu->addChild('egt.nav.mapping', array('route' => 'mapping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'group', 'labelAttributes' => array('class' => 'xn-text')));
+    }
+
+    public function mapping(Request $request, Competition $competition)
+    {
+        return $this->render('egt/mapping.html.twig', array(
+            "comp" => $competition
+        ));
     }
 }
