@@ -2,10 +2,11 @@
 
 namespace uteg\Menu;
 
-use Knp\Menu\FactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManager;
+use Knp\Menu\FactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use uteg\ACL\ACLCompetition;
 
 
@@ -20,7 +21,7 @@ class MenuBuilder extends ContainerAware
         $this->factory = $factory;
     }
 
-    public function mainMenu(Request $request, ACLCompetition $acl)
+    public function mainMenu(Request $request, ACLCompetition $acl, EventDispatcherInterface $eventDispatcher)
     {
         $menu = $this->factory->createItem('root');
 
@@ -39,6 +40,8 @@ class MenuBuilder extends ContainerAware
             ($acl->isGranted('CLUBS_EDIT')) ? $menu['nav.invites']->addChild('nav.invites.invite', array('route' => 'invite', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'send')) : '';
             $menu['nav.invites']->addChild('nav.invites.list', array('route' => 'inviteList', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'bars'));
         }
+
+        $eventDispatcher->dispatch(MenuEvent::SERVICE_MENU, new MenuEvent($this->factory, $menu));
 
         ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'cogs', 'labelAttributes' => array('class' => 'xn-text'))) : '';
         ($acl->isGranted('PERMISSIONS_VIEW')) ? $menu->addChild('nav.permissions', array('route' => 'permissions', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'lock', 'labelAttributes' => array('class' => 'xn-text'))) : '';

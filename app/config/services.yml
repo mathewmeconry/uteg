@@ -33,7 +33,7 @@ services:
         class: uteg\Menu\MenuBuilder
         factory_service: uteg.menu_builder # the menu builder service above
         factory_method: mainMenu # the method name to generate the menu
-        arguments: ["@request","@acl_competition"]
+        arguments: ["@request","@acl_competition","@event_dispatcher"]
         scope: request
         tags:
             - { name: knp_menu.menu, alias: mainMenu } # The alias is used in the template
@@ -49,4 +49,6 @@ services:
 
     uteg.egt:
         class: uteg\Service\egt
+        arguments: ["@service_container", "@event_dispatcher"]
+
 

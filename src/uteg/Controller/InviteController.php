@@ -19,6 +19,11 @@ class InviteController extends DefaultController
     public function inviteAction($compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_EDIT');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         return $this->render('invite.html.twig');
     }
 
@@ -202,8 +207,13 @@ class InviteController extends DefaultController
     public function inviteListAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         return $this->render('inviteList.html.twig', array(
-            "comp" => $this->getDoctrine()->getManager()->find('uteg:Competition', $request->getSession()->get('comp'))
+            "comp" => $comp
         ));
     }
 

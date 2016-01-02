@@ -83,6 +83,11 @@ class Competition
      */
     protected $c2is;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Module", inversedBy="competitions", cascade={"persist"})
+     * @ORM\JoinColumn(name="module_id", referencedColumnName="module_id")
+     */
+    protected $module;
 
     /**
      * Constructor
@@ -434,5 +439,13 @@ class Competition
     public function getC2is()
     {
         return $this->c2is;
+    }
+
+    public function getModule() {
+        return $this->module;
+    }
+
+    public function setModule(\uteg\Entity\Module $module) {
+        $this->module = $module;
     }
 }

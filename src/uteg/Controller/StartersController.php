@@ -27,6 +27,10 @@ class StartersController extends DefaultController
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
 
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         $requestUri = explode("/", $request->getRequestUri());
 
         if (end($requestUri) !== 'male' && end($requestUri) !== 'female') {
@@ -38,7 +42,7 @@ class StartersController extends DefaultController
             return $this->render('starters.html.twig', array(
                 "sex" => $sexshort,
                 "sextrans" => $sextrans,
-                "comp" => $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $request->getSession()->get('comp'))
+                "comp" => $comp
             ));
         }
     }
@@ -86,6 +90,11 @@ class StartersController extends DefaultController
     public function starterAction($id, $name, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         if ($name === "") {
             return $this->redirect($request->getRequestUri() . "/" . $this->getName($id), 301);
         } else {
@@ -103,12 +112,15 @@ class StartersController extends DefaultController
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         $form = $this->createForm(new S2cType(false));
 
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $competition = $em->getRepository('uteg:Competition')->find($request->getSession()->get('comp'));
             $formdata = $form->getData();
 
             $starter = $em->getRepository('uteg:Starter')->findOneBy(array("firstname" => $formdata['firstname'], "lastname" => $formdata['lastname'], "birthyear" => $formdata['birthyear'], "sex" => $formdata['sex']));
@@ -122,19 +134,19 @@ class StartersController extends DefaultController
                     $starter->setSex($formdata['sex']);
                     $s2c = false;
                 } else {
-                    $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+                    $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $comp));
                 }
             } else {
-                $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+                $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $comp));
             }
 
             if (!$s2c) {
                 $s2c = new Starters2Competitions();
                 $s2c->setStarter($starter);
-                $s2c->setCompetition($competition);
+                $s2c->setCompetition($comp);
 
                 $starter->addS2c($s2c);
-                $competition->addS2c($s2c);
+                $comp->addS2c($s2c);
             }
 
             $s2c->setClub($em->getRepository('uteg:Club')->find($formdata['club']));
@@ -147,7 +159,7 @@ class StartersController extends DefaultController
             if (count($errors) <= 0) {
                 $em->persist($starter);
                 $em->persist($s2c);
-                $em->persist($competition);
+                $em->persist($comp);
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add('success', 'competitionlist.addcomp.success');
@@ -203,6 +215,10 @@ class StartersController extends DefaultController
     public function starterImportAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
 
         $files = $request->getSession()->get('import');
         $request->getSession()->set('import', null);
@@ -371,6 +387,11 @@ class StartersController extends DefaultController
     public function starterEditAction($id, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         $s2c = $this->getDoctrine()->getEntityManager()->find('uteg:Starters2Competitions', $id);
 
         $form = $this->createForm(new S2cType(), $s2c);
@@ -402,12 +423,15 @@ class StartersController extends DefaultController
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         $em = $this->getDoctrine()->getEntityManager();
         $s2c = $em->find('uteg:Starters2Competitions', $_POST['id']);
-        $competition = $em->find('uteg:Competition', $request->getSession()->get('comp'));
 
-        $competition->removeS2c($s2c);
-        $em->persist($competition);
+        $comp->removeS2c($s2c);
+        $em->persist($comp);
         $em->flush();
         return new Response('true');
     }

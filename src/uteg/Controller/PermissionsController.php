@@ -18,8 +18,12 @@ class PermissionsController extends DefaultController
     {
         $this->get('acl_competition')->isGrantedUrl('PERMISSIONS_VIEW');
 
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         return $this->render('permissions.html.twig', array(
-            "comp" => $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $request->getSession()->get('comp'))
+            "comp" => $comp
         ));
     }
 

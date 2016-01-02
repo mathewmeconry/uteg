@@ -8,8 +8,29 @@
 
 namespace uteg\Service;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use uteg\Menu\MenuEvent;
 
 class egt
 {
+    private $container;
+    private $eventDispatcher;
 
+    public function __construct(ContainerInterface $container, EventDispatcherInterface $eventDispatcher)
+    {
+        $this->container = $container;
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function init()
+    {
+        $this->eventDispatcher->addListener('uteg.addServiceMenu', array($this, 'onAddServiceMenu'));
+    }
+
+    public function onAddServiceMenu(MenuEvent $event)
+    {
+        $menu = $event->getMenu();
+        $menu->addChild('nav.asdf', array('uri' => '#', 'icon' => 'user', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+    }
 }

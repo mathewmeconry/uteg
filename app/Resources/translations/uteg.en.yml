@@ -33,6 +33,7 @@ competitionlist:
         gym: 'Gym'
         location: 'Location'
         zipcode: 'Zip code'
+        module: 'Module'
         startdate: 'Start date'
         enddate: 'End date'
         submit: 'Add'
@@ -335,6 +336,5 @@ permissions:
         search: 'Search'
         searchPlaceholder: 'Search...'
         zeroRecords: 'No Permissions given'
-
-
-
+service:
+    egt: 'EGT'

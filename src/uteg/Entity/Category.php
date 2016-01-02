@@ -2,16 +2,14 @@
 
 namespace uteg\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
 
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="ute_category")
- * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Category
 {
@@ -37,17 +35,6 @@ class Category
      */
     protected $starters;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
-    protected $created;
-
-    /**
-     * @ORM\Column(type="datetime", name="deletedAt", nullable=true)
-     */
-    protected $deletedAt;
-
     public function __construct()
     {
         $this->starters = new ArrayCollection();
@@ -69,19 +56,6 @@ class Category
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return Category
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
      * Get name
      *
      * @return string
@@ -92,49 +66,16 @@ class Category
     }
 
     /**
-     * Set created
+     * Set name
      *
-     * @param \DateTime $created
+     * @param string $name
      * @return Category
      */
-    public function setCreated($created)
+    public function setName($name)
     {
-        $this->created = $created;
+        $this->name = $name;
 
         return $this;
-    }
-
-    /**
-     * Get created
-     *
-     * @return \DateTime
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * Set deletedAt
-     *
-     * @param \DateTime $deletedAt
-     * @return Category
-     */
-    public function setDeletedAt($deletedAt)
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get deletedAt
-     *
-     * @return \DateTime
-     */
-    public function getDeletedAt()
-    {
-        return $this->deletedAt;
     }
 
     /**
@@ -171,6 +112,16 @@ class Category
     }
 
     /**
+     * Get number
+     *
+     * @return integer
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
      * Set number
      *
      * @param integer $number
@@ -181,15 +132,5 @@ class Category
         $this->number = $number;
 
         return $this;
-    }
-
-    /**
-     * Get number
-     *
-     * @return integer
-     */
-    public function getNumber()
-    {
-        return $this->number;
     }
 }

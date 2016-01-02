@@ -2,6 +2,7 @@
 
 namespace uteg\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -20,6 +21,9 @@ class CompetitionType extends AbstractType
             ->add('gym', null, array('label' => 'competitionlist.addcomp.gym', "attr" => array("placeholder" => "competitionlist.addcomp.gym"), 'translation_domain' => 'uteg'))
             ->add('location', null, array('label' => 'competitionlist.addcomp.location', "attr" => array("placeholder" => "competitionlist.addcomp.location"), 'translation_domain' => 'uteg'))
             ->add('zipcode', 'number', array('label' => 'competitionlist.addcomp.zipcode', "attr" => array("placeholder" => "competitionlist.addcomp.zipcode"), 'translation_domain' => 'uteg'))
+            ->add('module', 'entity', array('class' => 'uteg:Module', 'query_builder' => function (EntityRepository $er) {
+                return $er->createQueryBuilder('c')->orderBy('c.displayName', 'ASC');
+            }, 'label' => 'competitionlist.addcomp.module', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
             ->add('startdate', 'date', array(
                 'label' => 'competitionlist.addcomp.startdate',
                 "attr" => array("placeholder" => "competitionlist.addcomp.startdate"),

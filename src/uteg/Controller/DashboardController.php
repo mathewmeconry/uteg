@@ -15,10 +15,13 @@ class DashboardController extends DefaultController
      */
     public function dashboardAction(Request $request, $compid)
     {
-        $comp = $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $request->getSession()->get('comp'));
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
 
         return $this->render('dashboard.html.twig', array(
-            "path" => array($comp->getName(), "dashboard.path")
+            "path" => array($comp->getName(), "dashboard.path"),
+            "compid" => $compid
         ));
     }
 }

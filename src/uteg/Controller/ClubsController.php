@@ -19,8 +19,13 @@ class ClubsController extends DefaultController
     public function clubsAction(Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
         return $this->render('clubs.html.twig', array(
-            "comp" => $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $request->getSession()->get('comp'))
+            "comp" => $comp
         ));
     }
 
