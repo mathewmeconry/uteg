@@ -43,11 +43,15 @@ class CompetitionController extends DefaultController
     }
 
     /**
-     * @Route("/competition", name="competition")
+     * @Route("/{compid}/competition", name="competition")
      */
-    public function competitionAction()
+    public function competitionAction($compid)
     {
         $this->get('acl_competition')->isGrantedUrl('SETTINGS_VIEW');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
 
         return $this->render('competition.html.twig');
     }

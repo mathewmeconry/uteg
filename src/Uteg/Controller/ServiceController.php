@@ -12,9 +12,9 @@ class ServiceController extends DefaultController {
      * @Route("{compid}/grouping", name="grouping")
      * @Method("GET")
      */
-    public function clubsAction(Request $request, $compid)
+    public function groupingAction(Request $request, $compid)
     {
-        $this->get('acl_competition')->isGrantedUrl('CLUBS_VIEW');
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $module = $this->get($comp->getModule()->getServiceName());
