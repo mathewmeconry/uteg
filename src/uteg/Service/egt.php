@@ -18,11 +18,13 @@ class egt
 {
     private $container;
     private $eventDispatcher;
+    private $templating;
 
     public function __construct(ContainerInterface $container, EventDispatcherInterface $eventDispatcher)
     {
         $this->container = $container;
         $this->eventDispatcher = $eventDispatcher;
+        $this->templating = $this->container->get('templating');
     }
 
     public function init()
@@ -38,7 +40,7 @@ class egt
 
     public function grouping(Request $request, Competition $competition)
     {
-        return $this->render('egt/grouping.html.twig', array(
+        return $this->templating->renderResponse('egt/grouping.html.twig', array(
             "comp" => $competition
         ));
     }

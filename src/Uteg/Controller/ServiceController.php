@@ -19,6 +19,6 @@ class ServiceController extends DefaultController {
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $module = $this->get($comp->getModule()->getServiceName());
         $module->init();
-        $module->grouping($request, $comp);
+        return $module->grouping($request, $comp);
     }
 }

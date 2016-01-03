@@ -3,3 +3,5 @@ app/logs/
 .idea/
 web/bundles/
 web/uploads/
+web/media/
+web/profilepictures/
