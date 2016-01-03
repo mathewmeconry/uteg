@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ServiceController extends DefaultController {
     /**
-     * @Route("{compid}/mapping", name="mapping")
+     * @Route("{compid}/grouping", name="grouping")
      * @Method("GET")
      */
     public function clubsAction(Request $request, $compid)
@@ -19,6 +19,6 @@ class ServiceController extends DefaultController {
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $module = $this->get($comp->getModule()->getServiceName());
         $module->init();
-        $module->mapping($request, $comp);
+        $module->grouping($request, $comp);
     }
 }

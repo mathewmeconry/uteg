@@ -33,12 +33,12 @@ class egt
     public function onAddServiceMenu(MenuEvent $event)
     {
         $menu = $event->getMenu();
-        $menu->addChild('egt.nav.mapping', array('route' => 'mapping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'group', 'labelAttributes' => array('class' => 'xn-text')));
+        $menu->addChild('egt.nav.grouping', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'group', 'labelAttributes' => array('class' => 'xn-text')));
     }
 
-    public function mapping(Request $request, Competition $competition)
+    public function grouping(Request $request, Competition $competition)
     {
-        return $this->render('egt/mapping.html.twig', array(
+        return $this->render('egt/grouping.html.twig', array(
             "comp" => $competition
         ));
     }

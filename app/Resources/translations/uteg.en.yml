@@ -341,6 +341,6 @@ service:
 
 egt:
     nav:
-        mapping: 'Starter Mapping'
-    mapping:
-        title: 'Starter Mapping'
+        grouping: 'Starter Grouping'
+    grouping:
+        title: 'Starter Grouping'
