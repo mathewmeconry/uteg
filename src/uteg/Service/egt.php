@@ -35,7 +35,10 @@ class egt
     public function onAddServiceMenu(MenuEvent $event)
     {
         $menu = $event->getMenu();
-        $menu->addChild('egt.nav.grouping', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group', 'labelAttributes' => array('class' => 'xn-text')));
+        $menu->addChild('egt.nav.grouping', array('uri' => '#', 'icon' => 'object-group', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        $menu['egt.nav.grouping']->addChild('egt.nav.grouping.male', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'sex' => 'male'), 'icon' => 'mars'));
+        $menu['egt.nav.grouping']->addChild('egt.nav.grouping.female', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'sex' => 'female'), 'icon' => 'venus'));
+
     }
 
     public function grouping(Request $request, Competition $competition)

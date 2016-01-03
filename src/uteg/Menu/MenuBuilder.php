@@ -105,6 +105,16 @@ class MenuBuilder extends ContainerAware
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
+            case 'grouping':
+                $uri = $request->getRequestUri();
+
+
+                $menu->addChild('service.grouping.path');
+                if (strpos($uri, 'male') === true) {
+                    $menu->addChild((strpos($uri, 'female') == false) ? 'service.grouping.path.male' : 'service.grouping.path.female')
+                        ->setCurrent(true);
+                }
+                break;
             case 'competition':
                 $menu
                     ->addChild('competition.path')

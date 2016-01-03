@@ -338,9 +338,16 @@ permissions:
         zeroRecords: 'No Permissions given'
 service:
     egt: 'EGT'
+    grouping:
+        path: 'Grouping'
+        path.male: 'Male'
+        path.female: 'Female'
 
 egt:
     nav:
         grouping: 'Starter Grouping'
+        grouping.female: 'Female'
+        grouping.male: 'Male'
     grouping:
         title: 'Starter Grouping'
+        header: 'Starter Grouping'
