@@ -1,0 +1,44 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: mathias
+ * Date: 1/4/16
+ * Time: 2:55 PM
+ */
+
+namespace uteg\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="ute_divisions")
+ */
+class Divisions
+{
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer", name="div_id")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Device", mappedBy="divisions")
+     */
+    protected $device;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Starters2Competition", mappedBy="division")
+     */
+    protected $starters;
+
+    public function __construct()
+    {
+      $this->starters = new ArrayCollection();
+    }
+
+}

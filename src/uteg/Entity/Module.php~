@@ -59,4 +59,63 @@ class Module
     {
         return $this->serviceName;
     }
+
+    /**
+     * Set displayName
+     *
+     * @param string $displayName
+     * @return Module
+     */
+    public function setDisplayName($displayName)
+    {
+        $this->displayName = $displayName;
+
+        return $this;
+    }
+
+    /**
+     * Set serviceName
+     *
+     * @param string $serviceName
+     * @return Module
+     */
+    public function setServiceName($serviceName)
+    {
+        $this->serviceName = $serviceName;
+
+        return $this;
+    }
+
+    /**
+     * Add competitions
+     *
+     * @param \uteg\Entity\Competition $competitions
+     * @return Module
+     */
+    public function addCompetition(\uteg\Entity\Competition $competitions)
+    {
+        $this->competitions[] = $competitions;
+
+        return $this;
+    }
+
+    /**
+     * Remove competitions
+     *
+     * @param \uteg\Entity\Competition $competitions
+     */
+    public function removeCompetition(\uteg\Entity\Competition $competitions)
+    {
+        $this->competitions->removeElement($competitions);
+    }
+
+    /**
+     * Get competitions
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCompetitions()
+    {
+        return $this->competitions;
+    }
 }
