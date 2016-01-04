@@ -14,7 +14,8 @@ use Doctrine\Common\Collections\Criteria;
  * @ORM\Table(name="ute_competition")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
-class Competition {
+class Competition
+{
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="comp_id")
@@ -68,28 +69,33 @@ class Competition {
     protected $deletedAt;
 
     /**
-     * @ORM\ManytoMany(targetEntity="User", mappedBy="competitions")
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="competitions")
      */
     protected $users;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Starters2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $s2cs;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Clubs2Invites", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Clubs2Invites", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $c2is;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Module", inversedBy="competitions", cascade={"persist"})
+     * @ORM\JoinColumn(name="module_id", referencedColumnName="module_id")
+     */
+    protected $module;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-    	$this->users = new ArrayCollection();
-    	$this->s2cs = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->s2cs = new ArrayCollection();
         $this->c2is = new ArrayCollection();
     }
 
@@ -119,7 +125,7 @@ class Competition {
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -142,7 +148,7 @@ class Competition {
     /**
      * Get gym
      *
-     * @return string 
+     * @return string
      */
     public function getGym()
     {
@@ -165,7 +171,7 @@ class Competition {
     /**
      * Get location
      *
-     * @return string 
+     * @return string
      */
     public function getLocation()
     {
@@ -188,7 +194,7 @@ class Competition {
     /**
      * Get zipcode
      *
-     * @return integer 
+     * @return integer
      */
     public function getZipcode()
     {
@@ -211,7 +217,7 @@ class Competition {
     /**
      * Get startdate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getStartdate()
     {
@@ -234,7 +240,7 @@ class Competition {
     /**
      * Get enddate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getEnddate()
     {
@@ -267,7 +273,7 @@ class Competition {
     /**
      * Get users
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getUsers()
     {
@@ -290,7 +296,7 @@ class Competition {
     /**
      * Get deleted
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getDeleted()
     {
@@ -313,7 +319,7 @@ class Competition {
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -336,7 +342,7 @@ class Competition {
     /**
      * Get deletedAt
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getDeletedAt()
     {
@@ -369,37 +375,39 @@ class Competition {
     /**
      * Get s2cs
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getS2cs()
     {
         return $this->s2cs;
     }
-    
-    public function getS2csBySex($sex) {
-    	$return = array();
-    	
-    	foreach($this->s2cs as $s2c) {
-    		if($s2c->getStarterBySex($sex) !== null) {
-    			$return[] = $s2c;
-    		}
-    	}
-    	
-    	return $return;
-    }
-    
-    public function getS2csBySexCat($sex, $category) {
-    	$return = array();
 
-    	foreach($this->s2cs as $s2c) {
-    		if($s2c->getStarterBySexCat($sex, $category) !== null) {
-    			$return[] = $s2c;
-    		}
-    	}
-    	 
-    	return $return;
+    public function getS2csBySex($sex)
+    {
+        $return = array();
+
+        foreach ($this->s2cs as $s2c) {
+            if ($s2c->getStarterBySex($sex) !== null) {
+                $return[] = $s2c;
+            }
+        }
+
+        return $return;
     }
-    
+
+    public function getS2csBySexCat($sex, $category)
+    {
+        $return = array();
+
+        foreach ($this->s2cs as $s2c) {
+            if ($s2c->getStarterBySexCat($sex, $category) !== null) {
+                $return[] = $s2c;
+            }
+        }
+
+        return $return;
+    }
+
     /**
      * Add c2is
      *
@@ -409,7 +417,7 @@ class Competition {
     public function addC2i(\uteg\Entity\Clubs2Invites $c2is)
     {
         $this->c2is[] = $c2is;
-    
+
         return $this;
     }
 
@@ -426,10 +434,18 @@ class Competition {
     /**
      * Get c2is
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getC2is()
     {
         return $this->c2is;
+    }
+
+    public function getModule() {
+        return $this->module;
+    }
+
+    public function setModule(\uteg\Entity\Module $module) {
+        $this->module = $module;
     }
 }

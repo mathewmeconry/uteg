@@ -12,7 +12,8 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
  * @ORM\Table(name="ute_club")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
-class Club {
+class Club
+{
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="club_id")
@@ -26,12 +27,12 @@ class Club {
     protected $name;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="club", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Starters2Competitions", mappedBy="club", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $members;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Clubs2Invites", mappedBy="club", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Clubs2Invites", mappedBy="club", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $c2is;
 
@@ -46,19 +47,21 @@ class Club {
      */
     protected $deletedAt;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->members = new ArrayCollection();
         $this->c2is = new ArrayCollection();
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->name;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -81,7 +84,7 @@ class Club {
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -104,7 +107,7 @@ class Club {
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -127,7 +130,7 @@ class Club {
     /**
      * Get deletedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDeletedAt()
     {
@@ -160,7 +163,7 @@ class Club {
     /**
      * Get members
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getMembers()
     {
@@ -176,7 +179,7 @@ class Club {
     public function addC2i(\uteg\Entity\Clubs2Invites $c2is)
     {
         $this->c2is[] = $c2is;
-    
+
         return $this;
     }
 
@@ -193,7 +196,7 @@ class Club {
     /**
      * Get c2is
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getC2is()
     {

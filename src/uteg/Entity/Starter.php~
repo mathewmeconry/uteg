@@ -13,7 +13,8 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
  * @ORM\Table(name="ute_starter")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
-class Starter {
+class Starter
+{
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="starter_id")
@@ -32,7 +33,7 @@ class Starter {
      * @Assert\NotBlank(message="starter.error.lastname")
      */
     protected $lastname;
-    
+
     /**
      * @ORM\Column(type="string", name="sex")
      * @Assert\NotBlank()
@@ -53,7 +54,7 @@ class Starter {
     protected $birthyear;
 
     /**
-     * @ORM\OnetoMany(targetEntity="Starters2Competitions", mappedBy="starter", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Starters2Competitions", mappedBy="starter", cascade={"persist", "remove"}, orphanRemoval=TRUE)
      */
     protected $s2cs;
 
@@ -68,11 +69,13 @@ class Starter {
      */
     protected $deletedAt;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->s2cs = new ArrayCollection();
     }
 
-    public function __toArray() {
+    public function __toArray()
+    {
         $array['firstname'] = $this->firstname;
         $array['lastname'] = $this->lastname;
         $array['birthyear'] = $this->birthyear;
@@ -83,7 +86,7 @@ class Starter {
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -106,7 +109,7 @@ class Starter {
     /**
      * Get firstname
      *
-     * @return string 
+     * @return string
      */
     public function getFirstname()
     {
@@ -129,7 +132,7 @@ class Starter {
     /**
      * Get lastname
      *
-     * @return string 
+     * @return string
      */
     public function getLastname()
     {
@@ -152,7 +155,7 @@ class Starter {
     /**
      * Get birthyear
      *
-     * @return integer 
+     * @return integer
      */
     public function getBirthyear()
     {
@@ -175,7 +178,7 @@ class Starter {
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -198,7 +201,7 @@ class Starter {
     /**
      * Get deletedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDeletedAt()
     {
@@ -231,7 +234,7 @@ class Starter {
     /**
      * Get s2cs
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getS2cs()
     {
@@ -247,14 +250,14 @@ class Starter {
     public function setSex($sex)
     {
         $this->sex = $sex;
-    
+
         return $this;
     }
 
     /**
      * Get sex
      *
-     * @return string 
+     * @return string
      */
     public function getSex()
     {

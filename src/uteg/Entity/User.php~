@@ -48,7 +48,7 @@ class User extends BaseUser
      * @ORM\Column(type="string", name="profilepicture", nullable=true)
      */
     protected $profilePicturePath;
-    
+
     /**
      * @Assert\File(
      *     maxSize = "5M",
@@ -57,8 +57,8 @@ class User extends BaseUser
      *     mimeTypesMessage = "Only the filetypes image are allowed."
      * )
      */
-    protected  $profilePictureFile;
-    
+    protected $profilePictureFile;
+
     private $tenoProfilePicturePath;
 
     public function __construct()
@@ -71,12 +71,12 @@ class User extends BaseUser
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
-    } 
+    }
 
     /**
      * Set firstname
@@ -94,7 +94,7 @@ class User extends BaseUser
     /**
      * Get firstname
      *
-     * @return string 
+     * @return string
      */
     public function getFirstname()
     {
@@ -117,7 +117,7 @@ class User extends BaseUser
     /**
      * Get lastname
      *
-     * @return string 
+     * @return string
      */
     public function getLastname()
     {
@@ -150,24 +150,25 @@ class User extends BaseUser
     /**
      * Get competitions
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCompetitions()
     {
         return $this->competitions;
     }
-    
-    
-/**
+
+
+    /**
      * Sets the file used for profile picture uploads
-     * 
+     *
      * @param UploadedFile $file
      * @return object
      */
-    public function setProfilePictureFile(UploadedFile $file = null) {
+    public function setProfilePictureFile(UploadedFile $file = null)
+    {
         // set the value of the holder
-        $this->profilePictureFile       =   $file;
-         // check if we have an old image path
+        $this->profilePictureFile = $file;
+        // check if we have an old image path
         if (isset($this->profilePicturePath)) {
             // store the old name to delete after the update
             $this->tempProfilePicturePath = $this->profilePicturePath;
@@ -181,10 +182,11 @@ class User extends BaseUser
 
     /**
      * Get the file used for profile picture uploads
-     * 
+     *
      * @return UploadedFile
      */
-    public function getProfilePictureFile() {
+    public function getProfilePictureFile()
+    {
 
         return $this->profilePictureFile;
     }
@@ -205,7 +207,7 @@ class User extends BaseUser
     /**
      * Get profilePicturePath
      *
-     * @return string 
+     * @return string
      */
     public function getProfilePicturePath()
     {
@@ -215,29 +217,32 @@ class User extends BaseUser
     /**
      * Get the absolute path of the profilePicturePath
      */
-    public function getProfilePictureAbsolutePath() {
+    public function getProfilePictureAbsolutePath()
+    {
         return null === $this->profilePicturePath
             ? null
-            : $this->getUploadRootDir().'/'.$this->profilePicturePath;
+            : $this->getUploadRootDir() . '/' . $this->profilePicturePath;
     }
 
     /**
      * Get root directory for file uploads
-     * 
+     *
      * @return string
      */
-    protected function getUploadRootDir($type='profilePicture') {
+    protected function getUploadRootDir($type = 'profilePicture')
+    {
         // the absolute directory path where uploaded
         // documents should be saved
-        return __DIR__.'/../../../web/'.$this->getUploadDir($type);
+        return __DIR__ . '/../../../web/' . $this->getUploadDir($type);
     }
 
     /**
      * Specifies where in the /web directory profile pic uploads are stored
-     * 
+     *
      * @return string
      */
-    protected function getUploadDir($type='profilePicture') {
+    protected function getUploadDir($type = 'profilePicture')
+    {
         // the type param is to change these methods at a later date for more file uploads
         // get rid of the __DIR__ so it doesn't screw up
         // when displaying uploaded doc/image in the view.
@@ -246,41 +251,43 @@ class User extends BaseUser
 
     /**
      * Get the web path for the user
-     * 
+     *
      * @return string
      */
-    public function getWebProfilePicturePath() {
+    public function getWebProfilePicturePath()
+    {
 
-        return '/'.$this->getUploadDir().'/'.$this->getProfilePicturePath(); 
+        return '/' . $this->getUploadDir() . '/' . $this->getProfilePicturePath();
     }
 
     /**
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */
-    public function preUploadProfilePicture() {
+    public function preUploadProfilePicture()
+    {
         if (null !== $this->getProfilePictureFile()) {
             // a file was uploaded
             // generate a unique filename
             $filename = $this->generateRandomProfilePictureFilename();
-            $this->setProfilePicturePath($filename.'.'.$this->getProfilePictureFile()->guessExtension());
+            $this->setProfilePicturePath($filename . '.' . $this->getProfilePictureFile()->guessExtension());
         }
     }
 
     /**
      * Generates a 32 char long random filename
-     * 
+     *
      * @return string
      */
-    public function generateRandomProfilePictureFilename() {
-        $count                  =   0;
+    public function generateRandomProfilePictureFilename()
+    {
+        $count = 0;
         do {
             $generator = new SecureRandom();
             $random = $generator->nextBytes(16);
             $randomString = bin2hex($random);
             $count++;
-        }
-        while(file_exists($this->getUploadRootDir().'/'.$randomString.'.'.$this->getProfilePictureFile()->guessExtension()) && $count < 50);
+        } while (file_exists($this->getUploadRootDir() . '/' . $randomString . '.' . $this->getProfilePictureFile()->guessExtension()) && $count < 50);
 
         return $randomString;
     }
@@ -288,12 +295,13 @@ class User extends BaseUser
     /**
      * @ORM\PostPersist()
      * @ORM\PostUpdate()
-     * 
+     *
      * Upload the profile picture
-     * 
+     *
      * @return mixed
      */
-    public function uploadProfilePicture() {
+    public function uploadProfilePicture()
+    {
         // check there is a profile pic to upload
         if ($this->getProfilePictureFile() === null) {
             return;
@@ -304,16 +312,16 @@ class User extends BaseUser
         $this->getProfilePictureFile()->move($this->getUploadRootDir(), $this->getProfilePicturePath());
 
         // check if we have an old image
-        if (isset($this->tempProfilePicturePath) && file_exists($this->getUploadRootDir().'/'.$this->tempProfilePicturePath)) {
+        if (isset($this->tempProfilePicturePath) && file_exists($this->getUploadRootDir() . '/' . $this->tempProfilePicturePath)) {
             // delete the old image
-            unlink($this->getUploadRootDir().'/'.$this->tempProfilePicturePath);
+            unlink($this->getUploadRootDir() . '/' . $this->tempProfilePicturePath);
             // clear the temp image path
             $this->tempProfilePicturePath = null;
         }
         $this->profilePictureFile = null;
     }
 
-     /**
+    /**
      * @ORM\PostRemove()
      */
     public function removeProfilePictureFile()
