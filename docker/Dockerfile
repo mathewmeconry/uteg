@@ -3,7 +3,7 @@ FROM debian:jessie
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y
-RUN apt-get install -y nginx php5-fpm php5-mysqlnd php5-cli mysql-server supervisor
+RUN apt-get install -y nginx php5-fpm php5-mysqlnd php5-cli mysql-server supervisor php5-intl php5-dev
 
 RUN sed -e 's/;daemonize = yes/daemonize = no/' -i /etc/php5/fpm/php-fpm.conf
 RUN sed -e 's/;listen\.owner/listen.owner/' -i /etc/php5/fpm/pool.d/www.conf
