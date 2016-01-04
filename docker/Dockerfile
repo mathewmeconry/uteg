@@ -12,6 +12,7 @@ RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 
 ADD vhost.conf /etc/nginx/sites-available/default
 ADD supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+ADD my.cnf /etc/mysql/my.cnf
 ADD init.sh /init.sh
 ADD mysqlcommands /mysqlcommands
 

@@ -9,10 +9,12 @@ done
 
 DB_NAME=uteg
 
+
+mysqladmin -u root create $DB_NAME
+
 cd /srv
 php app/console doctrine:schema:update --force
 
-mysqladmin -u root create $DB_NAME
 mysql -u root < /mysqlcommands
 
 if [ -n "$INIT" ]; then
