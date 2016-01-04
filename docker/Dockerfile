@@ -13,10 +13,12 @@ RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 ADD vhost.conf /etc/nginx/sites-available/default
 ADD supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 ADD init.sh /init.sh
+ADD mysqlcommands /mysqlcommands
 
 RUN chmod u+x /init.sh
 
-EXPOSE 80
+EXPOSE 80:80
+EXPOSE 3306:3306
 
 VOLUME ["/srv"]
 WORKDIR /srv
