@@ -336,18 +336,22 @@ permissions:
         search: 'Search'
         searchPlaceholder: 'Search...'
         zeroRecords: 'No Permissions given'
+
 service:
     egt: 'EGT'
-    grouping:
-        path: 'Grouping'
-        path.male: 'Male'
-        path.female: 'Female'
 
 egt:
     nav:
         grouping: 'Starter Grouping'
-        grouping.female: 'Female'
-        grouping.male: 'Male'
+        departments: 'Departments'
+        divisions: 'Divisions'
     grouping:
-        title: 'Starter Grouping'
-        header: 'Starter Grouping'
+        path: 'Grouping'
+    departments:
+        title: 'Departments'
+        header: 'Departments'
+        path: 'Departments'
+    divisions:
+        title: 'Divisions'
+        header: 'Divisions'
+        path: 'Divisions'

@@ -36,14 +36,21 @@ class egt
     {
         $menu = $event->getMenu();
         $menu->addChild('egt.nav.grouping', array('uri' => '#', 'icon' => 'object-group', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
-        $menu['egt.nav.grouping']->addChild('egt.nav.grouping.male', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'sex' => 'male'), 'icon' => 'mars'));
-        $menu['egt.nav.grouping']->addChild('egt.nav.grouping.female', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'sex' => 'female'), 'icon' => 'venus'));
+        $menu['egt.nav.grouping']->addChild('egt.nav.departments', array('route' => 'departments', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
+        $menu['egt.nav.grouping']->addChild('egt.nav.divisions', array('route' => 'divisions', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
 
     }
 
-    public function grouping(Request $request, Competition $competition)
+    public function departments(Request $request, Competition $competition)
     {
-        return $this->templating->renderResponse('egt/grouping.html.twig', array(
+        return $this->templating->renderResponse('egt/departments.html.twig', array(
+            "comp" => $competition
+        ));
+    }
+
+    public function divisions(Request $request, Competition $competition)
+    {
+        return $this->templating->renderResponse('egt/divisions.html.twig', array(
             "comp" => $competition
         ));
     }
