@@ -388,7 +388,7 @@ class StartersController extends DefaultController
         $module = $this->get($comp->getModule()->getServiceName());
         $module->init();
 
-        $s2c = $module->findS2c(array("id"=>$id));
+        $s2c = $module->findS2c(array("id" => $id));
 
         $form = $this->createForm(new S2cType(), $s2c);
 
@@ -424,7 +424,7 @@ class StartersController extends DefaultController
         $module->init();
 
         $em = $this->getDoctrine()->getEntityManager();
-        $s2c = $module->findS2c(array("id" =>  $id));
+        $s2c = $module->findS2c(array("id" => $id));
 
         $comp->removeS2c($s2c);
         $em->persist($comp);
