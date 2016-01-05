@@ -38,10 +38,26 @@ class DepartmentController extends DefaultController
     {
         $this->get('acl_competition')->isGrantedUrl('SETTINGS_VIEW');
 
+        setlocale(LC_TIME, $request->getLocale());
+        $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
-        $module = $this->get($comp->getModule()->getServiceName());
 
+        $deps = $comp->getDepartments();
+        $departments["data"] = array();
 
+        foreach($deps as $dep) {
+            $departments["data"][] = array("id" => $dep->getId(),
+                "number" => $dep->getNumber(),
+                "date" => $dateFormatter->format($dep->getDate()),
+                "category" => $dep->getCategory()->getName(),
+                "sex" => $dep->getSex()
+            );
+        }
+
+        $response = new Response(json_encode($departments));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 
     /**

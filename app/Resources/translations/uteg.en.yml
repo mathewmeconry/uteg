@@ -351,10 +351,23 @@ department:
         save: 'Save'
         cancel: 'Cancel'
         success: 'Departemnt successfully added'
+
 departments:
     title: 'Departments'
     header: 'Departments'
     path: 'Departments'
+    table:
+            all: 'All'
+            next: 'Next'
+            previous: 'Previous'
+            search: 'Search'
+            searchPlaceholder: 'Search...'
+            zeroRecords: 'No Departments defined'
+            number: 'Number'
+            date: 'Date'
+            category: 'Category'
+            sex: 'Sex'
+            actions: 'Actions'
 
 egt:
     nav:
