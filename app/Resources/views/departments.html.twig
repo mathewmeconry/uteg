@@ -2,7 +2,7 @@
 
 {% extends "base.html.twig" %}
 
-{% block title %}{{ 'egt.departments.title'|trans }}{% endblock %}
+{% block title %}{{ 'departments.title'|trans }}{% endblock %}
 
 {% block cssplugins %}
     <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
@@ -19,10 +19,10 @@
 
             $(table).DataTable({
                 "ajax": {
-                    "url": "{{ path('clubsPost', { 'compid': app.request.get('compid')}) }}",
+                    "url": "{{ path('departmentPost', { 'compid': app.request.get('compid')}) }}",
                     "method": "POST"
                 },
-                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "clubs.table.all"|trans }}"]],
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "department.table.all"|trans }}"]],
                 "search": {
                     "regex": true
                 },
@@ -130,7 +130,7 @@
         <div class="col-md-12">
             <div id="panel_invites" class="panel panel-default" style="min-height: 400px;">
                 <div class="panel-heading">
-                    <h3 class="panel-title">{{ 'egt.departments.header'|trans }}</h3>
+                    <h3 class="panel-title">{{ 'departments.header'|trans }}</h3>
                     <ul class="panel-controls">
                         {% if is_granted('SETTINGS_EDIT', comp) %}
                             <li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a>
@@ -163,9 +163,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="department-save"
-                                class="btn btn-success">{{ 'egt.department.add.save'|trans }}</button>
+                                class="btn btn-success">{{ 'department.add.save'|trans }}</button>
                         <button type="button" class="btn btn-default"
-                                data-dismiss="modal">{{ 'egt.department.add.cancel'|trans }}</button>
+                                data-dismiss="modal">{{ 'department.add.cancel'|trans }}</button>
                     </div>
                 </div>
             </div>

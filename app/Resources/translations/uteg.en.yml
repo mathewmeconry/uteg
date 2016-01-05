@@ -340,6 +340,22 @@ permissions:
 service:
     egt: 'EGT'
 
+department:
+    add:
+        number: 'Number'
+        date: 'Date'
+        female: 'Female'
+        male: 'Male'
+        sex: 'Sex'
+        category: 'Category'
+        save: 'Save'
+        cancel: 'Cancel'
+        success: 'Departemnt successfully added'
+departments:
+    title: 'Departments'
+    header: 'Departments'
+    path: 'Departments'
+
 egt:
     nav:
         grouping: 'Starter Grouping'
@@ -347,22 +363,7 @@ egt:
         divisions: 'Divisions'
     grouping:
         path: 'Grouping'
-    departments:
-        title: 'Departments'
-        header: 'Departments'
-        path: 'Departments'
     divisions:
         title: 'Divisions'
         header: 'Divisions'
         path: 'Divisions'
-    department:
-        add:
-            number: 'Number'
-            date: 'Date'
-            female: 'Female'
-            male: 'Male'
-            sex: 'Sex'
-            category: 'Category'
-            save: 'Save'
-            cancel: 'Cancel'
-            success: 'Departemnt successfully added'

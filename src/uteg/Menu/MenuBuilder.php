@@ -105,14 +105,14 @@ class MenuBuilder extends ContainerAware
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
-            case 'departments':
+            case 'department':
                 $menu->addChild('egt.grouping.path');
                 $menu
-                    ->addChild('egt.departments.path')
+                    ->addChild('departments.path')
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
-            case 'divisions':
+            case 'division':
                 $menu->addChild('egt.grouping.path');
                 $menu
                     ->addChild('egt.divisions.path')

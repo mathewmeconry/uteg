@@ -25,7 +25,7 @@ class DepartmentController extends DefaultController
         $module->init();
 
 
-        return $this->render('egt/departments.html.twig', array(
+        return $this->render('departments.html.twig', array(
             "comp" => $competition
         ));
     }
@@ -80,7 +80,7 @@ class DepartmentController extends DefaultController
             $em->persist($department);
             $em->flush();
 
-            $this->container->get('session')->getFlashBag()->add('success', 'egt.department.add.success');
+            $this->container->get('session')->getFlashBag()->add('success', 'department.add.success');
 
             return new Response('true');
         }
