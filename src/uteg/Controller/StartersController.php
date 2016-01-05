@@ -53,9 +53,6 @@ class StartersController extends DefaultController
     public function startersPostAction($sex, $cat, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
-        setlocale(LC_TIME, $request->getLocale());
-        $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
-
 
         if ($sex !== 'male' && $sex !== 'female') {
             return $this->redirect($request->getRequestUri() . "/male", 301);

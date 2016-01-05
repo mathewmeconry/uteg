@@ -48,7 +48,7 @@ class DepartmentController extends DefaultController
         foreach ($deps as $dep) {
             $departments["data"][] = array("id" => $dep->getId(),
                 "number" => $dep->getNumber(),
-                "date" => $dateFormatter->format($dep->getDate()),
+                "date" => $dateFormatter->format($dep->getDate(), "medium", "none", $request->getPreferredLanguage()),
                 "category" => $dep->getCategory()->getName(),
                 "sex" => $dep->getSex()
             );
@@ -61,7 +61,7 @@ class DepartmentController extends DefaultController
     }
 
     /**
-     * @Route("{compid}/departments/add", name="departmentAdd")
+     * @Route("/{compid}/departments/add", name="departmentAdd")
      * @Method("POST")
      */
     public function addDepartmentAction(Request $request, $compid)
@@ -69,14 +69,13 @@ class DepartmentController extends DefaultController
         $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
 
         $competition = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
-        setlocale(LC_TIME, $request->getLocale());
         $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
         $interval = new \DateInterval('P1D'); // 1 Day
         $dateRange = new \DatePeriod($competition->getStartdate(), $interval, $competition->getEnddate()->modify('+1 day'));
 
         $dateList = [];
         foreach ($dateRange as $date) {
-            $dateList[] = $dateFormatter->format($date, "short");
+            $dateList[] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
         }
 
         $department = new Department();

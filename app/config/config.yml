@@ -117,7 +117,7 @@ ewz_recaptcha:
 
 jms_i18n_routing:
     default_locale: en
-    locales: [de, en]
+    locales: [de, en, fr]
     strategy: custom
     
 liip_imagine:
