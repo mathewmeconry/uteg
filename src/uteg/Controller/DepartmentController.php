@@ -45,7 +45,7 @@ class DepartmentController extends DefaultController
         $deps = $comp->getDepartments();
         $departments["data"] = array();
 
-        foreach($deps as $dep) {
+        foreach ($deps as $dep) {
             $departments["data"][] = array("id" => $dep->getId(),
                 "number" => $dep->getNumber(),
                 "date" => $dateFormatter->format($dep->getDate()),
@@ -69,6 +69,15 @@ class DepartmentController extends DefaultController
         $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
 
         $competition = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        setlocale(LC_TIME, $request->getLocale());
+        $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
+        $interval = new \DateInterval('P1D'); // 1 Day
+        $dateRange = new \DatePeriod($competition->getStartdate(), $interval, $competition->getEnddate()->modify('+1 day'));
+
+        $dateList = [];
+        foreach ($dateRange as $date) {
+            $dateList[] = $dateFormatter->format($date, "short");
+        }
 
         $department = new Department();
 
@@ -81,7 +90,7 @@ class DepartmentController extends DefaultController
 
             $department->setDate(new \DateTime($department->getDate()));
 
-            $competitionDepartments = $competition->getDepartmentsbyCatDateSex($department->getCategory(),$department->getDate(), $department->getSex());
+            $competitionDepartments = $competition->getDepartmentsbyCatDateSex($department->getCategory(), $department->getDate(), $department->getSex());
             if (count($competitionDepartments) > 0) {
                 $department->setNumber($competitionDepartments[count($competitionDepartments) - 1]->getNumber() + 1);
             } else {
@@ -101,10 +110,11 @@ class DepartmentController extends DefaultController
             return new Response('true');
         }
 
-        return $this->render('egt/departmentEdit.html.twig',
+        return $this->render('form/departmentEdit.html.twig',
             array('form' => $form->createView(),
                 'error' => (isset($errorMessages)) ? $errorMessages : '',
-                'target' => 'departmentAdd'
+                'target' => 'departmentAdd',
+                'dateList' => $dateList
             )
         );
     }

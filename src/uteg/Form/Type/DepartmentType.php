@@ -22,7 +22,8 @@ class DepartmentType extends AbstractType
             'input' => 'string',
             'format' => 'yyyy-MM-dd',
             'widget' => 'single_text',
-            'html5' => true
+            'html5' => false,
+            'attr' => array("list" => "dates")
         ))
             ->add('sex', 'choice', array('choices' => array('male' => 'department.add.male', 'female' => 'department.add.female'), 'label' => 'department.add.sex', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
             ->add('category', 'entity', array('class' => 'uteg:Category', 'query_builder' => function (EntityRepository $er) {

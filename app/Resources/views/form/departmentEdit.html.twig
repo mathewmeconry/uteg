@@ -1,0 +1,19 @@
+{% trans_default_domain 'uteg' %}
+{% form_theme form 'form/formTheme_horizontal.html.twig' %}
+
+<form id="departmentEditForm" method="post" action="{{ path(target, { 'compid': app.request.get('compid')}) }}"
+      class="form-horizontal">
+
+    {{ form_row(form.date) }}
+    <datalist id="dates">
+        {% for date in dateList %}
+            <option>{{ date }}</option>
+        {% endfor %}
+    </datalist>
+
+    {{ form_row(form.sex) }}
+
+    {{ form_row(form.category) }}
+
+    {{ form_row(form._token) }}
+</form>
