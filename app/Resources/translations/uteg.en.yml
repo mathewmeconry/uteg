@@ -37,6 +37,7 @@ competitionlist:
         startdate: 'Start date'
         enddate: 'End date'
         submit: 'Add'
+        cancel: 'Cancel'
         success: 'Competition created successfully'
     delcomp:
         success: 'Competition deleted successfully'

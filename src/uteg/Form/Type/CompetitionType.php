@@ -26,21 +26,21 @@ class CompetitionType extends AbstractType
             }, 'label' => 'competitionlist.addcomp.module', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
             ->add('startdate', 'date', array(
                 'label' => 'competitionlist.addcomp.startdate',
-                "attr" => array("placeholder" => "competitionlist.addcomp.startdate"),
+                "attr" => array("placeholder" => "competitionlist.addcomp.startdate", "class" => "datepicker"),
                 'translation_domain' => 'uteg',
                 'input' => 'string',
                 'format' => 'yyyy-MM-dd',
                 'widget' => 'single_text',
-                'html5' => true
+                'html5' => false
             ))
             ->add('enddate', 'date', array(
                 'label' => 'competitionlist.addcomp.enddate',
-                "attr" => array("placeholder" => "competitionlist.addcomp.enddate"),
+                "attr" => array("placeholder" => "competitionlist.addcomp.enddate", "class" => "datepicker"),
                 'translation_domain' => 'uteg',
                 'input' => 'string',
                 'format' => 'yyyy-MM-dd',
                 'widget' => 'single_text',
-                'html5' => true
+                'html5' => false
             ))
             ->add('recaptcha', 'ewz_recaptcha', array(
                 'attr' => array(

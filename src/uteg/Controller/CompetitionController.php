@@ -119,7 +119,8 @@ class CompetitionController extends DefaultController
         }
 
         return $this->render('addComp.html.twig', array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'cancel' => "competitionlist"
         ));
     }
 

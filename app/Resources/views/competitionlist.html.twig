@@ -135,8 +135,8 @@
                         <td>{{ comp.gym }}</td>
                         <td>{{ comp.location }}</td>
                         <td>{{ comp.zipcode }}</td>
-                        <td>{{ comp.startdate|localizeddate('medium', 'none', app.request.locale) }}</td>
-                        <td>{{ comp.enddate|localizeddate('medium', 'none', app.request.locale) }}</td>
+                        <td>{{ comp.startdate|localizeddate('medium', 'none', app.request.preferredLanguage) }}</td>
+                        <td>{{ comp.enddate|localizeddate('medium', 'none', app.request.preferredLanguage) }}</td>
                         <td class="action">{% if is_granted('OWNER', comp) %}<i
                                     class="icon icon-delete-black"> {{ 'competitionlist.form.delete'|trans }}</i>{% endif %}
                             <i class="icon icon-view-black"> {{ 'competitionlist.form.view'|trans }}</i></td>
