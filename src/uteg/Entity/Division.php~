@@ -91,40 +91,4 @@ class Division
         $this->device = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-
-    /**
-     * Set department
-     *
-     * @param \uteg\Entity\Department $department
-     * @return Division
-     */
-    public function setDepartment(\uteg\Entity\Department $department = null)
-    {
-        $this->department = $department;
-
-        return $this;
-    }
-
-    /**
-     * Get department
-     *
-     * @return \uteg\Entity\Department 
-     */
-    public function getDepartment()
-    {
-        return $this->department;
-    }
-
-    /**
-     * Set device
-     *
-     * @param \uteg\Entity\Device $device
-     * @return Division
-     */
-    public function setDevice(\uteg\Entity\Device $device = null)
-    {
-        $this->device = $device;
-
-        return $this;
-    }
 }

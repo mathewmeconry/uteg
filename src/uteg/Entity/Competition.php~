@@ -90,6 +90,11 @@ class Competition
     protected $module;
 
     /**
+     * @ORM\OneToMany(targetEntity="Department", mappedBy="competition")
+     */
+    protected $departments;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -97,6 +102,7 @@ class Competition
         $this->users = new ArrayCollection();
         $this->s2cs = new ArrayCollection();
         $this->c2is = new ArrayCollection();
+        $this->departments = new ArrayCollection();
     }
 
     /**

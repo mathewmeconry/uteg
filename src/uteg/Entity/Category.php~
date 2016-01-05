@@ -35,9 +35,15 @@ class Category
      */
     protected $starters;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Department", mappedBy="category")
+     */
+    protected $departments;
+
     public function __construct()
     {
         $this->starters = new ArrayCollection();
+        $this->departments = new ArrayCollection();
     }
 
     public function __toString()

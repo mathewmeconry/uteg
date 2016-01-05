@@ -90,6 +90,11 @@ class Competition
     protected $module;
 
     /**
+     * @ORM\OneToMany(targetEntity="Department", mappedBy="competition")
+     */
+    protected $departments;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -97,6 +102,7 @@ class Competition
         $this->users = new ArrayCollection();
         $this->s2cs = new ArrayCollection();
         $this->c2is = new ArrayCollection();
+        $this->departments = new ArrayCollection();
     }
 
     /**
@@ -441,11 +447,58 @@ class Competition
         return $this->c2is;
     }
 
-    public function getModule() {
+    public function getModule()
+    {
         return $this->module;
     }
 
-    public function setModule(\uteg\Entity\Module $module) {
+    public function setModule(\uteg\Entity\Module $module)
+    {
         $this->module = $module;
+    }
+
+    /**
+     * Add departments
+     *
+     * @param \uteg\Entity\Department $departments
+     * @return Competition
+     */
+    public function addDepartment(\uteg\Entity\Department $departments)
+    {
+        $this->departments[] = $departments;
+
+        return $this;
+    }
+
+    /**
+     * Remove departments
+     *
+     * @param \uteg\Entity\Department $departments
+     */
+    public function removeDepartment(\uteg\Entity\Department $departments)
+    {
+        $this->departments->removeElement($departments);
+    }
+
+    /**
+     * Get departments
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDepartments()
+    {
+        return $this->departments;
+    }
+
+    public function getDepartmentsbyCatDateSex(\uteg\Entity\Category $category, \DateTime $dateTime, $sex) {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getCategory() === $category && $department->getDate() == $dateTime && $department->getSex() == $sex) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
     }
 }

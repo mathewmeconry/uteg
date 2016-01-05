@@ -416,7 +416,7 @@ class StartersController extends DefaultController
     }
 
     /**
-     * @Route("/starter/remove", name="starterRemove")
+     * @Route("/{compid}/starter/remove", name="starterRemove")
      */
     public function starterRemoveAction(Request $request, $compid)
     {

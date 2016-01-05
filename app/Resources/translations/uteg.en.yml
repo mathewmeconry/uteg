@@ -337,6 +337,18 @@ permissions:
         searchPlaceholder: 'Search...'
         zeroRecords: 'No Permissions given'
 
+department:
+    add:
+        number: 'Number'
+        date: 'Date'
+        female: 'Female'
+        male: 'Male'
+        sex: 'Sex'
+        category: 'Category'
+        save: 'Save'
+        cancel: 'Cancel'
+        success: 'Departemnt successfully added'
+
 service:
     egt: 'EGT'
 

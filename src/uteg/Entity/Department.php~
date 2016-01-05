@@ -21,6 +21,25 @@ class Department
     protected $id;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Competition", inversedBy="departments")
+     * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
+     */
+    protected $competition;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="departments")
+     * @ORM\JoinColumn(name="cat_id", referencedColumnName="cat_id")
+     */
+    protected $category;
+
+    /**
+     * @ORM\Column(type="string", name="sex")
+     * @Assert\NotBlank()
+     * @Assert\Choice(choices = {"male", "female"})
+     */
+    protected $sex;
+
+    /**
      * @ORM\Column(type="integer", name="number")
      */
     protected $number;
@@ -31,14 +50,14 @@ class Department
     protected $date;
 
     /**
-     * @ORM\Column(type="boolean", name="started", options={"default" = 0})
+     * @ORM\Column(type="boolean", name="started", options={"default" = false})
      */
-    protected $started;
+    protected $started = false;
 
     /**
-     * @ORM\Column(type="boolean", name="ended", options={"default" = 0})
+     * @ORM\Column(type="boolean", name="ended", options={"default" = false})
      */
-    protected $ended;
+    protected $ended = false;
 
     /**
      * @ORM\Column(type="integer", name="round", options={"default" = 0})
@@ -46,7 +65,7 @@ class Department
     protected $round;
 
     /**
-     * @ORM\OneToMany(targetEntity="Divisions", mappedBy="department")
+     * @ORM\OneToMany(targetEntity="Division", mappedBy="department")
      */
     protected $divisions;
 
@@ -249,5 +268,28 @@ class Department
     public function getDivisions()
     {
         return $this->divisions;
+    }
+
+    /**
+     * Set competition
+     *
+     * @param \uteg\Entity\Competition $competition
+     * @return Department
+     */
+    public function setCompetition(\uteg\Entity\Competition $competition = null)
+    {
+        $this->competition = $competition;
+
+        return $this;
+    }
+
+    /**
+     * Get competition
+     *
+     * @return \uteg\Entity\Competition 
+     */
+    public function getCompetition()
+    {
+        return $this->competition;
     }
 }
