@@ -380,7 +380,7 @@ class StartersController extends DefaultController
     /**
      * @Route("/{compid}/starter/edit/{id}", name="starterEdit", defaults={"id": ""}, requirements={"id": "\d+"})
      */
-    public function starterEditAction($id, Request $request, $compid)
+    public function starterEditAction(Request $request, $compid, $id)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
@@ -413,9 +413,9 @@ class StartersController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/starter/remove", name="starterRemove")
+     * @Route("/{compid}/starter/remove/{id}", name="starterRemove", defaults={"id": ""}, requirements={"id": "\d+"})
      */
-    public function starterRemoveAction(Request $request, $compid)
+    public function starterRemoveAction(Request $request, $compid, $id)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
@@ -424,7 +424,7 @@ class StartersController extends DefaultController
         $module->init();
 
         $em = $this->getDoctrine()->getEntityManager();
-        $s2c = $module->findS2c(array("id" =>  $_POST['id']));
+        $s2c = $module->findS2c(array("id" =>  $id));
 
         $comp->removeS2c($s2c);
         $em->persist($comp);

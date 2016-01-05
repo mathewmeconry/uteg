@@ -156,8 +156,7 @@
             $('#starter-remove').click(function () {
                 $.ajax({
                     type: "POST",
-                    url: "{{ path('starterRemove', { 'compid': app.request.get('compid')}) }}",
-                    data: {id: $("#dialog-remove").data('s2c_id')}
+                    url: "{{ path('starterRemove', { 'compid': app.request.get('compid')}) }}" + "/" + $("#dialog-remove").data('s2c_id')
                 }).success(function (data) {
                     if (data == 'true') {
                         $('#dialog-remove').modal('hide');

@@ -61,7 +61,7 @@ class DepartmentController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/departments/add", name="departmentAdd")
+     * @Route("/{compid}/department/add", name="departmentAdd")
      * @Method("POST")
      */
     public function addDepartmentAction(Request $request, $compid)
@@ -119,7 +119,7 @@ class DepartmentController extends DefaultController
     }
 
     /**
-     * @Route("{compid}/departments/remove", name="departmentRemove")
+     * @Route("{compid}/department/remove", name="departmentRemove")
      * @Method("POST")
      */
     public function removeDepartmentAction(Request $request, $compid)
