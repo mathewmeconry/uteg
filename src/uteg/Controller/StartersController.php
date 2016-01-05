@@ -5,7 +5,6 @@ namespace uteg\Controller;
 use uteg\Entity\Club;
 use uteg\Form\Type\StarterType;
 use uteg\Form\Type\S2cType;
-use uteg\Entity\Starters2Competitions;
 use uteg\Entity\Starter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -134,14 +133,14 @@ class StartersController extends DefaultController
                     $starter->setSex($formdata['sex']);
                     $s2c = false;
                 } else {
-                    $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $comp));
+                    $s2c = $module->findS2c(array("starter" => $starter, "competition" => $comp));
                 }
             } else {
-                $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $comp));
+                $s2c = $module->findS2c(array("starter" => $starter, "competition" => $comp));
             }
 
             if (!$s2c) {
-                $s2c = new Starters2Competitions();
+                $s2c = $module->getS2c();
                 $s2c->setStarter($starter);
                 $s2c->setCompetition($comp);
 
@@ -392,7 +391,7 @@ class StartersController extends DefaultController
         $module = $this->get($comp->getModule()->getServiceName());
         $module->init();
 
-        $s2c = $this->getDoctrine()->getEntityManager()->find('uteg:Starters2Competitions', $id);
+        $s2c = $module->findS2c(array("id"=>$id));
 
         $form = $this->createForm(new S2cType(), $s2c);
 
@@ -428,7 +427,7 @@ class StartersController extends DefaultController
         $module->init();
 
         $em = $this->getDoctrine()->getEntityManager();
-        $s2c = $em->find('uteg:Starters2Competitions', $_POST['id']);
+        $s2c = $module->findS2c(array("id" =>  $_POST['id']));
 
         $comp->removeS2c($s2c);
         $em->persist($comp);

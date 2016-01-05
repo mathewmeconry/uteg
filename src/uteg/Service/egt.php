@@ -13,6 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use uteg\Entity\Competition;
 use uteg\EventListener\MenuEvent;
+use uteg\Entity\Starters2CompetitionsEGT;
 
 class egt
 {
@@ -53,5 +54,21 @@ class egt
         return $this->templating->renderResponse('egt/divisions.html.twig', array(
             "comp" => $competition
         ));
+    }
+
+    public function getS2c()
+    {
+      return new Starters2CompetitionsEGT();
+    }
+
+    public function findS2c(Array $searchArray)
+    {
+      $em = $this->container->get('doctrine')->getEntityManager();
+
+      return $em->getRepository('uteg:Starters2CompetitionsEGT')->findOneBy($searchArray);
+    }
+
+    public function getS2cString() {
+      return 'Starters2CompetitionsEGT';
     }
 }

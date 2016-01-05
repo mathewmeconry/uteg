@@ -9,10 +9,13 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
 
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="ute_starters2competitions")
- * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
- */
+* @ORM\Entity
+* @ORM\Table(name="ute_starters2competitionsegt")
+* @ORM\InheritanceType("JOINED")
+* @ORM\DiscriminatorColumn(name="module", type="string")
+* @ORM\DiscriminatorMap({"egt" = "Starters2CompetitionsEGT"})
+* @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+*/
 class Starters2Competitions
 {
     /**

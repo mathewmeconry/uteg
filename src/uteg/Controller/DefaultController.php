@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Starter;
-use uteg\Entity\Starters2Competitions;
 use uteg\Entity\Club;
 
 class DefaultController extends Controller
@@ -66,6 +65,7 @@ class DefaultController extends Controller
 
     public function addMassiveAction($competition, $starters, $club = null)
     {
+        $module = $this->get($competition->getModule()->getServiceName());
         $em = $this->getDoctrine()->getManager();
         $return = array();
         $errorMessages = array();
@@ -82,14 +82,14 @@ class DefaultController extends Controller
                     $starter->setSex($starterPost['sex']);
                     $s2c = false;
                 } else {
-                    $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+                    $s2c = $module->findS2c(array("starter" => $starter, "competition" => $competition));
                 }
             } else {
-                $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+                $s2c = $module->findS2c(array("starter" => $starter, "competition" => $competition));
             }
 
             if (!$s2c) {
-                $s2c = new Starters2Competitions();
+                $s2c = $module->getS2c();
                 $s2c->setStarter($starter);
                 $s2c->setCompetition($competition);
 

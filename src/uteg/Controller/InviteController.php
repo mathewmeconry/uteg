@@ -138,6 +138,8 @@ class InviteController extends DefaultController
     public function inviteTokenAction($token, $compid)
     {
         $em = $this->getDoctrine()->getManager();
+        $comp = $em->find('uteg:Competition', $request->getSession()->get('comp'));
+        $module = $this->get($comp->getModule());
         $c2i = $em->getRepository('uteg:Clubs2Invites')->findOneBy(array("token" => $token));
         $today = date('Y-m-d');
 
@@ -146,10 +148,10 @@ class InviteController extends DefaultController
             $qb = $em->createQueryBuilder();
             $qb->select('s2c')
                 ->distinct()
-                ->from('uteg\Entity\Starters2Competitions', 's2c')
+                ->from('uteg\Entity\\'.$module->getS2cString(), 's2c')
                 ->join('uteg\Entity\Competition', 'co', \Doctrine\ORM\Query\Expr\Join::WITH, 's2c.competition = co.id')
                 ->where('s2c.club = ?1')
-                ->andWhere('co.id = (SELECT MAX(s2c2.competition) FROM uteg\Entity\Starters2Competitions as s2c2 WHERE s2c2.club = ?2 AND s2c2.competition < ?3)')
+                ->andWhere('co.id = (SELECT MAX(s2c2.competition) FROM uteg\Entity\\'.$module->getS2cString().'as s2c2 WHERE s2c2.club = ?2 AND s2c2.competition < ?3)')
                 ->setParameter(1, $c2i->getClubObj())
                 ->setParameter(2, $c2i->getClubObj())
                 ->setParameter(3, $c2i->getCompetition());
