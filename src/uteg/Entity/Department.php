@@ -82,7 +82,7 @@ class Department
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -105,7 +105,7 @@ class Department
     /**
      * Get number
      *
-     * @return integer 
+     * @return integer
      */
     public function getNumber()
     {
@@ -128,7 +128,7 @@ class Department
     /**
      * Get date
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -151,7 +151,7 @@ class Department
     /**
      * Get started
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getStarted()
     {
@@ -174,7 +174,7 @@ class Department
     /**
      * Get ended
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEnded()
     {
@@ -197,11 +197,16 @@ class Department
     /**
      * Get round
      *
-     * @return integer 
+     * @return integer
      */
     public function getRound()
     {
         return $this->round;
+    }
+
+    public function increaseRound()
+    {
+        return $this->round + 1;
     }
 
     /**
@@ -230,7 +235,7 @@ class Department
     /**
      * Get starters
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getStarters()
     {
@@ -263,7 +268,7 @@ class Department
     /**
      * Get divisions
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getDivisions()
     {
@@ -286,7 +291,7 @@ class Department
     /**
      * Get competition
      *
-     * @return \uteg\Entity\Competition 
+     * @return \uteg\Entity\Competition
      */
     public function getCompetition()
     {
@@ -309,7 +314,7 @@ class Department
     /**
      * Get sex
      *
-     * @return string 
+     * @return string
      */
     public function getSex()
     {
@@ -332,7 +337,7 @@ class Department
     /**
      * Get category
      *
-     * @return \uteg\Entity\Category 
+     * @return \uteg\Entity\Category
      */
     public function getCategory()
     {
