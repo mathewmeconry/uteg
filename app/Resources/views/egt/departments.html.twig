@@ -4,8 +4,73 @@
 
 {% block title %}{{ 'egt.departments.title'|trans }}{% endblock %}
 
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
+{% endblock %}
+
+{% block jsplugins %}
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
+{% endblock %}
+
 {% block script %}
     <script>
+        function dataTable(table) {
+
+            $(table).DataTable({
+                "ajax": {
+                    "url": "{{ path('clubsPost', { 'compid': app.request.get('compid')}) }}",
+                    "method": "POST"
+                },
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "clubs.table.all"|trans }}"]],
+                "search": {
+                    "regex": true
+                },
+                "order": [[0, "asc"]],
+                responsive: {
+                    details: {
+                        type: 'column'
+                    }
+                },
+                "columns": [
+                    {"data": "name", 'type': 'string'},
+                ],
+                "paginate": {
+                    "next": "{{ "clubs.table.next"|trans }}",
+                    "previous": "{{ "clubs.table.previous"|trans }}"
+                },
+                "language": {
+                    "search": "{{ "clubs.table.search"|trans }}",
+                    "searchPlaceholder": "{{ "clubs.table.searchPlaceholder"|trans }}",
+                    "thousands": "'",
+                    "zeroRecords": "{{ "clubs.table.zeroRecords"|trans }}"
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            dataTable($('#clubs'));
+
+            $('.table').on('init.dt', function () {
+                onload();
+            });
+
+            $('select[name*="m_length"]').change(function () {
+                onload();
+            });
+
+            $('.panel-refresh').click(function () {
+                panel_refresh(
+                        $('#panel_clubs'),
+                        $('#clubs').DataTable().ajax.reload(function () {
+                            setTimeout(function () {
+                                panel_refresh($('#panel_clubs'));
+                            }, 500);
+                        }, false)
+                );
+            });
+        });
+
         {% if is_granted('SETTINGS_EDIT', comp) %}
 
         $('#department-save').click(function () {
@@ -98,9 +163,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="department-save"
-                                class="btn btn-success">{{ 'department.add.save'|trans }}</button>
+                                class="btn btn-success">{{ 'egt.department.add.save'|trans }}</button>
                         <button type="button" class="btn btn-default"
-                                data-dismiss="modal">{{ 'department.add.cancel'|trans }}</button>
+                                data-dismiss="modal">{{ 'egt.department.add.cancel'|trans }}</button>
                     </div>
                 </div>
             </div>
