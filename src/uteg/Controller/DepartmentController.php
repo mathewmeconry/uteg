@@ -119,10 +119,58 @@ class DepartmentController extends DefaultController
     }
 
     /**
-     * @Route("{compid}/department/remove", name="departmentRemove")
+     * @Route("/{compid}/department/edit/{id}", name="departmentEdit", defaults={"id": ""}, requirements={"id": "\d+"})
      * @Method("POST")
      */
-    public function removeDepartmentAction(Request $request, $compid)
+    public function editDepartmentAction(Request $request, $compid, $id)
+    {
+        $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $competition = $em->find('uteg:Competition', $compid);
+        $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
+        $interval = new \DateInterval('P1D'); // 1 Day
+        $dateRange = new \DatePeriod($competition->getStartdate(), $interval, $competition->getEnddate()->modify('+1 day'));
+
+        $dateList = [];
+        foreach ($dateRange as $date) {
+            $dateList[] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
+        }
+
+        $department = $em->find('uteg:Department', $id);
+        $department->setDate('2015-10-01');
+
+        $form = $this->container->get('form.factory')->create(new DepartmentType(), $department);
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $em = $this->container->get('doctrine')->getEntityManager();
+            $department = $form->getData();
+
+            $department->setDate(new \DateTime($department->getDate()));
+
+            $em->persist($department);
+            $em->flush();
+
+            $this->container->get('session')->getFlashBag()->add('success', 'department.edit.success');
+
+            return new Response('true');
+        }
+
+        return $this->render('form/departmentEdit.html.twig',
+            array('form' => $form->createView(),
+                'error' => (isset($errorMessages)) ? $errorMessages : '',
+                'target' => 'departmentAdd',
+                'dateList' => $dateList
+            )
+        );
+    }
+
+    /**
+     * @Route("/{compid}/department/remove/{id}", name="departmentRemove", defaults={"id": ""}, requirements={"id": "\d+"})
+     * @Method("POST")
+     */
+    public function removeDepartmentAction(Request $request, $compid, $id)
     {
         $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
 

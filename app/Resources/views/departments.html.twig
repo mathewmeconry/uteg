@@ -78,67 +78,88 @@
                         }, false)
                 );
             });
-        });
 
-        {% if is_granted('SETTINGS_EDIT', comp) %}
+            {% if is_granted('SETTINGS_EDIT', comp) %}
 
-        $('#department-save').click(function () {
-            var values = {};
-            $.each($('#departmentEditForm').serializeArray(), function (i, field) {
-                values[field.name] = field.value;
-            });
+            $('tbody').on('click', 'td div button.departments-edit', function (event) {
+                var table = $(this).parent().parent().parent().parent().parent().DataTable();
+                var dep_id = table.cell($(this).parent().parent().parent(), 0).data();
 
-            var url = ($('#dialog-edit-body form').attr('action').indexOf('edit') > -1) ? $('#dialog-edit-body form').attr('action') + "/" + $("#dialog-edit").data('s2c_id') : $('#dialog-edit-body form').attr('action');
-
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: values
-            }).success(function (data) {
-                if (data == 'true') {
-                    $('#dialog-edit').modal('hide');
-                    showFlashbag();
-                    $('.panel-refresh').click();
-                } else {
+                $.ajax({
+                    url: "{{ path('departmentEdit', { 'compid': app.request.get('compid')}) }}/" + dep_id,
+                    method: "POST"
+                }).success(function (data) {
                     $('#dialog-edit-body').html(data);
                     $('.select').selectpicker({
                         liveSearch: false,
                         size: 10
                     });
-                }
-            });
-        });
+                });
 
-        $('#department-remove').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "{{ path('departmentRemove', { 'compid': app.request.get('compid')}) }}",
-                data: {id: $("#dialog-remove").data('dep_id')}
-            }).success(function (data) {
-                if (data == 'true') {
-                    $('#dialog-remove').modal('hide');
-                    showFlashbag();
-                    $('.panel-refresh').click();
-                }
+                $('#dialog-edit-modal-title').html("{{ "department.edit.modalHeader" | trans }}");
+                $("#dialog-edit").data('dep_id', dep_id).modal('show');
             });
-        });
 
-        $('.control-add').click(function () {
-            $.ajax({
-                url: "{{ path('departmentAdd', { 'compid': app.request.get('compid')}) }}",
-                method: "POST"
-            }).success(function (data) {
-                $('#dialog-edit-body').html(data);
-                $('.select').selectpicker({
-                    liveSearch: false,
-                    size: 10
+            $('#department-save').click(function () {
+                var values = {};
+                $.each($('#departmentEditForm').serializeArray(), function (i, field) {
+                    values[field.name] = field.value;
+                });
+
+                var url = ($('#dialog-edit-body form').attr('action').indexOf('edit') > -1) ? $('#dialog-edit-body form').attr('action') + "/" + $("#dialog-edit").data('dep_id') : $('#dialog-edit-body form').attr('action');
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: values
+                }).success(function (data) {
+                    if (data == 'true') {
+                        $('#dialog-edit').modal('hide');
+                        showFlashbag();
+                        $('.panel-refresh').click();
+                    } else {
+                        $('#dialog-edit-body').html(data);
+                        $('.select').selectpicker({
+                            liveSearch: false,
+                            size: 10
+                        });
+                    }
                 });
             });
 
-            $('#dialog-edit-modal-title').html('Add new');
-            $('#dialog-edit').modal('show');
+            $('#department-remove').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('departmentRemove', { 'compid': app.request.get('compid')}) }}",
+                    data: {id: $("#dialog-remove").data('dep_id')}
+                }).success(function (data) {
+                    if (data == 'true') {
+                        $('#dialog-remove').modal('hide');
+                        showFlashbag();
+                        $('.panel-refresh').click();
+                    }
+                });
+            });
+
+            $('.control-add').click(function () {
+                $.ajax({
+                    url: "{{ path('departmentAdd', { 'compid': app.request.get('compid')}) }}",
+                    method: "POST"
+                }).success(function (data) {
+                    $('#dialog-edit-body').html(data);
+                    $('.select').selectpicker({
+                        liveSearch: false,
+                        size: 10
+                    });
+                });
+
+                $('#dialog-edit-modal-title').html('Add new');
+                $('#dialog-edit').modal('show');
+            });
+            {% endif %}
+
         });
-        {% endif %}
+
     </script>
 {% endblock %}
 

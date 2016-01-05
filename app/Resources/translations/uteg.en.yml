@@ -352,6 +352,9 @@ department:
         save: 'Save'
         cancel: 'Cancel'
         success: 'Departemnt successfully added'
+    edit:
+        modalHeader: 'Edit Department'
+        success: 'Departemnt successfully edited'
 
 departments:
     title: 'Departments'
