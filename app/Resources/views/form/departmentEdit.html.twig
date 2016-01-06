@@ -5,11 +5,6 @@
       class="form-horizontal">
 
     {{ form_row(form.date) }}
-    <datalist id="dates">
-        {% for date in dateList %}
-            <option>{{ date }}</option>
-        {% endfor %}
-    </datalist>
 
     {{ form_row(form.sex) }}
 

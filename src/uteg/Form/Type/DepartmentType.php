@@ -10,10 +10,12 @@ use Symfony\Component\Validator\Constraints\True;
 
 class DepartmentType extends AbstractType
 {
+    protected $datelist;
     protected $format;
 
-    public function __construct($format = 'Y-m-d')
+    public function __construct($datelist, $format = 'Y-m-d')
     {
+        $this->datelist = $datelist;
         $this->format = $format;
     }
 
@@ -23,15 +25,7 @@ class DepartmentType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('date', 'date', array(
-            'label' => 'department.add.date',
-            'translation_domain' => 'uteg',
-            'input' => 'string',
-            'format' => $this->format,
-            'widget' => 'single_text',
-            'html5' => false,
-            'attr' => array("list" => "dates")
-        ))
+        $builder->add('date', 'choice', array('choices' => $this->datelist, 'label' => 'department.add.date', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
             ->add('sex', 'choice', array('choices' => array('male' => 'department.add.male', 'female' => 'department.add.female'), 'label' => 'department.add.sex', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
             ->add('category', 'entity', array('class' => 'uteg:Category', 'query_builder' => function (EntityRepository $er) {
                 return $er->createQueryBuilder('c')->orderBy('c.number', 'ASC');
