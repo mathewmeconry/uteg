@@ -10,6 +10,13 @@ use Symfony\Component\Validator\Constraints\True;
 
 class DepartmentType extends AbstractType
 {
+    protected $format;
+
+    public function __construct($format = 'Y-m-d')
+    {
+        $this->format = $format;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -20,7 +27,7 @@ class DepartmentType extends AbstractType
             'label' => 'department.add.date',
             'translation_domain' => 'uteg',
             'input' => 'string',
-            'format' => 'yyyy-MM-dd',
+            'format' => $this->format,
             'widget' => 'single_text',
             'html5' => false,
             'attr' => array("list" => "dates")

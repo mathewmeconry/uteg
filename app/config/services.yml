@@ -13,6 +13,9 @@ services:
         class:     uteg\ACL\ACLCompetition
         arguments: ["@doctrine.orm.entity_manager","@security.acl.provider","@request_stack", "@security.authorization_checker"]
 
+    bcc_extra_tools.date_formatter:
+        class: uteg\Overrides\DateFormatter
+
     uteg_user.registration.form.type:
         class: uteg\Form\Type\RegistrationFormType
         arguments: [%fos_user.model.user.class%]

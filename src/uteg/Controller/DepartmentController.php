@@ -79,8 +79,7 @@ class DepartmentController extends DefaultController
         }
 
         $department = new Department();
-
-        $form = $this->container->get('form.factory')->create(new DepartmentType(), $department);
+        $form = $this->container->get('form.factory')->create(new DepartmentType($dateFormatter->getPattern("short", "none", $request->getPreferredLanguage())), $department);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -140,7 +139,7 @@ class DepartmentController extends DefaultController
         $department = $em->find('uteg:Department', $id);
         $department->setDate('2015-10-01');
 
-        $form = $this->container->get('form.factory')->create(new DepartmentType(), $department);
+        $form = $this->container->get('form.factory')->create(new DepartmentType($dateFormatter->getPattern("short", "none", $request->getPreferredLanguage())), $department);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -160,8 +159,7 @@ class DepartmentController extends DefaultController
         return $this->render('form/departmentEdit.html.twig',
             array('form' => $form->createView(),
                 'error' => (isset($errorMessages)) ? $errorMessages : '',
-                'target' => 'departmentAdd',
-                'dateList' => $dateList
+                'target' => 'departmentAdd'
             )
         );
     }
