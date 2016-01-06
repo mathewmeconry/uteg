@@ -355,6 +355,13 @@ department:
     edit:
         modalHeader: 'Edit Department'
         success: 'Departemnt successfully edited'
+    remove:
+        modalHeader: 'Delete Department'
+        question: 'Do you really want remove this Department: '
+        confirm: 'Confirm'
+        cancel: 'Cancel'
+        ok: 'OK'
+        access_denied: 'You have no permissions to delete this Department'
 
 departments:
     title: 'Departments'

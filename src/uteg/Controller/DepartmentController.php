@@ -175,5 +175,16 @@ class DepartmentController extends DefaultController
         $module = $this->get($comp->getModule()->getServiceName());
         $module->init();
 
+        $em = $this->getDoctrine()->getManager();
+        $department = $em->find('uteg:Department', $id);
+
+        if(!$this->get('acl_competition')->isGrantedEntity('SETTINGS_EDIT', $department)) {
+            return new Response('access_denied');
+        }
+
+        $em->remove($department);
+        $em->flush();
+
+        return new Response('true');
     }
 }

@@ -81,7 +81,32 @@
 
             {% if is_granted('SETTINGS_EDIT', comp) %}
 
-            $('tbody').on('click', 'td div button.departments-edit', function (event) {
+            function removeClick() {
+                $('#department-remove-confirm').click(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('departmentRemove', { 'compid': app.request.get('compid')}) }}" + "/" + $("#dialog-remove").data('dep_id'),
+                    }).success(function (data) {
+                        if (data == 'true') {
+                            $('#dialog-remove').modal('hide');
+                            showFlashbag();
+                            $('.panel-refresh').click();
+                        } else if (data == 'access_denied') {
+                            $('#department-remove-cancel').hide();
+                            $('#department-remove-confirm').html("{{ 'department.remove.ok' | trans }}");
+                            $('#dialog-remove-body').html("{{ 'department.remove.access_denied' | trans }}");
+                            $('#department-remove-confirm').click(function () {
+                                $('#dialog-remove').modal('hide');
+                                removeClick();
+                            });
+                        }
+                    });
+                });
+            }
+
+            removeClick();
+
+            $('tbody').on('click', 'td div button.departments-edit-save', function (event) {
                 var table = $(this).parent().parent().parent().parent().parent().DataTable();
                 var dep_id = table.cell($(this).parent().parent().parent(), 0).data();
 
@@ -96,11 +121,20 @@
                     });
                 });
 
-                $('#dialog-edit-modal-title').html("{{ "department.edit.modalHeader" | trans }}");
                 $("#dialog-edit").data('dep_id', dep_id).modal('show');
             });
 
-            $('#department-save').click(function () {
+            $('tbody').on('click', 'td div button.departments-remove', function (event) {
+                var table = $(this).parent().parent().parent().parent().parent().DataTable();
+                var dep_id = table.cell($(this).parent().parent().parent(), 0).data();
+
+                $('#dialog-remove-body-name').html(table.cell($(this).parent().parent().parent(), 1).data() + " - " + table.cell($(this).parent().parent().parent(), 2).data() + " - " + table.cell($(this).parent().parent().parent(), 3).data() + " - " + table.cell($(this).parent().parent().parent(), 4).data());
+                $("#dialog-remove").data('dep_id', dep_id).modal('show');
+                $('#department-remove-cancel').show();
+            });
+
+
+            $('#department-save-save').click(function () {
                 var values = {};
                 $.each($('#departmentEditForm').serializeArray(), function (i, field) {
                     values[field.name] = field.value;
@@ -127,19 +161,6 @@
                 });
             });
 
-            $('#department-remove').click(function () {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ path('departmentRemove', { 'compid': app.request.get('compid')}) }}",
-                    data: {id: $("#dialog-remove").data('dep_id')}
-                }).success(function (data) {
-                    if (data == 'true') {
-                        $('#dialog-remove').modal('hide');
-                        showFlashbag();
-                        $('.panel-refresh').click();
-                    }
-                });
-            });
 
             $('.control-add').click(function () {
                 $.ajax({
@@ -206,16 +227,38 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                     aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="dialog-edit-modal-title"></h4>
+                        <h4 class="modal-title"
+                            id="dialog-edit-modal-title">{{ 'department.edit.modalHeader'|trans }}</h4>
                     </div>
                     <div id="dialog-edit-body" class="modal-body">
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="department-save"
+                        <button type="button" id="department-save-save"
                                 class="btn btn-success">{{ 'department.add.save'|trans }}</button>
-                        <button type="button" class="btn btn-default"
+                        <button type="button" id="department-save-cancel" class="btn btn-default"
                                 data-dismiss="modal">{{ 'department.add.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="dialog-remove" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"
+                            id="dialog-remove-modal-title">{{ 'department.remove.modalHeader'|trans }}</h4>
+                    </div>
+                    <div id="dialog-remove-body" class="modal-body">
+                        {{ 'department.remove.question'|trans }}<span id="dialog-remove-body-name"></span>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="department-remove-confirm"
+                                class="btn btn-danger">{{ 'department.remove.confirm'|trans }}</button>
+                        <button type="button" id="department-remove-cancel" class="btn btn-default"
+                                data-dismiss="modal">{{ 'department.remove.cancel'|trans }}</button>
                     </div>
                 </div>
             </div>
