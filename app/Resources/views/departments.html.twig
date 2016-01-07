@@ -57,6 +57,33 @@
             });
         }
 
+        {% if is_granted('SETTINGS_EDIT', comp) %}
+        function removeClick() {
+            $('#department-remove-confirm').unbind('click');
+            $('#department-remove-confirm').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('departmentRemove', { 'compid': app.request.get('compid')}) }}" + "/" + $("#dialog-remove").data('dep_id'),
+                }).success(function (data) {
+                    if (data == 'true') {
+                        $('#dialog-remove').modal('hide');
+                        showFlashbag();
+                        $('.panel-refresh').click();
+                    } else if (data == 'access_denied') {
+                        $('#department-remove-cancel').hide();
+                        $('#department-remove-confirm').html("{{ 'department.remove.ok' | trans }}");
+                        $('#dialog-remove-body').html("{{ 'department.remove.access_denied' | trans }}");
+                        $('#department-remove-confirm').unbind('click');
+                        $('#department-remove-confirm').click(function () {
+                            $('#dialog-remove').modal('hide');
+                            removeClick();
+                        });
+                    }
+                });
+            });
+        }
+        {% endif %}
+
         $(document).ready(function () {
             dataTable($('#departments'));
 
@@ -81,32 +108,9 @@
 
             {% if is_granted('SETTINGS_EDIT', comp) %}
 
-            function removeClick() {
-                $('#department-remove-confirm').click(function () {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ path('departmentRemove', { 'compid': app.request.get('compid')}) }}" + "/" + $("#dialog-remove").data('dep_id'),
-                    }).success(function (data) {
-                        if (data == 'true') {
-                            $('#dialog-remove').modal('hide');
-                            showFlashbag();
-                            $('.panel-refresh').click();
-                        } else if (data == 'access_denied') {
-                            $('#department-remove-cancel').hide();
-                            $('#department-remove-confirm').html("{{ 'department.remove.ok' | trans }}");
-                            $('#dialog-remove-body').html("{{ 'department.remove.access_denied' | trans }}");
-                            $('#department-remove-confirm').click(function () {
-                                $('#dialog-remove').modal('hide');
-                                removeClick();
-                            });
-                        }
-                    });
-                });
-            }
-
             removeClick();
 
-            $('tbody').on('click', 'td div button.departments-edit-save', function (event) {
+            $('tbody').on('click', 'td div button.departments-edit', function (event) {
                 var table = $(this).parent().parent().parent().parent().parent().DataTable();
                 var dep_id = table.cell($(this).parent().parent().parent(), 0).data();
 
@@ -128,6 +132,7 @@
                 var table = $(this).parent().parent().parent().parent().parent().DataTable();
                 var dep_id = table.cell($(this).parent().parent().parent(), 0).data();
 
+                $('#dialog-remove-body').html("{{ 'department.remove.question'|trans }}<span id=\"dialog-remove-body-name\"></span>?");
                 $('#dialog-remove-body-name').html(table.cell($(this).parent().parent().parent(), 1).data() + " - " + table.cell($(this).parent().parent().parent(), 2).data() + " - " + table.cell($(this).parent().parent().parent(), 3).data() + " - " + table.cell($(this).parent().parent().parent(), 4).data());
                 $("#dialog-remove").data('dep_id', dep_id).modal('show');
                 $('#department-remove-cancel').show();

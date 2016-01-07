@@ -361,6 +361,7 @@ department:
         confirm: 'Confirm'
         cancel: 'Cancel'
         ok: 'OK'
+        success: 'Department successfully deleted'
         access_denied: 'You have no permissions to delete this Department'
 
 departments:
