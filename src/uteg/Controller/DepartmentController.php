@@ -178,13 +178,14 @@ class DepartmentController extends DefaultController
         $em = $this->getDoctrine()->getManager();
         $department = $em->find('uteg:Department', $id);
 
-        if(!$this->get('acl_competition')->isGrantedEntity('SETTINGS_EDIT', $department)) {
+        if (!$comp->isDepOf($department)) {
             return new Response('access_denied');
+        } else {
+            $em->remove($department);
+            $em->flush();
+
+            $this->container->get('session')->getFlashBag()->add('success', 'department.remove.success');
+            return new Response('true');
         }
-
-        $em->remove($department);
-        $em->flush();
-
-        return new Response('true');
     }
 }

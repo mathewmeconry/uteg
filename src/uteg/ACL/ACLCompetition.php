@@ -95,14 +95,6 @@ class ACLCompetition
         }
     }
 
-    public function isGrantedEntity($permission, $entity) {
-        if($this->authorizationChecker->isGranted($permission, $entity)) {
-            return true;
-        } else{
-            return false;
-        }
-    }
-
     public function getPossibleRoute()
     {
         $this->updateAcl();

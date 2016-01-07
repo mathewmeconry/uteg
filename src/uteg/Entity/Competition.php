@@ -490,7 +490,8 @@ class Competition
         return $this->departments;
     }
 
-    public function getDepartmentsbyCatDateSex(\uteg\Entity\Category $category, \DateTime $dateTime, $sex) {
+    public function getDepartmentsbyCatDateSex(\uteg\Entity\Category $category, \DateTime $dateTime, $sex)
+    {
         $return = array();
 
         foreach ($this->departments as $department) {
@@ -500,5 +501,16 @@ class Competition
         }
 
         return $return;
+    }
+
+    public function isDepOf(\uteg\Entity\Department $checkDep)
+    {
+        foreach ($this->departments as $department) {
+            if ($department === $checkDep) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }
