@@ -148,7 +148,7 @@ class ACLCompetition
 
     private function updateAcl()
     {
-        $this->comp = $this->em->find('uteg:Competition', $this->requestStack->getCurrentRequest()->getSession()->get('comp'));
+        $this->comp = $this->em->find('uteg:Competition', $this->requestStack->getCurrentRequest()->get('compid'));
         $objectIdentity = ObjectIdentity::fromDomainObject($this->comp);
 
         try {
