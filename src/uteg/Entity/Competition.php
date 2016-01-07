@@ -490,7 +490,33 @@ class Competition
         return $this->departments;
     }
 
-    public function getDepartmentsbyCatDateSex(\uteg\Entity\Category $category, \DateTime $dateTime, $sex)
+    public function getDepartmentsByCat(\uteg\Entity\Category $category)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getCategory() === $category) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
+    public function getDepartmentsByCatDate(\uteg\Entity\Category $category, \DateTime $dateTime)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getCategory() === $category && $department->getDate() == $dateTime) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
+    public function getDepartmentsByCatDateSex(\uteg\Entity\Category $category, \DateTime $dateTime, $sex)
     {
         $return = array();
 
@@ -508,9 +534,9 @@ class Competition
         foreach ($this->departments as $department) {
             if ($department === $checkDep) {
                 return true;
-            } else {
-                return false;
             }
         }
+
+        return false;
     }
 }
