@@ -88,15 +88,12 @@ class DepartmentController extends DefaultController
 
             $department->setDate(new \DateTime($department->getDate()));
 
-            $this->adjustDepNumbering($competition, $department, 'up');
-
             $department->setCompetition($competition);
             $department->setStarted(false);
             $department->setEnded(false);
             $department->setRound(0);
 
-            $em->persist($department);
-            $em->flush();
+            $this->adjustDepNumbering($competition, $department, 'up');
 
             $this->container->get('session')->getFlashBag()->add('success', 'department.add.success');
 
@@ -138,13 +135,17 @@ class DepartmentController extends DefaultController
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em = $this->container->get('doctrine')->getEntityManager();
+            $uow = $em->getUnitOfWork();
             $department = $form->getData();
+            $oldDepartment = $uow->getOriginalEntityData($department);
 
             $department->setDate(new \DateTime($department->getDate()));
-            $this->adjustDepNumbering($competition, $department, 'up');
 
-            $em->persist($department);
-            $em->flush();
+            if ($oldDepartment['category'] !== $department->getCategory() || $oldDepartment['date'] !== $department->getDate() || $oldDepartment['sex'] !== $department->getSex()) {
+                $this->adjustDepNumbering($competition, $oldDepartment, 'down');
+            }
+
+            $this->adjustDepNumbering($competition, $department, 'up');
 
             $this->container->get('session')->getFlashBag()->add('success', 'department.edit.success');
 
@@ -186,9 +187,13 @@ class DepartmentController extends DefaultController
         }
     }
 
-    private function adjustDepNumbering(\uteg\Entity\Competition $competition, \uteg\Entity\Department $srcDepartment, $mode)
+    private function adjustDepNumbering(\uteg\Entity\Competition $competition, $srcDepartment, $mode)
     {
-        $departments = $competition->getDepartmentsByCatDateSex($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getSex());
+        if (is_array($srcDepartment)) {
+            $departments = $competition->getDepartmentsByCatDateSex($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['sex']);
+        } else {
+            $departments = $competition->getDepartmentsByCatDateSex($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getSex());
+        }
         $em = $this->getDoctrine()->getManager();
 
         switch ($mode) {
@@ -203,11 +208,17 @@ class DepartmentController extends DefaultController
                 break;
             case 'down':
                 foreach ($departments as $department) {
-                    if ($department->getNumber() > $srcDepartment->getNumber()) {
+                    if (is_array($srcDepartment)) {
+                        $srcNumber = $srcDepartment['number'];
+                    } else {
+                        $srcNumber = $srcDepartment->getNumber();
+                    }
+
+                    if ($department->getNumber() > $srcNumber) {
                         $department->setNumber($department->getNumber() - 1);
                     }
+                    $em->persist($department);
                 }
-                $em->persist($department);
                 break;
         }
 
