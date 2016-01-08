@@ -14,7 +14,7 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
  {
    /**
     * @ORM\ManyToOne(targetEntity="DivisionEGT", inversedBy="starters")
-    * @ORM\JoinColumn(name="div_id", referencedColumnName="div_id")
+    * @ORM\JoinColumn(name="div_id", referencedColumnName="div_id", onDelete="SET NULL")
     * @Assert\Blank
     */
    protected $division;

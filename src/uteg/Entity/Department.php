@@ -65,7 +65,7 @@ class Department
     protected $round;
 
     /**
-     * @ORM\OneToMany(targetEntity="Division", mappedBy="department")
+     * @ORM\OneToMany(targetEntity="Division", mappedBy="department", cascade={"persist", "remove"})
      */
     protected $divisions;
 

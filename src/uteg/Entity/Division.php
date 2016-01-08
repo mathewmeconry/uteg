@@ -30,8 +30,8 @@ class Division
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Department", inversedBy="divisions")
-     * @ORM\JoinColumn(name="dep_id", referencedColumnName="dep_id")
+     * @ORM\ManyToOne(targetEntity="Department", inversedBy="divisions", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="dep_id", referencedColumnName="dep_id", onDelete="cascade")
      */
     protected $department;
 
