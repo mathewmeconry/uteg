@@ -293,6 +293,8 @@
     }
 
     function selectPicker(sl, search) {
+        search = typeof search !== 'undefined' ? search : false;
+
         if(search) {
             $(sl).selectpicker({
                 liveSearch: false,
