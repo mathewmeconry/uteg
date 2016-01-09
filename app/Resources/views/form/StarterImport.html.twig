@@ -52,7 +52,7 @@
 
         $(document).ready(function () {
             {% for starter in starters %}
-            {% if starter.gender is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.gender }}");
+            {% if starter.gender is defined %}$('#gender{{ loop.index0 }}').val("{{ starter.gender }}");
             {% endif %}
             {% if starter.club.id is defined %}$('#club{{ loop.index0 }}').val("{{ starter.club.id }}");
             {% endif %}
@@ -80,7 +80,7 @@
                 row.find('[name*="firstname"]').typeahead('val', starter.firstname);
                 row.find('[name*="lastname"]').typeahead('val', starter.lastname);
                 row.find('[name*="birthyear"]').typeahead('val', starter.birthyear);
-                row.find('[name*="sex"]').selectpicker('val', starter.gender);
+                row.find('[name*="gender"]').selectpicker('val', starter.gender);
             });
         });
     </script>
@@ -101,7 +101,7 @@
                                 <th>{{ 'starters.import.table.firstname'|trans }}</th>
                                 <th>{{ 'starters.import.table.lastname'|trans }}</th>
                                 <th>{{ 'starters.import.table.birthyear'|trans }}</th>
-                                <th>{{ 'starters.import.table.sex'|trans }}</th>
+                                <th>{{ 'starters.import.table.gender'|trans }}</th>
                                 <th>{{ 'starters.import.table.club'|trans }}</th>
                                 <th>{{ 'starters.import.table.category'|trans }}</th>
                             </tr>
@@ -129,7 +129,7 @@
                                                 class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
                                     </td>
                                     <td>
-                                        <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]"
+                                        <select id="gender{{ loop.index0 }}" name="data[{{ loop.index0 }}][gender]"
                                                 class="form-control select">
                                             <option value="">{{ 'starters.import.choose'|trans }}</option>
                                             <option value="male">{{ 'starters.import.table.male'|trans }}</option>

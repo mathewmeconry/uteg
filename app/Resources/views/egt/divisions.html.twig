@@ -18,12 +18,12 @@
                 selectChange($(this).data('filter'));
             });
 
-            selectChange('sex');
+            selectChange('gender');
         }
 
         function update(source) {
             switch (source) {
-                case 'sex':
+                case 'gender':
                     $('#divisions-filter-category').selectpicker('val', $('#divisions-filter-category option')[0].value);
                     break;
                 case 'category':
@@ -44,7 +44,7 @@
                 data: filterSerialize
             }).success(function (data) {
                 switch (data.filteredBy) {
-                    case 'sex':
+                    case 'gender':
                         $('#divisions-filter-category').html('');
                         $.each(data.value, function (key, value) {
                             $('#divisions-filter-category').append('<option value="' + value.number + '">' + value.name + '</option>');
@@ -94,8 +94,8 @@
                     <div class="row">
                         <form id="divisions-filter">
                             <div class="col-md-3">
-                                <select id="divisions-filter-sex" name="divisions-filter[sex]" class="select"
-                                        data-width="100%" data-filter="sex">
+                                <select id="divisions-filter-gender" name="divisions-filter[gender]" class="select"
+                                        data-width="100%" data-filter="gender">
                                     <option value="female">{{ 'egt.divisions.female' | trans }}</option>
                                     <option value="male">{{ 'egt.divisions.male' | trans }}</option>
                                 </select>

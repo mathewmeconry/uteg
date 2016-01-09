@@ -38,7 +38,7 @@
                     {"data": "number", "type": "integer"},
                     {"data": "date", "type": "string"},
                     {"data": "category", "type": "string"},
-                    {"data": "sex", "type": "string"},
+                    {"data": "gender", "type": "string"},
                     {
                         "data": null,
                         "defaultContent": '{% if is_granted('SETTINGS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-warning btn-rounded btn-condensed btn-sm btn-icon departments-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon departments-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}'
@@ -204,7 +204,7 @@
                             <th class="all">{{ 'departments.table.number'|trans }}</th>
                             <th class="all">{{ 'departments.table.date'|trans }}</th>
                             <th class="all">{{ 'departments.table.category'|trans }}</th>
-                            <th class="all">{{ 'departments.table.sex'|trans }}</th>
+                            <th class="all">{{ 'departments.table.gender'|trans }}</th>
                             <th style="width: 150px;" class="min-tablet-p">{{ 'departments.table.actions'|trans }}</th>
                         </tr>
                         </thead>
