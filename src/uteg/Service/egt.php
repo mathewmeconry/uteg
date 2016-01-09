@@ -76,10 +76,10 @@ class egt
         $return['filteredBy'] = $entityName;
 
         switch ($entityName) {
-            case "sex":
-                if (array_key_exists('sex', $data)) {
-                    $sex = $data['sex'];
-                    $deps = $competition->getDepartmentsBySex($sex);
+            case "gender":
+                if (array_key_exists('gender', $data)) {
+                    $gender = $data['gender'];
+                    $deps = $competition->getDepartmentsByGender($gender);
                     foreach ($deps as $dep) {
                         if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
                             $return['value'][$dep->getCategory()->getNumber()] = array("number" => $dep->getCategory()->getNumber(),
@@ -93,12 +93,12 @@ class egt
 
                 break;
             case "category":
-                if (array_key_exists('category', $data) && array_key_exists('sex', $data)) {
+                if (array_key_exists('category', $data) && array_key_exists('gender', $data)) {
                     $catid = $data['category'];
-                    $sex = $data['sex'];
+                    $gender = $data['gender'];
                     $dateFormatter = $this->container->get('bcc_extra_tools.date_formatter');
                     $category = $em->find('uteg:Category', $catid);
-                    $deps = $competition->getDepartmentsByCatSex($category, $sex);
+                    $deps = $competition->getDepartmentsByCatGender($category, $gender);
                     $array['value'] = [];
 
                     foreach ($deps as $dep) {
@@ -107,7 +107,7 @@ class egt
                                 "number" => $dep->getNumber(),
                                 "date" => $dateFormatter->format($dep->getDate(), "short", "none", $request->getPreferredLanguage()),
                                 "category" => $dep->getCategory()->getName(),
-                                "sex" => $dep->getSex()
+                                "gender" => $dep->getGender()
                             );
                         }
                     }
@@ -126,7 +126,21 @@ class egt
                 }
                 break;
             case "department":
+                if (array_key_exists('category', $data) && array_key_exists('gender', $data) && array_key_exists('department', $data)) {
+                    $catid = $data['category'];
+                    $depid = $data['department'];
+                    $gender = $data['gender'];
+                    $dateFormatter = $this->container->get('bcc_extra_tools.date_formatter');
+                    $category = $em->find('uteg:Category', $catid);
+                    $department = $em->find('uteg:Department', $depid);
+                    $unassignedS2cs = $competition->getS2csByGenderCat($category, $gender);
+                    $assignedS2cs = $competition->getS2csByGenderCatDep($category, $gender, $department);
+                    $array['value'] = [];
 
+
+                } else {
+                    $return = "";
+                }
                 break;
             case "club":
 

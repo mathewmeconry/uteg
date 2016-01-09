@@ -181,14 +181,14 @@ class Starters2Competitions
         return $this->starter;
     }
 
-    public function getStarterBySex($sex)
+    public function getStarterByGender($gender)
     {
-        return ($this->starter->getSex() == $sex) ? $this->starter : null;
+        return ($this->starter->getGender() == $gender) ? $this->starter : null;
     }
 
-    public function getStarterBySexCat($sex, $category)
+    public function getStarterByGenderCat($gender, $category)
     {
-        return ($this->starter->getSex() == $sex && $this->category->getNumber() == $category) ? $this->starter : null;
+        return ($this->starter->getGender() == $gender && $this->category->getNumber() == $category) ? $this->starter : null;
     }
 
     /**
@@ -313,12 +313,12 @@ class Starters2Competitions
         return $this;
     }
 
-    public function getSex()
+    public function getGender()
     {
-        return $this->starter->getSex();
+        return $this->starter->getGender();
     }
 
-    public function setSex($sex)
+    public function setGender($gender)
     {
         return $this;
     }

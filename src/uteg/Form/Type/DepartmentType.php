@@ -26,7 +26,7 @@ class DepartmentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('date', 'choice', array('choices' => $this->datelist, 'label' => 'department.add.date', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
-            ->add('sex', 'choice', array('choices' => array('male' => 'department.add.male', 'female' => 'department.add.female'), 'label' => 'department.add.sex', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
+            ->add('gender', 'choice', array('choices' => array('male' => 'department.add.male', 'female' => 'department.add.female'), 'label' => 'department.add.gender', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
             ->add('category', 'entity', array('class' => 'uteg:Category', 'query_builder' => function (EntityRepository $er) {
                 return $er->createQueryBuilder('c')->orderBy('c.number', 'ASC');
             }, 'label' => 'department.add.category', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'));

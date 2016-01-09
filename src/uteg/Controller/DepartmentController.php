@@ -49,7 +49,7 @@ class DepartmentController extends DefaultController
                 "number" => $dep->getNumber(),
                 "date" => $dateFormatter->format($dep->getDate(), "medium", "none", $request->getPreferredLanguage()),
                 "category" => $dep->getCategory()->getName(),
-                "sex" => $dep->getSex()
+                "gender" => $dep->getGender()
             );
         }
 
@@ -140,7 +140,7 @@ class DepartmentController extends DefaultController
 
             $department->setDate(new \DateTime($department->getDate()));
 
-            if ($oldDepartment['category'] !== $department->getCategory() || $oldDepartment['date'] !== $department->getDate() || $oldDepartment['sex'] !== $department->getSex()) {
+            if ($oldDepartment['category'] !== $department->getCategory() || $oldDepartment['date'] !== $department->getDate() || $oldDepartment['gender'] !== $department->getGender()) {
                 $this->adjustDepNumbering($competition, $oldDepartment, 'down');
             }
 
@@ -189,9 +189,9 @@ class DepartmentController extends DefaultController
     private function adjustDepNumbering(\uteg\Entity\Competition $competition, $srcDepartment, $mode)
     {
         if (is_array($srcDepartment)) {
-            $departments = $competition->getDepartmentsByCatDateSex($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['sex']);
+            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['gender']);
         } else {
-            $departments = $competition->getDepartmentsByCatDateSex($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getSex());
+            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getGender());
         }
         $em = $this->getDoctrine()->getManager();
 

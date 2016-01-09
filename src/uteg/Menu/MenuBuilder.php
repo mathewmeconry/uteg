@@ -29,8 +29,8 @@ class MenuBuilder extends ContainerAware
         ($acl->isGranted('DASHBOARD')) ? $menu->addChild('nav.dashboard', array('route' => 'dashboard', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'dashboard', 'labelAttributes' => array('class' => 'xn-text'))) : '';
         if ($acl->isGranted('STARTERS_VIEW')) {
             $menu->addChild('nav.starters', array('uri' => '#', 'icon' => 'user', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
-            $menu['nav.starters']->addChild('nav.starters.male', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'sex' => 'male'), 'icon' => 'mars'));
-            $menu['nav.starters']->addChild('nav.starters.female', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'sex' => 'female'), 'icon' => 'venus'));
+            $menu['nav.starters']->addChild('nav.starters.male', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'gender' => 'male'), 'icon' => 'mars'));
+            $menu['nav.starters']->addChild('nav.starters.female', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'gender' => 'female'), 'icon' => 'venus'));
             ($acl->isGranted('STARTERS_EDIT')) ? $menu['nav.starters']->addChild('nav.starters.import', array('route' => 'starterImport', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'upload')) : '';
         }
 

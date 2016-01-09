@@ -33,11 +33,11 @@ class Department
     protected $category;
 
     /**
-     * @ORM\Column(type="string", name="sex")
+     * @ORM\Column(type="string", name="gender")
      * @Assert\NotBlank()
      * @Assert\Choice(choices = {"male", "female"})
      */
-    protected $sex;
+    protected $gender;
 
     /**
      * @ORM\Column(type="integer", name="number")
@@ -299,26 +299,26 @@ class Department
     }
 
     /**
-     * Set sex
+     * Set gender
      *
-     * @param string $sex
+     * @param string $gender
      * @return Department
      */
-    public function setSex($sex)
+    public function setGender($gender)
     {
-        $this->sex = $sex;
+        $this->gender = $gender;
 
         return $this;
     }
 
     /**
-     * Get sex
+     * Get gender
      *
      * @return string
      */
-    public function getSex()
+    public function getGender()
     {
-        return $this->sex;
+        return $this->gender;
     }
 
     /**

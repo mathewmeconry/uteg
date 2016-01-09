@@ -55,7 +55,7 @@ class DefaultController extends Controller
                 "firstname" => $starter->getFirstname(),
                 "lastname" => $starter->getLastname(),
                 "birthyear" => $starter->getBirthyear(),
-                "sex" => $starter->getSex());
+                "gender" => $starter->getGender());
         }
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
@@ -71,15 +71,15 @@ class DefaultController extends Controller
         $errorMessages = array();
         $fails = array();
         foreach ($starters as $starterPost) {
-            $starter = $em->getRepository('uteg:Starter')->findOneBy(array("firstname" => $starterPost['firstname'], "lastname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "sex" => $starterPost['sex']));
+            $starter = $em->getRepository('uteg:Starter')->findOneBy(array("firstname" => $starterPost['firstname'], "lastname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "gender" => $starterPost['gender']));
             if (!$starter) {
-                $starter = $em->getRepository('uteg:Starter')->findOneBy(array("lastname" => $starterPost['firstname'], "firstname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "sex" => $starterPost['sex']));
+                $starter = $em->getRepository('uteg:Starter')->findOneBy(array("lastname" => $starterPost['firstname'], "firstname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "gender" => $starterPost['gender']));
                 if (!$starter) {
                     $starter = new Starter();
                     $starter->setFirstname($starterPost['firstname']);
                     $starter->setLastname($starterPost['lastname']);
                     $starter->setBirthyear($starterPost['birthyear']);
-                    $starter->setSex($starterPost['sex']);
+                    $starter->setGender($starterPost['gender']);
                     $s2c = false;
                 } else {
                     $s2c = $module->findS2c(array("starter" => $starter, "competition" => $competition));

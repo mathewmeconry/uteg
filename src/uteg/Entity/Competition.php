@@ -388,12 +388,12 @@ class Competition
         return $this->s2cs;
     }
 
-    public function getS2csBySex($sex)
+    public function getS2csByGender($gender)
     {
         $return = array();
 
         foreach ($this->s2cs as $s2c) {
-            if ($s2c->getStarterBySex($sex) !== null) {
+            if ($s2c->getStarterByGender($gender) !== null) {
                 $return[] = $s2c;
             }
         }
@@ -401,12 +401,12 @@ class Competition
         return $return;
     }
 
-    public function getS2csBySexCat($sex, $category)
+    public function getS2csByGenderCat($gender, $category)
     {
         $return = array();
 
         foreach ($this->s2cs as $s2c) {
-            if ($s2c->getStarterBySexCat($sex, $category) !== null) {
+            if ($s2c->getStarterByGenderCat($gender, $category) !== null) {
                 $return[] = $s2c;
             }
         }
@@ -516,12 +516,12 @@ class Competition
         return $return;
     }
 
-    public function getDepartmentsByCatDateSex(\uteg\Entity\Category $category, \DateTime $dateTime, $sex)
+    public function getDepartmentsByCatDateGender(\uteg\Entity\Category $category, \DateTime $dateTime, $gender)
     {
         $return = array();
 
         foreach ($this->departments as $department) {
-            if ($department->getCategory() === $category && $department->getDate() == $dateTime && $department->getSex() == $sex) {
+            if ($department->getCategory() === $category && $department->getDate() == $dateTime && $department->getGender() == $gender) {
                 $return[] = $department;
             }
         }
@@ -529,12 +529,12 @@ class Competition
         return $return;
     }
 
-    public function getDepartmentsByCatSex(\uteg\Entity\Category $category, $sex)
+    public function getDepartmentsByCatGender(\uteg\Entity\Category $category, $gender)
     {
         $return = array();
 
         foreach ($this->departments as $department) {
-            if ($department->getCategory() == $category && $department->getSex() == $sex) {
+            if ($department->getCategory() == $category && $department->getGender() == $gender) {
                 $return[] = $department;
             }
         }
@@ -542,12 +542,12 @@ class Competition
         return $return;
     }
 
-    public function getDepartmentsBySex($sex)
+    public function getDepartmentsByGender($gender)
     {
         $return = array();
 
         foreach ($this->departments as $department) {
-            if ($department->getSex() == $sex) {
+            if ($department->getGender() == $gender) {
                 $return[] = $department;
             }
         }

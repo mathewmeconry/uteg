@@ -9,7 +9,7 @@
 
     {{ form_row(form.birthyear) }}
 
-    {{ form_row(form.sex) }}
+    {{ form_row(form.gender) }}
 
     {{ form_row(form.category) }}
 
@@ -57,7 +57,7 @@
             source: substringMatcher(starters),
             templates: {
                 suggestion: function (starter) {
-                    return '<p><span class="' + starter.sex + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';
+                    return '<p><span class="' + starter.gender + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.gender == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';
                 }
             }
         });
@@ -67,7 +67,7 @@
         $('#uteg_starter_firstname').typeahead('val', starter.firstname);
         $('#uteg_starter_lastname').typeahead('val', starter.lastname);
         $('#uteg_starter_birthyear').typeahead('val', starter.birthyear);
-        $('#uteg_starter_sex').selectpicker('val', starter.sex);
+        $('#uteg_starter_sex').selectpicker('val', starter.gender);
     });
 
     autoComplete('#uteg_starter_firstname', 'firstname');
