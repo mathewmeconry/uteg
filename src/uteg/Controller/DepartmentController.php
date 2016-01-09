@@ -38,7 +38,6 @@ class DepartmentController extends DefaultController
     {
         $this->get('acl_competition')->isGrantedUrl('SETTINGS_VIEW');
 
-        setlocale(LC_TIME, $request->getLocale());
         $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
 
