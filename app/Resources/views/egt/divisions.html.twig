@@ -12,6 +12,7 @@
     <script>
         $(document).ready(function () {
             selectPicker('.select', false);
+            selectPicker('.selectSearch', true);
         });
     </script>
 {% endblock %}
@@ -28,15 +29,29 @@
                     </ul>
                 </div>
                 <div class="panel-body">
-                    <blockquote id="divisions-filter">
-                        <select id="divisions-filter-sex" name="divisions-filter[sex]" class="select">
+                    <div class="col-md-3">
+                        <select id="divisions-filter-sex" name="divisions-filter[sex]" class="select"
+                                data-width="100%">
                             <option value="f">{{ 'egt.divisions.female' | trans }}</option>
                             <option value="m">{{ 'egt.divisions.male' | trans }}</option>
                         </select>
-                        <select id="divisions-filter-category" name="divisions-filter[category]" class="select">
-
+                    </div>
+                    <div class="col-md-3">
+                        <select id="divisions-filter-category" name="divisions-filter[category]"
+                                class="select" data-width="100%">
                         </select>
-                    </blockquote>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="divisions-filter-department" name="divisions-filter[department]"
+                                class="select" data-width="100%">
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="divisions-filter-club" name="divisions-filter[club]" class="selectSearch"
+                                data-width="100%">
+                            <option value="all">{{ 'egt.divisions.all' | trans }}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>

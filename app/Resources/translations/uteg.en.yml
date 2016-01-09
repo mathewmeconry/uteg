@@ -392,3 +392,6 @@ egt:
         title: 'Divisions'
         header: 'Divisions'
         path: 'Divisions'
+        female: 'Female'
+        male: 'Male'
+        all: 'All'
