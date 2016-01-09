@@ -292,23 +292,18 @@
         });
     }
 
-    function selectPicker(sl, search) {
+    function selectPicker(sl, search, showSubtext) {
+        search = typeof search !== 'undefined' ? search : false;
         search = typeof search !== 'undefined' ? search : false;
 
-        if(search) {
-            $(sl).selectpicker({
-                liveSearch: false,
-                size: 10,
-                liveSearch: true
-            });
-        } else {
-            $(sl).selectpicker({
-                liveSearch: false,
-                size: 10
-            });
-        }
+        $(sl).selectpicker({
+            liveSearch: false,
+            size: 10,
+            liveSearch: search,
+            showSubtext: showSubtext
+        });
 
-        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
             $(sl).selectpicker('mobile');
         }
     }
