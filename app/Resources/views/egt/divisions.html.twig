@@ -11,8 +11,8 @@
 {% block script %}
     <script>
         function init() {
-            selectPicker('.select', false);
-            selectPicker('.selectSearch', true);
+            selectPicker('.select', false, true);
+            selectPicker('.selectSearch', true, true);
 
             $('.select, .selectSearch').change(function () {
                 selectChange($(this).data('filter'));
@@ -54,8 +54,16 @@
                         break;
                     case 'category':
                         $('#divisions-filter-department').html('');
-                        $.each(data.value, function (key, value) {
-                            $('#divisions-filter-department').append('<option value="' + value.id + '">{{ 'egt.divisions.department' | trans }} ' + value.number + '</option>');
+                        $.each(data.value, function (key, day) {
+                            var optgroup = $('<optgroup>');
+                            optgroup.attr('label', day.date);
+
+                            $.each(day.deps, function (key, value) {
+                                $(optgroup).append('<option value="' + value.id + '" data-subtext="' + value.date + '">{{ 'egt.divisions.department' | trans }} ' + value.number + '</option>');
+                            });
+
+                            $('#divisions-filter-department').append(optgroup);
+
                         });
                         $('#divisions-filter-department').selectpicker('refresh');
                         break;

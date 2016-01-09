@@ -99,16 +99,27 @@ class egt
                     $dateFormatter = $this->container->get('bcc_extra_tools.date_formatter');
                     $category = $em->find('uteg:Category', $catid);
                     $deps = $competition->getDepartmentsByCatSex($category, $sex);
+                    $array['value'] = [];
 
                     foreach ($deps as $dep) {
-                        if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
-                            $return['value'][$dep->getId()] = array("id" => $dep->getId(),
+                        if (!array_key_exists($dep->getCategory()->getNumber(), $array['value'])) {
+                            $array['value'][$dep->getDate()->getTimestamp()][$dep->getId()] = array("id" => $dep->getId(),
                                 "number" => $dep->getNumber(),
-                                "date" => $dateFormatter->format($dep->getDate(), "medium", "none", $request->getPreferredLanguage()),
+                                "date" => $dateFormatter->format($dep->getDate(), "short", "none", $request->getPreferredLanguage()),
                                 "category" => $dep->getCategory()->getName(),
                                 "sex" => $dep->getSex()
                             );
                         }
+                    }
+
+                    ksort($array['value']);
+                    foreach ($array['value'] as $key => $day) {
+                        usort($day, function ($a, $b) {
+                            return $a['number'] - $b['number'];
+                        });
+
+                        $return['value'][$key]['deps'] = $day;
+                        $return['value'][$key]['date'] = end($day)['date'];
                     }
                 } else {
                     $return = "";
