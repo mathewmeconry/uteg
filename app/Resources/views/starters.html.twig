@@ -107,14 +107,8 @@
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
-                    $('.selectSearch').selectpicker({
-                        liveSearch: true,
-                        size: 10
-                    });
-                    $('.select').selectpicker({
-                        liveSearch: false,
-                        size: 10
-                    });
+                    selectPicker('.selectSearch', true);
+                    selectPicker('.select', false);
                 });
 
                 $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
@@ -172,14 +166,8 @@
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
-                    $('.selectSearch').selectpicker({
-                        liveSearch: true,
-                        size: 10
-                    });
-                    $('.select').selectpicker({
-                        liveSearch: false,
-                        size: 10
-                    });
+                    selectPicker('.selectSearch', true);
+                    selectPicker('.select', false);
                 });
 
                 $('#dialog-edit-modal-title').html('Add new');
@@ -200,7 +188,8 @@
                         {% if is_granted("STARTERS_EDIT", comp) %}
                             <li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a>
                             </li>
-                            <li><a href="{{ path('starterImport', { 'compid': app.request.get('compid')}) }}" class="control-primary"><span
+                            <li><a href="{{ path('starterImport', { 'compid': app.request.get('compid')}) }}"
+                                   class="control-primary"><span
                                             class="fa fa-upload"></span></a></li>
                         {% endif %}
                         <li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>

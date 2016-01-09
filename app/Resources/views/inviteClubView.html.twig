@@ -72,7 +72,7 @@
                         }
                     });
 
-                    $('#starters table tbody tr:last td select.select').selectpicker();
+                    selectPicker('#starters table tbody tr:last td select.select', false);
 
                     autoComplete('#starters table tbody tr:last td input.typeahead[name*="firstname"]', 'firstname');
                     autoComplete('#starters table tbody tr:last td input.typeahead[name*="lastname"]', 'lastname');
@@ -114,7 +114,7 @@
 
             addNewLineEvent();
 
-            $('.select').selectpicker();
+            selectPicker('.select', false);
 
             autoComplete('.typeahead[name*="firstname"]', 'firstname');
             autoComplete('.typeahead[name*="lastname"]', 'lastname');

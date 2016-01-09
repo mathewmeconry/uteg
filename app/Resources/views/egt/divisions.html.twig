@@ -4,10 +4,22 @@
 
 {% block title %}{{ 'egt.divisions.title'|trans }}{% endblock %}
 
+{% block jsplugins %}
+    <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            selectPicker('.select', false);
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <div id="panel_invites" class="panel panel-default" style="min-height: 400px;">
+            <div id="panel_divisions" class="panel panel-default" style="min-height: 400px;">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ 'egt.divisions.header'|trans }}</h3>
                     <ul class="panel-controls">
@@ -16,7 +28,15 @@
                     </ul>
                 </div>
                 <div class="panel-body">
+                    <blockquote id="divisions-filter">
+                        <select id="divisions-filter-sex" name="divisions-filter[sex]" class="select">
+                            <option value="f">{{ 'egt.divisions.female' | trans }}</option>
+                            <option value="m">{{ 'egt.divisions.male' | trans }}</option>
+                        </select>
+                        <select id="divisions-filter-category" name="divisions-filter[category]" class="select">
 
+                        </select>
+                    </blockquote>
                 </div>
             </div>
         </div>

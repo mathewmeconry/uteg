@@ -292,6 +292,25 @@
         });
     }
 
+    function selectPicker(sl, search) {
+        if(search) {
+            $(sl).selectpicker({
+                liveSearch: false,
+                size: 10,
+                liveSearch: true
+            });
+        } else {
+            $(sl).selectpicker({
+                liveSearch: false,
+                size: 10
+            });
+        }
+
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+            $(sl).selectpicker('mobile');
+        }
+    }
+
     $(document).ready(function () {
         {% for flashMessage in app.session.flashbag.get('error') %}
         noty({text: '{{ flashMessage|trans }}', layout: 'topCenter', type: 'error', timeout: 5000});

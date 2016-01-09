@@ -119,10 +119,7 @@
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
-                    $('.select').selectpicker({
-                        liveSearch: false,
-                        size: 10
-                    });
+                    selectPicker('.select', false);
                 });
 
                 $("#dialog-edit").data('dep_id', dep_id).modal('show');
@@ -158,10 +155,7 @@
                         $('.panel-refresh').click();
                     } else {
                         $('#dialog-edit-body').html(data);
-                        $('.select').selectpicker({
-                            liveSearch: false,
-                            size: 10
-                        });
+                        selectPicker('.select', false);
                     }
                 });
             });
@@ -173,10 +167,7 @@
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
-                    $('.select').selectpicker({
-                        liveSearch: false,
-                        size: 10
-                    });
+                    selectPicker('.select', false);
                 });
 
                 $('#dialog-edit-modal-title').html('Add new');

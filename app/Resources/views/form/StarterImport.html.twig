@@ -60,14 +60,8 @@
             {% endif %}
             {% endfor %}
 
-            $('.selectSearch').selectpicker({
-                liveSearch: true,
-                size: 10
-            });
-
-            $('.select').selectpicker({
-                size: 10
-            });
+            selectPicker('.selectSearch', true);
+            selectPicker('.select', false);
 
             $('#submit').click(function () {
                 $('#starters').submit();
