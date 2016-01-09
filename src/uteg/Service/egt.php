@@ -13,6 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Competition;
+use uteg\Entity\DivisionEGT;
 use uteg\EventListener\MenuEvent;
 use uteg\Entity\Starters2CompetitionsEGT;
 
@@ -56,6 +57,23 @@ class egt
     public function getS2cString()
     {
         return 'Starters2CompetitionsEGT';
+    }
+
+    public function getDivision()
+    {
+        return new DivisionEGT();
+    }
+
+    public function findDivision(Array $searchArray)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+
+        return $em->getRepositiry('uteg:DivsionEGT')->findOneBy($searchArray);
+    }
+
+    public function getDivisionString()
+    {
+        return 'DivsionEGT';
     }
 
 
