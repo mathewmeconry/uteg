@@ -529,6 +529,32 @@ class Competition
         return $return;
     }
 
+    public function getDepartmentsByCatSex(\DateTime $dateTime, $sex)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getDate() == $dateTime && $department->getSex() == $sex) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
+    public function getDepartmentsBySex($sex)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getSex() == $sex) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
     public function isDepOf(\uteg\Entity\Department $checkDep)
     {
         foreach ($this->departments as $department) {

@@ -11,6 +11,7 @@ namespace uteg\Service;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Competition;
 use uteg\EventListener\MenuEvent;
 use uteg\Entity\Starters2CompetitionsEGT;
@@ -47,7 +48,7 @@ class egt
 
     public function findS2c(Array $searchArray)
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         return $em->getRepository('uteg:Starters2CompetitionsEGT')->findOneBy($searchArray);
     }
@@ -63,5 +64,81 @@ class egt
         return $this->container->get('templating')->renderResponse('egt/divisions.html.twig', array(
             "comp" => $competition
         ));
+    }
+
+    public function divisionsFilter(Request $request, Competition $competition)
+    {
+        $em = $this->container->get('Doctrine')->getManager();
+        $data = $request->request->get('divisions-filter');
+        $entityName = $request->query->get('by');
+        $return = [];
+        $return['value'] = [];
+
+        switch ($entityName) {
+            case "sex":
+                $return['filteredBy'] = $entityName;
+
+                if (array_key_exists('category', $data) && array_key_exists('date', $data) && array_key_exists('sex', $data)) {
+                    $sex = $data['sex'];
+                    $category = $em->find('uteg:Category', $data['category']);
+                    $date = $data['date'];
+                    $deps = $competition->getDepartmentsByCatDateSex($category, $date, $sex);
+
+                    foreach ($deps as $dep) {
+                        if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
+                            $return['value'][$dep->getCategory()->getNumber()] = array("number" => $dep->getCategory()->getNumber(),
+                                "name" => $dep->getCategory()->getName()
+                            );
+                        }
+                    }
+                } elseif (array_key_exists('date', $data) && array_key_exists('sex', $data)) {
+                    $sex = $data['sex'];
+                    $date = $data['date'];
+                    $deps = $competition->getDepartmentsByDateSex($date, $sex);
+
+                    foreach ($deps as $dep) {
+                        if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
+                            $return['value'][$dep->getCategory()->getNumber()] = array("number" => $dep->getCategory()->getNumber(),
+                                "name" => $dep->getCategory()->getName()
+                            );
+                        }
+                    }
+
+                } elseif (array_key_exists('sex', $data)) {
+                    $sex = $data['sex'];
+                    $deps = $competition->getDepartmentsBySex($sex);
+                    foreach ($deps as $dep) {
+                        if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
+                            $return['value'][$dep->getCategory()->getNumber()] = array("number" => $dep->getCategory()->getNumber(),
+                                "name" => $dep->getCategory()->getName()
+                            );
+                        }
+                    }
+                } else {
+                    $return = "";
+                }
+
+                break;
+            case "date":
+
+                break;
+            case "category":
+
+                break;
+            case "department":
+
+                break;
+            case "club":
+
+                break;
+            default:
+                echo "server error";
+                break;
+        }
+
+        $response = new Response(json_encode((array)$return));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 }

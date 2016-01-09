@@ -10,9 +10,38 @@
 
 {% block script %}
     <script>
+        function selectChange(filter) {
+            var filterSerialize = $('#divisions-filter').serialize();
+
+            $.ajax({
+                url: "{{ path('divisionFilter', { 'compid': app.request.get('compid')}) }}?by=" + filter,
+                method: "POST",
+                data: filterSerialize
+            }).success(function (data) {
+                switch (data.filteredBy) {
+                    case 'sex':
+                        $('#divisions-filter-category').html('');
+                        $.each(data.value, function (key, value) {
+                            $('#divisions-filter-category').append('<option value="' + value.number + '">' + value.name + '</option>');
+                        });
+                        $('#divisions-filter-category').selectpicker('refresh');
+                        break;
+                }
+            });
+        }
+
         $(document).ready(function () {
             selectPicker('.select', false);
             selectPicker('.selectSearch', true);
+
+            $('.select, .selectSearch').change(function () {
+                selectChange($(this).data('filter'));
+            });
+
+            selectChange('sex');
+            selectChange('date');
+            selectChange('category');
+            selectChange('department');
         });
     </script>
 {% endblock %}
@@ -29,28 +58,37 @@
                     </ul>
                 </div>
                 <div class="panel-body">
-                    <div class="col-md-3">
-                        <select id="divisions-filter-sex" name="divisions-filter[sex]" class="select"
-                                data-width="100%">
-                            <option value="f">{{ 'egt.divisions.female' | trans }}</option>
-                            <option value="m">{{ 'egt.divisions.male' | trans }}</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select id="divisions-filter-category" name="divisions-filter[category]"
-                                class="select" data-width="100%">
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select id="divisions-filter-department" name="divisions-filter[department]"
-                                class="select" data-width="100%">
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select id="divisions-filter-club" name="divisions-filter[club]" class="selectSearch"
-                                data-width="100%">
-                            <option value="all">{{ 'egt.divisions.all' | trans }}</option>
-                        </select>
+                    <div class="row">
+                        <form id="divisions-filter">
+                            <div class="col-md-2">
+                                <select id="divisions-filter-sex" name="divisions-filter[sex]" class="select"
+                                        data-width="100%" data-filter="sex">
+                                    <option value="female">{{ 'egt.divisions.female' | trans }}</option>
+                                    <option value="male">{{ 'egt.divisions.male' | trans }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="divisions-filter-date" name="divisions-filter[date]"
+                                        class="select" data-width="100%" data-filter="date">
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="divisions-filter-category" name="divisions-filter[category]"
+                                        class="select" data-width="100%" data-filter="category">
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="divisions-filter-department" name="divisions-filter[department]"
+                                        class="select" data-width="100%" data-filter="department">
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="divisions-filter-club" name="divisions-filter[club]" class="selectSearch"
+                                        data-width="100%" data-filter="club">
+                                    <option value="all">{{ 'egt.divisions.all' | trans }}</option>
+                                </select>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
