@@ -395,3 +395,4 @@ egt:
         female: 'Female'
         male: 'Male'
         all: 'All'
+        department: 'Department'

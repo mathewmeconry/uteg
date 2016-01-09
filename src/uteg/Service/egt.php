@@ -93,7 +93,26 @@ class egt
 
                 break;
             case "category":
+                if (array_key_exists('category', $data) && array_key_exists('sex', $data)) {
+                    $catid = $data['category'];
+                    $sex = $data['sex'];
+                    $dateFormatter = $this->container->get('bcc_extra_tools.date_formatter');
+                    $category = $em->find('uteg:Category', $catid);
+                    $deps = $competition->getDepartmentsByCatSex($category, $sex);
 
+                    foreach ($deps as $dep) {
+                        if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
+                            $return['value'][$dep->getId()] = array("id" => $dep->getId(),
+                                "number" => $dep->getNumber(),
+                                "date" => $dateFormatter->format($dep->getDate(), "medium", "none", $request->getPreferredLanguage()),
+                                "category" => $dep->getCategory()->getName(),
+                                "sex" => $dep->getSex()
+                            );
+                        }
+                    }
+                } else {
+                    $return = "";
+                }
                 break;
             case "department":
 

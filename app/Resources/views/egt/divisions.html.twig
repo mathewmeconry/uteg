@@ -10,10 +10,35 @@
 
 {% block script %}
     <script>
+        function init() {
+            selectPicker('.select', false);
+            selectPicker('.selectSearch', true);
+
+            $('.select, .selectSearch').change(function () {
+                selectChange($(this).data('filter'));
+            });
+
+            selectChange('sex');
+        }
+
+        function update(source) {
+            switch (source) {
+                case 'sex':
+                    $('#divisions-filter-category').selectpicker('val', $('#divisions-filter-category option')[0].value);
+                    break;
+                case 'category':
+                    $('#divisions-filter-department').selectpicker('val', $('#divisions-filter-department option')[0].value);
+                    break;
+                case 'department':
+                    $('#divisions-filter-club').selectpicker('val', $('#divisions-filter-club option')[0].value);
+                    break;
+            }
+        }
+
         function selectChange(filter) {
             var filterSerialize = $('#divisions-filter').serialize();
 
-            $.ajax({
+            return $.ajax({
                 url: "{{ path('divisionFilter', { 'compid': app.request.get('compid')}) }}?by=" + filter,
                 method: "POST",
                 data: filterSerialize
@@ -25,22 +50,23 @@
                             $('#divisions-filter-category').append('<option value="' + value.number + '">' + value.name + '</option>');
                         });
                         $('#divisions-filter-category').selectpicker('refresh');
+
+                        break;
+                    case 'category':
+                        $('#divisions-filter-department').html('');
+                        $.each(data.value, function (key, value) {
+                            $('#divisions-filter-department').append('<option value="' + value.id + '">{{ 'egt.divisions.department' | trans }} ' + value.number + '</option>');
+                        });
+                        $('#divisions-filter-department').selectpicker('refresh');
                         break;
                 }
+
+                update(data.filteredBy);
             });
         }
 
         $(document).ready(function () {
-            selectPicker('.select', false);
-            selectPicker('.selectSearch', true);
-
-            $('.select, .selectSearch').change(function () {
-                selectChange($(this).data('filter'));
-            });
-
-            selectChange('sex');
-            selectChange('category');
-            selectChange('department');
+            init();
         });
     </script>
 {% endblock %}
