@@ -40,13 +40,6 @@ class egt
 
     }
 
-    public function divisions(Request $request, Competition $competition)
-    {
-        return $this->container->get('templating')->renderResponse('egt/divisions.html.twig', array(
-            "comp" => $competition
-        ));
-    }
-
     public function getS2c()
     {
         return new Starters2CompetitionsEGT();
@@ -62,5 +55,13 @@ class egt
     public function getS2cString()
     {
         return 'Starters2CompetitionsEGT';
+    }
+
+
+    public function divisions(Request $request, Competition $competition)
+    {
+        return $this->container->get('templating')->renderResponse('egt/divisions.html.twig', array(
+            "comp" => $competition
+        ));
     }
 }
