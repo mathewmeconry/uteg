@@ -73,38 +73,11 @@ class egt
         $entityName = $request->query->get('by');
         $return = [];
         $return['value'] = [];
+        $return['filteredBy'] = $entityName;
 
         switch ($entityName) {
             case "sex":
-                $return['filteredBy'] = $entityName;
-
-                if (array_key_exists('category', $data) && array_key_exists('date', $data) && array_key_exists('sex', $data)) {
-                    $sex = $data['sex'];
-                    $category = $em->find('uteg:Category', $data['category']);
-                    $date = $data['date'];
-                    $deps = $competition->getDepartmentsByCatDateSex($category, $date, $sex);
-
-                    foreach ($deps as $dep) {
-                        if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
-                            $return['value'][$dep->getCategory()->getNumber()] = array("number" => $dep->getCategory()->getNumber(),
-                                "name" => $dep->getCategory()->getName()
-                            );
-                        }
-                    }
-                } elseif (array_key_exists('date', $data) && array_key_exists('sex', $data)) {
-                    $sex = $data['sex'];
-                    $date = $data['date'];
-                    $deps = $competition->getDepartmentsByDateSex($date, $sex);
-
-                    foreach ($deps as $dep) {
-                        if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
-                            $return['value'][$dep->getCategory()->getNumber()] = array("number" => $dep->getCategory()->getNumber(),
-                                "name" => $dep->getCategory()->getName()
-                            );
-                        }
-                    }
-
-                } elseif (array_key_exists('sex', $data)) {
+                if (array_key_exists('sex', $data)) {
                     $sex = $data['sex'];
                     $deps = $competition->getDepartmentsBySex($sex);
                     foreach ($deps as $dep) {
@@ -117,9 +90,6 @@ class egt
                 } else {
                     $return = "";
                 }
-
-                break;
-            case "date":
 
                 break;
             case "category":
