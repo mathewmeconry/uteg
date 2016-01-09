@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Department;
+use uteg\Entity\DivisionEGT;
 use uteg\Form\Type\DepartmentType;
 
 class DepartmentController extends DefaultController
@@ -68,6 +69,7 @@ class DepartmentController extends DefaultController
         $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
 
         $competition = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($competition->getModule()->getServiceName());
         $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
         $interval = new \DateInterval('P1D'); // 1 Day
         $dateRange = new \DatePeriod($competition->getStartdate(), $interval, $competition->getEnddate()->modify('+1 day'));
@@ -91,6 +93,16 @@ class DepartmentController extends DefaultController
             $department->setStarted(false);
             $department->setEnded(false);
             $department->setRound(0);
+
+            for($i = 0; $i < 5;$i++){
+                $division = $module->getDivision();
+                $division->addDevice($em->find('uteg:Device', $i));
+                $department->addDivision($division);
+            }
+
+            if($department->getGender() === "male") {
+
+            }
 
             $this->adjustDepNumbering($competition, $department, 'up');
 
