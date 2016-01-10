@@ -145,7 +145,7 @@ class DepartmentController extends DefaultController
         $department = $em->find('uteg:Department', $id);
         $department->setDate($dateFormatter->format($department->getDate(), "short", "none", $request->getPreferredLanguage()));
 
-        $form = $this->container->get('form.factory')->create(new DepartmentType($dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage())), $department);
+        $form = $this->container->get('form.factory')->create(new DepartmentType($dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage()), true), $department);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
