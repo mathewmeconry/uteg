@@ -101,7 +101,8 @@ class DepartmentController extends DefaultController
             }
 
             if($department->getGender() === "male") {
-
+                $division = $module->getDivision();
+                $division->addDevice($em->find('uteg:Device', 5));
             }
 
             $this->adjustDepNumbering($competition, $department, 'up');
