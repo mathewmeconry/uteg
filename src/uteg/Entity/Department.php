@@ -72,6 +72,7 @@ class Department
     public function __construct()
     {
         $this->starters = new ArrayCollection();
+        $this->divisions = new ArrayCollection();
     }
 
     public function __toString()
@@ -245,10 +246,10 @@ class Department
     /**
      * Add divisions
      *
-     * @param \uteg\Entity\Divisions $divisions
+     * @param \uteg\Entity\Division $division
      * @return Department
      */
-    public function addDivision(\uteg\Entity\Divisions $divisions)
+    public function addDivision(\uteg\Entity\Division $divisions)
     {
         $this->divisions[] = $divisions;
 
@@ -258,9 +259,9 @@ class Department
     /**
      * Remove divisions
      *
-     * @param \uteg\Entity\Divisions $divisions
+     * @param \uteg\Entity\Division $division
      */
-    public function removeDivision(\uteg\Entity\Divisions $divisions)
+    public function removeDivision(\uteg\Entity\Division $divisions)
     {
         $this->divisions->removeElement($divisions);
     }

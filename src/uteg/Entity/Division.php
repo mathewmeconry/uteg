@@ -52,32 +52,9 @@ class Division
     }
 
     /**
-     * Add device
-     *
-     * @param \uteg\Entity\Device $device
-     * @return Divisions
-     */
-    public function addDevice(\uteg\Entity\Device $device)
-    {
-        $this->device[] = $device;
-
-        return $this;
-    }
-
-    /**
-     * Remove device
-     *
-     * @param \uteg\Entity\Device $device
-     */
-    public function removeDevice(\uteg\Entity\Device $device)
-    {
-        $this->device->removeElement($device);
-    }
-
-    /**
      * Get device
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \uteg\Entity\Device
      */
     public function getDevice()
     {

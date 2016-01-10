@@ -94,15 +94,18 @@ class DepartmentController extends DefaultController
             $department->setEnded(false);
             $department->setRound(0);
 
-            for($i = 0; $i < 5;$i++){
+            for($i = 1; $i < 5;$i++){
                 $division = $module->getDivision();
-                $division->addDevice($em->find('uteg:Device', $i));
-                $department->addDivision($division);
+                $division->setDevice($em->getRepository('uteg:Device')->findOneById($i));
+                $division->setDepartment($department);
+                $em->persist($division);
             }
 
             if($department->getGender() === "male") {
                 $division = $module->getDivision();
-                $division->addDevice($em->find('uteg:Device', 5));
+                $division->setDevice($em->getRepository('uteg:Device')->findOneById(5));
+                $division->setDepartment($department);
+                $em->persist($division);
             }
 
             $this->adjustDepNumbering($competition, $department, 'up');
@@ -229,6 +232,7 @@ class DepartmentController extends DefaultController
                     if ($department->getNumber() > $srcNumber) {
                         $department->setNumber($department->getNumber() - 1);
                     }
+
                     $em->persist($department);
                 }
                 break;
