@@ -21,6 +21,11 @@ class Device
     protected $id;
 
     /**
+     * @ORM\Column(type="integer", name="number")
+     */
+    protected $number;
+
+    /**
      * @ORM\Column(type="string", name="name")
      */
     protected $name;
