@@ -10,3 +10,9 @@ INSERT INTO ute_category (`number`, `name`) VALUES ('5', 'K5');
 INSERT INTO ute_category (`number`, `name`) VALUES ('6', 'K6');
 INSERT INTO ute_category (`number`, `name`) VALUES ('7', 'K7');
 INSERT INTO ute_category (`number`, `name`) VALUES ('8', 'KD/H');
+
+INSERT INTO ute_device (`id`, `number`, `name`) VALUES ('1', ''1', 'uteg.device.floor');
+INSERT INTO ute_device (`id`, `number`, `name`) VALUES ('2', '2', 'uteg.device.rings');
+INSERT INTO ute_device (`id`, `number`, `name`) VALUES ('3', '3', 'uteg.device.vault');
+INSERT INTO ute_device (`id`, `number`, `name`) VALUES ('4', '5', 'uteg.device.horizontal-bar');
+INSERT INTO ute_device (`id`, `number`, `name`) VALUES ('5', '4', 'uteg.device.parallel-bars');
