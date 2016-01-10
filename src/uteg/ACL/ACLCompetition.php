@@ -26,11 +26,15 @@ class ACLCompetition
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function addPermission($permission, $userSearchArray)
+    public function addPermission($permission, $userSearchArray, $compid = false)
     {
         $this->isadmin = ($userSearchArray['username'] == "admin") ? true : false;
 
-        $this->updateAcl();
+        if (!$compid) {
+            $this->updateAcl();
+        } else {
+            $this->updateAcl($compid);
+        }
 
         $securityIdentity = $this->getUserSecurityIdentityBy($userSearchArray);
 
@@ -138,9 +142,14 @@ class ACLCompetition
         $this->isadmin = false;
     }
 
-    private function updateAcl()
+    private function updateAcl($compid = false)
     {
-        $this->comp = $this->em->find('uteg:Competition', $this->requestStack->getCurrentRequest()->get('compid'));
+        if (!$compid) {
+            $this->comp = $this->em->find('uteg:Competition', $this->requestStack->getCurrentRequest()->get('compid'));
+        } else {
+            $this->comp = $this->em->find('uteg:Competition', $compid);
+        }
+
         $objectIdentity = ObjectIdentity::fromDomainObject($this->comp);
 
         try {
@@ -168,10 +177,11 @@ class ACLCompetition
         }
     }
 
-    private function getPermissionsByMask($mask) {
+    private function getPermissionsByMask($mask)
+    {
         $permissions = array();
 
-        switch($mask) {
+        switch ($mask) {
             case 256:
                 $permissions['dashboard'] = 1;
                 break;

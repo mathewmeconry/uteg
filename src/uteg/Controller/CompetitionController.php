@@ -106,8 +106,7 @@ class CompetitionController extends DefaultController
             $em->persist($competition);
             $em->flush();
 
-            $request->getSession()->set('comp', $competition->getId());
-            $aclcomp->addPermission(MaskBuilder::MASK_OWNER, array('username' => $user->getUsername()));
+            $aclcomp->addPermission(MaskBuilder::MASK_OWNER, array('username' => $user->getUsername()), $competition->getid());
             $user->addCompetition($competition);
 
             $em->persist($user);
