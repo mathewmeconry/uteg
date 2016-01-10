@@ -12,13 +12,13 @@ class DepartmentType extends AbstractType
 {
     protected $datelist;
     protected $format;
-    protected $readonly;
+    protected $disabled;
 
-    public function __construct($datelist, $format = 'Y-m-d', $readonly = false)
+    public function __construct($datelist, $format = 'Y-m-d', $disabled = false)
     {
         $this->datelist = $datelist;
         $this->format = $format;
-        $this->readonly = ($readonly) ? 'readonly' : '';
+        $this->disabled = $disabled;
     }
 
     /**
@@ -28,8 +28,8 @@ class DepartmentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('date', 'choice', array('choices' => $this->datelist, 'label' => 'department.add.date', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
-            ->add('gender', 'choice', array('disabled' => $this->readonly, 'choices' => array('male' => 'department.add.male', 'female' => 'department.add.female'), 'label' => 'department.add.gender', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
-            ->add('category', 'entity', array('disabled' => $this->readonly, 'class' => 'uteg:Category', 'query_builder' => function (EntityRepository $er) {
+            ->add('gender', 'choice', array('disabled' => $this->disabled, 'choices' => array('male' => 'department.add.male', 'female' => 'department.add.female'), 'label' => 'department.add.gender', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'))
+            ->add('category', 'entity', array('disabled' => $this->disabled, 'class' => 'uteg:Category', 'query_builder' => function (EntityRepository $er) {
                 return $er->createQueryBuilder('c')->orderBy('c.number', 'ASC');
             }, 'label' => 'department.add.category', "attr" => array("class" => "select"), 'translation_domain' => 'uteg'));
     }
