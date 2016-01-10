@@ -380,6 +380,13 @@ departments:
             category: 'Category'
             gender: 'Gender'
             actions: 'Actions'
+device:
+    floor: 'Floor'
+    rings: 'Swinging Rings'
+    vault: 'Vault'
+    parallel-bars: 'Parallel Bars'
+    horizontal-bar: 'Horizontal Bar'
+
 
 egt:
     nav:
