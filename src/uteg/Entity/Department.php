@@ -71,7 +71,6 @@ class Department
 
     public function __construct()
     {
-        $this->starters = new ArrayCollection();
         $this->divisions = new ArrayCollection();
     }
 
@@ -208,39 +207,6 @@ class Department
     public function increaseRound()
     {
         return $this->round + 1;
-    }
-
-    /**
-     * Add starters
-     *
-     * @param \uteg\Entity\Starters2Competitions $starters
-     * @return Department
-     */
-    public function addStarter(\uteg\Entity\Starters2Competitions $starters)
-    {
-        $this->starters[] = $starters;
-
-        return $this;
-    }
-
-    /**
-     * Remove starters
-     *
-     * @param \uteg\Entity\Starters2Competitions $starters
-     */
-    public function removeStarter(\uteg\Entity\Starters2Competitions $starters)
-    {
-        $this->starters->removeElement($starters);
-    }
-
-    /**
-     * Get starters
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getStarters()
-    {
-        return $this->starters;
     }
 
     /**

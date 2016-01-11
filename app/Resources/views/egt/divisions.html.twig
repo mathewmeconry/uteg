@@ -67,6 +67,12 @@
                         });
                         $('#divisions-filter-department').selectpicker('refresh');
                         break;
+                    case 'department':
+                        $('#divisions-filter-club').html('<option value="all">{{ 'egt.divisions.all' | trans }}</option>');
+                        $.each(data.value, function (key, value) {
+                            $('#divisions-filter-club').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                        $('#divisions-filter-club').selectpicker('refresh');
                 }
 
                 update(data.filteredBy);
@@ -113,7 +119,6 @@
                             <div class="col-md-3">
                                 <select id="divisions-filter-club" name="divisions-filter[club]" class="selectSearch"
                                         data-width="100%" data-filter="club">
-                                    <option value="all">{{ 'egt.divisions.all' | trans }}</option>
                                 </select>
                             </div>
                         </form>

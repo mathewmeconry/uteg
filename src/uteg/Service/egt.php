@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints\Null;
 use uteg\Entity\Competition;
 use uteg\Entity\DivisionEGT;
 use uteg\EventListener\MenuEvent;
@@ -145,23 +146,78 @@ class egt
                 break;
             case "department":
                 if (array_key_exists('category', $data) && array_key_exists('gender', $data) && array_key_exists('department', $data)) {
-                    $catid = $data['category'];
                     $depid = $data['department'];
+                    $catid = $data['category'];
                     $gender = $data['gender'];
-                    $dateFormatter = $this->container->get('bcc_extra_tools.date_formatter');
                     $category = $em->find('uteg:Category', $catid);
-                    $department = $em->find('uteg:Department', $depid);
-                    $unassignedS2cs = $competition->getS2csByGenderCat($category, $gender);
-                    $assignedS2cs = $competition->getS2csByGenderCatDep($category, $gender, $department);
-                    $array['value'] = [];
 
+                    $queryResult = $em
+                        ->getRepository('uteg:Starters2CompetitionsEGT')
+                        ->createQueryBuilder('s')
+                        ->select('cb.id as id', 'cb.name as name')
+                        ->join('s.competition', 'c', 'WITH', 'c.id = :competition')
+                        ->join('s.starter', 'st', 'WITH', 'st.gender = :gender')
+                        ->join('s.club', 'cb')
+                        ->where('s.category = :category')
+                        ->setParameters(array('competition' => $competition->getId(),
+                            'gender' => $gender,
+                            'category' => $category
+                        ))
+                        ->orderBy('cb.name', 'DESC')
+                        ->distinct()
+                        ->getQuery()
+                        ->getResult();
+
+                    foreach ($queryResult as $club) {
+                        $clubEntry['id'] = $club['id'];
+                        $clubEntry['name'] = $club['name'];
+                        $return['value'][] = $clubEntry;
+                    }
 
                 } else {
                     $return = "";
                 }
                 break;
             case "club":
+                $catid = $data['category'];
+                $depid = $data['department'];
+                $gender = $data['gender'];
+                $category = $em->find('uteg:Category', $catid);
+                $department = $em->find('uteg:Department', $depid);
+                $unassignedS2cs = [];
+                $divisions = $department->getDivisions();
+                $assignedS2cs = [];
 
+                $queryResult = $em
+                    ->getRepository('uteg:Starters2CompetitionsEGT')
+                    ->createQueryBuilder('s')
+                    ->select('s')
+                    ->join('s.competition', 'c', 'WITH', 'c.id = :competition')
+                    ->join('s.starter', 'st', 'WITH', 'st.gender = :gender')
+                    ->where('s.division is NULL')
+                    ->andWhere('s.category = :category')
+                    ->orderBy('st.firstname', 'DESC')
+                    ->setParameters(array('competition' => $competition->getId(),
+                        'category' => $category,
+                        'gender' => $gender
+                    ))
+                    ->getQuery()
+                    ->getResult();
+
+                foreach ($queryResult as $s2c) {
+                    $unassignedS2cs[] = array("id" => $s2c->getId(),
+                        "firstname" => $s2c->getStarter()->getFirstname(),
+                        "lastname" => $s2c->getStarter()->getLastname(),
+                        "birthyear" => $s2c->getStarter()->getBirthyear(),
+                        "club" => $s2c->getClub()->getName(),
+                        "category" => ($s2c->getCategory()->getNumber() == 8) ? ($s2c->getStarter()->getGender() == 'female') ? $s2c->getCategory()->getName() . "D" : $s2c->getCategory()->getName() . "H" : $s2c->getCategory()->getName(),
+                        "present" => $s2c->getPresent(),
+                        "medicalcert" => $s2c->getMedicalcert()
+                    );
+                }
+
+                $return['value']['starters']['assigned'] = $assignedS2cs;
+                $return['value']['starters']['unassigned'] = $unassignedS2cs;
                 break;
             default:
                 echo "server error";

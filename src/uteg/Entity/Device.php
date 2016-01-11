@@ -51,6 +51,29 @@ class Device
      * @param string $name
      * @return Device
      */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return Device
+     */
     public function setName($name)
     {
         $this->name = $name;
