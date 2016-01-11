@@ -179,41 +179,59 @@ class egt
                 }
                 break;
             case "club":
-                $catid = $data['category'];
-                $depid = $data['department'];
-                $gender = $data['gender'];
-                $category = $em->find('uteg:Category', $catid);
-                $department = $em->find('uteg:Department', $depid);
-                $unassignedS2cs = [];
-                $divisions = $department->getDivisions();
-                $assignedS2cs = [];
+                if (array_key_exists('category', $data) && array_key_exists('gender', $data) && array_key_exists('department', $data) && array_key_exists('club', $data)) {
+                    $catid = $data['category'];
+                    $depid = $data['department'];
+                    $clubid = $data['club'];
+                    $club = ($clubid !== 'all') ? $em->find('uteg:Club', $clubid) : $clubid;
+                    $gender = $data['gender'];
+                    $category = $em->find('uteg:Category', $catid);
+                    $department = $em->find('uteg:Department', $depid);
+                    $unassignedS2cs = [];
+                    $divisions = $department->getDivisions();
+                    $assignedS2cs = [];
 
-                $queryResult = $em
-                    ->getRepository('uteg:Starters2CompetitionsEGT')
-                    ->createQueryBuilder('s')
-                    ->select('s')
-                    ->join('s.competition', 'c', 'WITH', 'c.id = :competition')
-                    ->join('s.starter', 'st', 'WITH', 'st.gender = :gender')
-                    ->where('s.division is NULL')
-                    ->andWhere('s.category = :category')
-                    ->orderBy('st.firstname', 'DESC')
-                    ->setParameters(array('competition' => $competition->getId(),
-                        'category' => $category,
-                        'gender' => $gender
-                    ))
-                    ->getQuery()
-                    ->getResult();
+                    foreach ($divisions as $division) {
+                        if($club === 'all') {
+                            $assignedS2cs[$division->getDevice()->getNumber()] = $division->getS2cs();
+                        } else {
+                            $assignedS2cs[$division->getDevice()->getNumber()] = $division->getS2csByClub($club);
+                        }
+                    }
 
-                foreach ($queryResult as $s2c) {
-                    $unassignedS2cs[] = array("id" => $s2c->getId(),
-                        "firstname" => $s2c->getStarter()->getFirstname(),
-                        "lastname" => $s2c->getStarter()->getLastname(),
-                        "birthyear" => $s2c->getStarter()->getBirthyear(),
-                        "club" => $s2c->getClub()->getName(),
-                        "category" => ($s2c->getCategory()->getNumber() == 8) ? ($s2c->getStarter()->getGender() == 'female') ? $s2c->getCategory()->getName() . "D" : $s2c->getCategory()->getName() . "H" : $s2c->getCategory()->getName(),
-                        "present" => $s2c->getPresent(),
-                        "medicalcert" => $s2c->getMedicalcert()
-                    );
+                    $query = $em
+                        ->getRepository('uteg:Starters2CompetitionsEGT')
+                        ->createQueryBuilder('s')
+                        ->select('s')
+                        ->join('s.competition', 'c', 'WITH', 'c.id = :competition')
+                        ->join('s.starter', 'st', 'WITH', 'st.gender = :gender')
+                        ->where('s.division is NULL')
+                        ->andWhere('s.category = :category')
+                        ->orderBy('st.firstname', 'DESC')
+                        ->setParameters(array('competition' => $competition->getId(),
+                            'category' => $category,
+                            'gender' => $gender
+                        ));
+
+                    if($club !== 'all') {
+                        $query
+                            ->andWhere('s.club = :club')
+                            ->setParameter('club', $club);
+                    }
+
+                    $queryResult = $query->getQuery()->getResult();
+
+                    foreach ($queryResult as $s2c) {
+                        $unassignedS2cs[] = array("id" => $s2c->getId(),
+                            "firstname" => $s2c->getStarter()->getFirstname(),
+                            "lastname" => $s2c->getStarter()->getLastname(),
+                            "birthyear" => $s2c->getStarter()->getBirthyear(),
+                            "club" => $s2c->getClub()->getName(),
+                            "category" => ($s2c->getCategory()->getNumber() == 8) ? ($s2c->getStarter()->getGender() == 'female') ? $s2c->getCategory()->getName() . "D" : $s2c->getCategory()->getName() . "H" : $s2c->getCategory()->getName(),
+                            "present" => $s2c->getPresent(),
+                            "medicalcert" => $s2c->getMedicalcert()
+                        );
+                    }
                 }
 
                 $return['value']['starters']['assigned'] = $assignedS2cs;

@@ -13,7 +13,7 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
  class Starters2CompetitionsEGT extends Starters2Competitions
  {
    /**
-    * @ORM\ManyToOne(targetEntity="DivisionEGT", inversedBy="starters")
+    * @ORM\ManyToOne(targetEntity="DivisionEGT", inversedBy="s2cs")
     * @ORM\JoinColumn(name="div_id", referencedColumnName="div_id", onDelete="SET NULL")
     * @Assert\Blank
     */

@@ -15,11 +15,11 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
   /**
    * @ORM\OneToMany(targetEntity="Starters2CompetitionsEGT", mappedBy="division")
    */
-  protected $starters;
+  protected $s2cs;
 
   public function __construct()
   {
-    $this->starters = new ArrayCollection();
+    $this->s2cs = new ArrayCollection();
   }
     /**
      * Add starters
@@ -27,9 +27,9 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
      * @param \uteg\Entity\Starters2CompetitionsEGT $starters
      * @return DivisionsEGT
      */
-    public function addStarter(\uteg\Entity\Starters2CompetitionsEGT $starters)
+    public function addS2c(\uteg\Entity\Starters2CompetitionsEGT $s2c)
     {
-        $this->starters[] = $starters;
+        $this->s2cs[] = $s2c;
 
         return $this;
     }
@@ -39,9 +39,9 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
      *
      * @param \uteg\Entity\Starters2CompetitionsEGT $starters
      */
-    public function removeStarter(\uteg\Entity\Starters2CompetitionsEGT $starters)
+    public function removeS2c(\uteg\Entity\Starters2CompetitionsEGT $s2c)
     {
-        $this->starters->removeElement($starters);
+        $this->s2cs->removeElement($s2c);
     }
 
     /**
@@ -49,8 +49,20 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getStarters()
+    public function getS2cs()
     {
-        return $this->starters;
+        return $this->s2cs;
     }
+
+     public function getS2csByClub(\uteg\Entity\Club $club) {
+         $return = [];
+
+         foreach ($this->s2cs as $s2c) {
+             if($s2c->getClub === $club) {
+                $return[] = $s2c;
+             }
+         }
+
+         return $return;
+     }
 }
