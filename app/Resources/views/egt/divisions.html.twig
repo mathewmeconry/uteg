@@ -6,6 +6,26 @@
 
 {% block jsplugins %}
     <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/nestable/jquery.nestable.js") }}'></script>
+{% endblock %}
+
+{% block css %}
+    <style>
+    .dd {
+        padding-top:20px;
+    }
+
+        .dd-list {
+            border: 1px solid #D5D5D5;
+            padding: 5px;
+            background: rgba(242, 242, 242,0.4);
+            overflow-y: auto;
+            max-height:95%;
+            -moz-border-radius: 5px 5px 5px 5px;
+            -webkit-border-radius: 5px 5px 5px 5px;
+            border-radius: 5px 5px 5px 5px;
+        }
+    </style>
 {% endblock %}
 
 {% block script %}
@@ -19,6 +39,22 @@
             });
 
             selectChange('gender');
+
+            $(window).resize(function() {
+                sizeDivs();
+            });
+        }
+
+        function sizeDivs() {
+            sizeDiv('#divisions-unassigned-starters');
+        }
+
+        function sizeDiv(selector) {
+            if(selector == "#divisions-unassigned-starters") {
+                $(selector).height($(window).height()/100*70);
+            } else {
+                $(selector).height($(window).height()/100*20);
+            }
         }
 
         function update(source) {
@@ -73,6 +109,19 @@
                             $('#divisions-filter-club').append('<option value="' + value.id + '">' + value.name + '</option>');
                         });
                         $('#divisions-filter-club').selectpicker('refresh');
+                        break;
+                    case 'club':
+                        $('#divisions-unassigned-starters ol').html('');
+
+                        $.each(data.value.starters.unassigned, function (key, value) {
+                            $('#divisions-unassigned-starters ol').append('<li class="dd-item dd3-item" data-id="' + value.id + '"><div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">' + value.firstname + ' ' + value.lastname + ' <span class="small-text">' + value.club + '</span></div><li>');
+                        });
+
+                        $('#divisions-unassigned-starters').nestable({
+                            "maxDepth": 1
+                        });
+
+                        sizeDivs();
                 }
 
                 update(data.filteredBy);
@@ -122,6 +171,12 @@
                                 </select>
                             </div>
                         </form>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 dd" id="divisions-unassigned-starters">
+                            <h3>{{ 'egt.divisions.header-unassigned' | trans }}</h3>
+                            <ol class="dd-list"></ol>
+                        </div>
                     </div>
                 </div>
             </div>
