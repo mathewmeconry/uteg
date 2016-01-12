@@ -11,19 +11,27 @@
 
 {% block css %}
     <style>
-    .dd {
-        padding-top:20px;
-    }
+        .dd {
+            padding-top: 20px;
+        }
 
-        .dd-list {
+        .dd-list, .dd-empty {
             border: 1px solid #D5D5D5;
             padding: 5px;
-            background: rgba(242, 242, 242,0.4);
+            background: rgba(242, 242, 242, 0.4);
             overflow-y: auto;
-            max-height:95%;
+            max-height: 95%;
             -moz-border-radius: 5px 5px 5px 5px;
             -webkit-border-radius: 5px 5px 5px 5px;
             border-radius: 5px 5px 5px 5px;
+        }
+
+        .device ol {
+            max-height: 30%;
+        }
+
+        .display-none {
+            display: none;
         }
     </style>
 {% endblock %}
@@ -40,20 +48,21 @@
 
             selectChange('gender');
 
-            $(window).resize(function() {
+            $(window).resize(function () {
                 sizeDivs();
             });
         }
 
         function sizeDivs() {
             sizeDiv('#divisions-unassigned-starters');
+            sizeDiv('.device ol');
         }
 
         function sizeDiv(selector) {
-            if(selector == "#divisions-unassigned-starters") {
-                $(selector).height($(window).height()/100*70);
+            if (selector == "#divisions-unassigned-starters") {
+                $(selector).height($(window).height() / 100 * 70);
             } else {
-                $(selector).height($(window).height()/100*20);
+                $(selector).height($(window).height() / 100 * 30);
             }
         }
 
@@ -87,6 +96,16 @@
                         });
                         $('#divisions-filter-category').selectpicker('refresh');
 
+                        if ($('#divisions-filter-gender').selectpicker('val') === "male") {
+                            $('.male').removeClass("display-none");
+                            $('.display').removeClass('col-md-6');
+                            $('.display').addClass('col-md-4');
+                        } else {
+                            $('.male').addClass("display-none");
+                            $('.display').removeClass('col-md-4');
+                            $('.display').addClass('col-md-6');
+                        }
+
                         break;
                     case 'category':
                         $('#divisions-filter-department').html('');
@@ -111,14 +130,15 @@
                         $('#divisions-filter-club').selectpicker('refresh');
                         break;
                     case 'club':
-                        $('#divisions-unassigned-starters ol').html('');
+                        $('.dd-list').html('');
 
                         $.each(data.value.starters.unassigned, function (key, value) {
                             $('#divisions-unassigned-starters ol').append('<li class="dd-item dd3-item" data-id="' + value.id + '"><div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">' + value.firstname + ' ' + value.lastname + ' <span class="small-text">' + value.club + '</span></div><li>');
                         });
 
-                        $('#divisions-unassigned-starters').nestable({
-                            "maxDepth": 1
+                        $('.dd').nestable({
+                            "maxDepth": 1,
+                            "group": 1
                         });
 
                         sizeDivs();
@@ -176,6 +196,32 @@
                         <div class="col-md-3 dd" id="divisions-unassigned-starters">
                             <h3>{{ 'egt.divisions.header-unassigned' | trans }}</h3>
                             <ol class="dd-list"></ol>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-6 device dd">
+                                    <h3>{{ 'device.floor' | trans }}</h3>
+                                    <div class="dd-empty"></div>
+                                </div>
+                                <div class="col-md-6 device dd">
+                                    <h3>{{ 'device.rings' | trans }}</h3>
+                                    <div class="dd-empty"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 display device dd">
+                                    <h3>{{ 'device.vault' | trans }}</h3>
+                                    <div class="dd-empty"></div>
+                                </div>
+                                <div class="col-md-4 male display-none device dd">
+                                    <h3>{{ 'device.parallel-bars' | trans }}</h3>
+                                    <div class="dd-empty"></div>
+                                </div>
+                                <div class="col-md-6 display device dd">
+                                    <h3>{{ 'device.horizontal-bar' | trans }}</h3>
+                                    <div class="dd-empty"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
