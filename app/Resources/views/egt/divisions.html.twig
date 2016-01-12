@@ -11,11 +11,11 @@
 
 {% block css %}
     <style>
-        .dd {
+        .sortable {
             padding-top: 20px;
         }
 
-        .dd-list, .dd-empty {
+        .sortable-list {
             border: 1px solid #D5D5D5;
             padding: 5px;
             background: rgba(242, 242, 242, 0.4);
@@ -24,9 +24,10 @@
             -moz-border-radius: 5px 5px 5px 5px;
             -webkit-border-radius: 5px 5px 5px 5px;
             border-radius: 5px 5px 5px 5px;
+            position: static;
         }
 
-        .device ol {
+        .device > ul {
             max-height: 30%;
         }
 
@@ -54,15 +55,17 @@
         }
 
         function sizeDivs() {
-            sizeDiv('#divisions-unassigned-starters');
-            sizeDiv('.device ol');
+            sizeDiv('#divisions-unassigned-starters > ul');
+            sizeDiv('.device > ul');
         }
 
         function sizeDiv(selector) {
-            if (selector == "#divisions-unassigned-starters") {
+            if (selector == "#divisions-unassigned-starters > ul") {
                 $(selector).height($(window).height() / 100 * 70);
+                $(selector).css('min-height', $(window).height() / 100 * 70);
             } else {
-                $(selector).height($(window).height() / 100 * 30);
+                $(selector).height($(window).height() / 100 * 31);
+                $(selector).css('min-height', $(window).height() / 100 * 31);
             }
         }
 
@@ -130,15 +133,18 @@
                         $('#divisions-filter-club').selectpicker('refresh');
                         break;
                     case 'club':
-                        $('.dd-list').html('');
+                        $(".sortable-list").html('');
 
-                        $.each(data.value.starters.unassigned, function (key, value) {
-                            $('#divisions-unassigned-starters ol').append('<li class="dd-item dd3-item" data-id="' + value.id + '"><div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">' + value.firstname + ' ' + value.lastname + ' <span class="small-text">' + value.club + '</span></div><li>');
-                        });
+                        if (typeof(data.value.starters.unassigned) !== "unassigned") {
+                            $.each(data.value.starters.unassigned, function (key, value) {
+                                $('#divisions-unassigned-starters ul').append('<li class="dd-item dd3-item" data-id="' + value.id + '"><div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">' + value.firstname + ' ' + value.lastname + ' <span class="small-text">' + value.club + '</span></div></li>');
+                            });
+                        }
 
-                        $('.dd').nestable({
-                            "maxDepth": 1,
-                            "group": 1
+                        $(".sortable-list").sortable({
+                            connectWith: ".sortable-list",
+                            items: "> li",
+                            revert: true
                         });
 
                         sizeDivs();
@@ -193,33 +199,33 @@
                         </form>
                     </div>
                     <div class="row">
-                        <div class="col-md-3 dd" id="divisions-unassigned-starters">
+                        <div class="col-md-3 sortable" id="divisions-unassigned-starters">
                             <h3>{{ 'egt.divisions.header-unassigned' | trans }}</h3>
-                            <ol class="dd-list"></ol>
+                            <ul class="sortable-list"></ul>
                         </div>
                         <div class="col-md-9">
                             <div class="row">
-                                <div class="col-md-6 device dd">
+                                <div class="col-md-6 device sortable">
                                     <h3>{{ 'device.floor' | trans }}</h3>
-                                    <div class="dd-empty"></div>
+                                    <ul class="sortable-list"></ul>
                                 </div>
-                                <div class="col-md-6 device dd">
+                                <div class="col-md-6 device sortable">
                                     <h3>{{ 'device.rings' | trans }}</h3>
-                                    <div class="dd-empty"></div>
+                                    <ul class="sortable-list"></ul>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 display device dd">
+                                <div class="col-md-6 display device sortable">
                                     <h3>{{ 'device.vault' | trans }}</h3>
-                                    <div class="dd-empty"></div>
+                                    <ul class="sortable-list"></ul>
                                 </div>
-                                <div class="col-md-4 male display-none device dd">
+                                <div class="col-md-4 male display-none device sortable">
                                     <h3>{{ 'device.parallel-bars' | trans }}</h3>
-                                    <div class="dd-empty"></div>
+                                    <ul class="sortable-list"></ul>
                                 </div>
-                                <div class="col-md-6 display device dd">
+                                <div class="col-md-6 display device sortable">
                                     <h3>{{ 'device.horizontal-bar' | trans }}</h3>
-                                    <div class="dd-empty"></div>
+                                    <ul class="sortable-list"></ul>
                                 </div>
                             </div>
                         </div>
