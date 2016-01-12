@@ -163,7 +163,7 @@ class egt
                             'gender' => $gender,
                             'category' => $category
                         ))
-                        ->orderBy('cb.name', 'DESC')
+                        ->orderBy('cb.name', 'ASC')
                         ->distinct()
                         ->getQuery()
                         ->getResult();
@@ -222,7 +222,8 @@ class egt
                         ->join('s.starter', 'st', 'WITH', 'st.gender = :gender')
                         ->where('s.division is NULL')
                         ->andWhere('s.category = :category')
-                        ->orderBy('st.firstname', 'DESC')
+                        ->addOrderBy('s.club', 'ASC')
+                        ->addOrderBy('st.firstname', 'ASC')
                         ->setParameters(array('competition' => $competition->getId(),
                             'category' => $category,
                             'gender' => $gender
@@ -272,7 +273,7 @@ class egt
         $s2c = $em->getRepository('uteg:Starters2CompetitionsEGT')->findOneBy(array("id" => $s2cId));
         $division = $em->getRepository('uteg:DivisionEGT')->findOneBy(array("id" => $divisionId));
 
-        if($competition->isS2cOf($s2c) && $competition->isDepOf($division->getDepartment())) {
+        if ($competition->isS2cOf($s2c) && $competition->isDepOf($division->getDepartment())) {
             $s2c->setDivision($division);
             $em->persist($s2c);
             $em->flush();
