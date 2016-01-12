@@ -53,6 +53,7 @@
                 revert: true,
                 receive: function (event, ui) {
                     assignStarter(ui);
+                    numberSortable();
                 }
             });
 
@@ -193,6 +194,7 @@
                         $(".sortable-list").sortable('refresh');
 
                         sizeDivs();
+                        numberSortable();
                 }
 
                 update(data.filteredBy);
@@ -201,6 +203,15 @@
 
         function buildSortable(starter) {
             return '<li class="dd-item dd3-item" data-id="' + starter.id + '"><div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">' + starter.firstname + ' ' + starter.lastname + ' <span class="small-text">' + starter.club + '</span></div></li>';
+        }
+
+        function numberSortable() {
+            $('#divisions-unassigned-starters h3 span').html($('#divisions-unassigned-starters ul li').length);
+            $('#device-1 h3 span').html($('#device-1 ul li').length);
+            $('#device-2 h3 span').html($('#device-2 ul li').length);
+            $('#device-3 h3 span').html($('#device-3 ul li').length);
+            $('#device-4 h3 span').html($('#device-4 ul li').length);
+            $('#device-5 h3 span').html($('#device-5 ul li').length);
         }
 
         function assignStarter(ui) {
@@ -264,31 +275,31 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3 sortable" id="divisions-unassigned-starters">
-                            <h3>{{ 'egt.divisions.header-unassigned' | trans }}</h3>
+                            <h3>{{ 'egt.divisions.header-unassigned' | trans }} <span class="small-text"></span></h3>
                             <ul class="sortable-list"></ul>
                         </div>
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-md-6 device sortable" id="device-1">
-                                    <h3>{{ 'device.floor' | trans }}</h3>
+                                    <h3>{{ 'device.floor' | trans }} <span class="small-text"></span></h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
                                 <div class="col-md-6 device sortable" id="device-2">
-                                    <h3>{{ 'device.rings' | trans }}</h3>
+                                    <h3>{{ 'device.rings' | trans }} <span class="small-text"></span></h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 display device sortable" id="device-3">
-                                    <h3>{{ 'device.vault' | trans }}</h3>
+                                    <h3>{{ 'device.vault' | trans }} <span class="small-text"></span></h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
                                 <div class="col-md-4 male display-none device sortable" id="device-4">
-                                    <h3>{{ 'device.parallel-bars' | trans }}</h3>
+                                    <h3>{{ 'device.parallel-bars' | trans }} <span class="small-text"></span></h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
                                 <div class="col-md-6 display device sortable" id="device-5">
-                                    <h3>{{ 'device.horizontal-bar' | trans }}</h3>
+                                    <h3>{{ 'device.horizontal-bar' | trans }} <span class="small-text"></span></h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
                             </div>
