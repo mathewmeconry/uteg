@@ -151,11 +151,43 @@
                                 });
                             }
 
-                            if (typeof(data.value.assigned[1].starters) !== "undefinded") {
+                            if (typeof(data.value.assigned[1]) !== "undefined") {
                                 $.each(data.value.assigned[1].starters, function (key, value) {
                                     $('#device-1 ul').append(buildSortable(value));
                                 });
                             }
+
+                            if (typeof(data.value.assigned[2]) !== "undefined") {
+                                $.each(data.value.assigned[2].starters, function (key, value) {
+                                    $('#device-1 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[3]) !== "undefined") {
+                                $.each(data.value.assigned[3].starters, function (key, value) {
+                                    $('#device-1 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[4]) !== "undefined") {
+                                $.each(data.value.assigned[4].starters, function (key, value) {
+                                    $('#device-1 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[5]) !== "undefined") {
+                                $.each(data.value.assigned[5].starters, function (key, value) {
+                                    $('#device-1 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            $('#device-1 ul').data('id', data.value.assigned[1].id);
+                            $('#device-2 ul').data('id', data.value.assigned[2].id);
+                            $('#device-3 ul').data('id', data.value.assigned[3].id);
+                            if (typeof(data.value.assigned[4]) !== "undefined") {
+                                $('#device-4 ul').data('id', data.value.assigned[4].id);
+                            }
+                            $('#device-5 ul').data('id', data.value.assigned[5].id);
                         }
 
                         $(".sortable-list").sortable('refresh');
@@ -173,16 +205,17 @@
 
         function assignStarter(ui) {
             var starterId = ui.item.data('id');
-            console.log(ui);
-            {#return $.ajax({#}
-            {#url: "{{ path('divisionFilter', { 'compid': app.request.get('compid')}) }}",#}
-            {#method: "POST",#}
-            {#data: {division: divisionId, starter: starterId}#}
-            {#}).success(function (data) {#}
-            {#if (data == 'access_denied') {#}
-            {#showFlashbag();#}
-            {#}#}
-            {#});#}
+            var divisionId = $(ui.item).parent().data('id');
+            console.log($(ui.item).parent());
+            return $.ajax({
+                url: "{{ path('divisionAssign', { 'compid': app.request.get('compid')}) }}",
+                method: "POST",
+                data: {division: divisionId, starter: starterId}
+            }).success(function (data) {
+                if (data == 'access_denied') {
+                    showFlashbag();
+                }
+            });
         }
 
         $(document).ready(function () {

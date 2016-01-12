@@ -34,8 +34,20 @@ class ServiceController extends DefaultController
 
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $module = $this->get($comp->getModule()->getServiceName());
-        $module->init();
 
         return $module->divisionsFilter($request, $comp);
+    }
+
+    /**
+     * @Route("{compid}/division/assign", name="divisionAssign")
+     * @Method("POST")
+     */
+    public function divisionAssignAction(Request $request, $compid)
+    {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+
+        return $module->divisionAssign($request, $comp);
     }
 }

@@ -565,4 +565,14 @@ class Competition
 
         return false;
     }
+
+    public function isS2cOf(\uteg\Entity\Starters2Competitions $starters2Competitions) {
+        foreach ($this->s2cs as $s2c) {
+            if($s2c === $starters2Competitions) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

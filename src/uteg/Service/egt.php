@@ -192,7 +192,7 @@ class egt
                     $assignedS2cs = [];
 
                     foreach ($divisions as $division) {
-                        if($club === 'all') {
+                        if ($club === 'all') {
                             $assignedS2cs[$division->getDevice()->getNumber()]['starters'] = $division->getS2cs();
                         } else {
                             $assignedS2cs[$division->getDevice()->getNumber()]['starters'] = $division->getS2csByClub($club);
@@ -215,7 +215,7 @@ class egt
                             'gender' => $gender
                         ));
 
-                    if($club !== 'all') {
+                    if ($club !== 'all') {
                         $query
                             ->andWhere('s.club = :club')
                             ->setParameter('club', $club);
@@ -248,5 +248,24 @@ class egt
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
+    }
+
+    public function divisionAssign(Request $request, \uteg\Entity\Competition $competition)
+    {
+        $em = $this->container->get('Doctrine')->getManager();
+        $s2cId = $request->request->get('starter');
+        $divisionId = $request->request->get('division');
+
+        $s2c = $em->getRepository('uteg:Starters2CompetitionsEGT')->findOneBy(array("id" => $s2cId));
+        $division = $em->getRepository('uteg:DivisionEGT')->findOneBy(array("id" => $divisionId));
+
+        if($competition->isS2cOf($s2c) && $competition->isDepOf($division->getDepartment())) {
+            $s2c->setDivision($division);
+            $em->persist($s2c);
+            $em->flush();
+            return new Response('true');
+        } else {
+            return new Response('access_denied');
+        }
     }
 }
