@@ -47,6 +47,15 @@
                 selectChange($(this).data('filter'));
             });
 
+            $(".sortable-list").sortable({
+                connectWith: ".sortable-list",
+                items: "> li",
+                revert: true,
+                receive: function (event, ui) {
+                    assignStarter(ui);
+                }
+            });
+
             selectChange('gender');
 
             $(window).resize(function () {
@@ -135,23 +144,45 @@
                     case 'club':
                         $(".sortable-list").html('');
 
-                        if (typeof(data.value.starters.unassigned) !== "unassigned") {
-                            $.each(data.value.starters.unassigned, function (key, value) {
-                                $('#divisions-unassigned-starters ul').append('<li class="dd-item dd3-item" data-id="' + value.id + '"><div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">' + value.firstname + ' ' + value.lastname + ' <span class="small-text">' + value.club + '</span></div></li>');
-                            });
+                        if (typeof(data.value) !== "undefined") {
+                            if (typeof(data.value.unassigned) !== "undefined") {
+                                $.each(data.value.unassigned, function (key, value) {
+                                    $('#divisions-unassigned-starters ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[1].starters) !== "undefinded") {
+                                $.each(data.value.assigned[1].starters, function (key, value) {
+                                    $('#device-1 ul').append(buildSortable(value));
+                                });
+                            }
                         }
 
-                        $(".sortable-list").sortable({
-                            connectWith: ".sortable-list",
-                            items: "> li",
-                            revert: true
-                        });
+                        $(".sortable-list").sortable('refresh');
 
                         sizeDivs();
                 }
 
                 update(data.filteredBy);
             });
+        }
+
+        function buildSortable(starter) {
+            return '<li class="dd-item dd3-item" data-id="' + starter.id + '"><div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">' + starter.firstname + ' ' + starter.lastname + ' <span class="small-text">' + starter.club + '</span></div></li>';
+        }
+
+        function assignStarter(ui) {
+            var starterId = ui.item.data('id');
+            console.log(ui);
+            {#return $.ajax({#}
+            {#url: "{{ path('divisionFilter', { 'compid': app.request.get('compid')}) }}",#}
+            {#method: "POST",#}
+            {#data: {division: divisionId, starter: starterId}#}
+            {#}).success(function (data) {#}
+            {#if (data == 'access_denied') {#}
+            {#showFlashbag();#}
+            {#}#}
+            {#});#}
         }
 
         $(document).ready(function () {
@@ -205,7 +236,7 @@
                         </div>
                         <div class="col-md-9">
                             <div class="row">
-                                <div class="col-md-6 device sortable">
+                                <div class="col-md-6 device sortable" id="device-1">
                                     <h3>{{ 'device.floor' | trans }}</h3>
                                     <ul class="sortable-list"></ul>
                                 </div>

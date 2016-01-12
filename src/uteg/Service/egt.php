@@ -236,8 +236,8 @@ class egt
                     }
                 }
 
-                $return['value']['starters']['assigned'] = $assignedS2cs;
-                $return['value']['starters']['unassigned'] = $unassignedS2cs;
+                $return['value']['assigned'] = $assignedS2cs;
+                $return['value']['unassigned'] = $unassignedS2cs;
                 break;
             default:
                 echo "server error";
