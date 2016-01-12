@@ -193,10 +193,12 @@ class egt
 
                     foreach ($divisions as $division) {
                         if($club === 'all') {
-                            $assignedS2cs[$division->getDevice()->getNumber()] = $division->getS2cs();
+                            $assignedS2cs[$division->getDevice()->getNumber()]['starters'] = $division->getS2cs();
                         } else {
-                            $assignedS2cs[$division->getDevice()->getNumber()] = $division->getS2csByClub($club);
+                            $assignedS2cs[$division->getDevice()->getNumber()]['starters'] = $division->getS2csByClub($club);
                         }
+
+                        $assignedS2cs[$division->getDevice()->getNumber()]['id'] = $division->getId();
                     }
 
                     $query = $em
