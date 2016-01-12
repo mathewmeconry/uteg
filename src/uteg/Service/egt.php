@@ -193,9 +193,22 @@ class egt
 
                     foreach ($divisions as $division) {
                         if ($club === 'all') {
-                            $assignedS2cs[$division->getDevice()->getNumber()]['starters'] = $division->getS2cs();
+                            $result = $division->getS2cs()->toArray();
                         } else {
-                            $assignedS2cs[$division->getDevice()->getNumber()]['starters'] = $division->getS2csByClub($club);
+                            $result = $division->getS2csByClub($club);
+                        }
+
+                        $assignedS2cs[$division->getDevice()->getNumber()]['starters'] = [];
+                        foreach ($result as $s2c) {
+                            $assignedS2cs[$division->getDevice()->getNumber()]['starters'][] = array("id" => $s2c->getId(),
+                                "firstname" => $s2c->getStarter()->getFirstname(),
+                                "lastname" => $s2c->getStarter()->getLastname(),
+                                "birthyear" => $s2c->getStarter()->getBirthyear(),
+                                "club" => $s2c->getClub()->getName(),
+                                "category" => ($s2c->getCategory()->getNumber() == 8) ? ($s2c->getStarter()->getGender() == 'female') ? $s2c->getCategory()->getName() . "D" : $s2c->getCategory()->getName() . "H" : $s2c->getCategory()->getName(),
+                                "present" => $s2c->getPresent(),
+                                "medicalcert" => $s2c->getMedicalcert()
+                            );
                         }
 
                         $assignedS2cs[$division->getDevice()->getNumber()]['id'] = $division->getId();

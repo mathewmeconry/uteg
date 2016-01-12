@@ -159,25 +159,25 @@
 
                             if (typeof(data.value.assigned[2]) !== "undefined") {
                                 $.each(data.value.assigned[2].starters, function (key, value) {
-                                    $('#device-1 ul').append(buildSortable(value));
+                                    $('#device-2 ul').append(buildSortable(value));
                                 });
                             }
 
                             if (typeof(data.value.assigned[3]) !== "undefined") {
                                 $.each(data.value.assigned[3].starters, function (key, value) {
-                                    $('#device-1 ul').append(buildSortable(value));
+                                    $('#device-3 ul').append(buildSortable(value));
                                 });
                             }
 
                             if (typeof(data.value.assigned[4]) !== "undefined") {
                                 $.each(data.value.assigned[4].starters, function (key, value) {
-                                    $('#device-1 ul').append(buildSortable(value));
+                                    $('#device-4 ul').append(buildSortable(value));
                                 });
                             }
 
                             if (typeof(data.value.assigned[5]) !== "undefined") {
                                 $.each(data.value.assigned[5].starters, function (key, value) {
-                                    $('#device-1 ul').append(buildSortable(value));
+                                    $('#device-5 ul').append(buildSortable(value));
                                 });
                             }
 
@@ -273,21 +273,21 @@
                                     <h3>{{ 'device.floor' | trans }}</h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
-                                <div class="col-md-6 device sortable">
+                                <div class="col-md-6 device sortable" id="device-2">
                                     <h3>{{ 'device.rings' | trans }}</h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 display device sortable">
+                                <div class="col-md-6 display device sortable" id="device-3">
                                     <h3>{{ 'device.vault' | trans }}</h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
-                                <div class="col-md-4 male display-none device sortable">
+                                <div class="col-md-4 male display-none device sortable" id="device-4">
                                     <h3>{{ 'device.parallel-bars' | trans }}</h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
-                                <div class="col-md-6 display device sortable">
+                                <div class="col-md-6 display device sortable" id="device-5">
                                     <h3>{{ 'device.horizontal-bar' | trans }}</h3>
                                     <ul class="sortable-list"></ul>
                                 </div>
