@@ -44,6 +44,10 @@ class MenuBuilder extends ContainerAware
 
         $eventDispatcher->dispatch(MenuEvent::SERVICE_MENU, new MenuEvent($this->factory, $menu, $request));
 
+        $menu->addChild('egt.nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+
+        $eventDispatcher->dispatch(MenuEvent::REPORTING_MENU, new MenuEvent($this->factory, $menu, $request));
+
         ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'cogs', 'labelAttributes' => array('class' => 'xn-text'))) : '';
         ($acl->isGranted('PERMISSIONS_VIEW')) ? $menu->addChild('nav.permissions', array('route' => 'permissions', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'lock', 'labelAttributes' => array('class' => 'xn-text'))) : '';
 
@@ -118,6 +122,8 @@ class MenuBuilder extends ContainerAware
                     ->addChild('egt.divisions.path')
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
+                break;
+            case 'reporting':
                 break;
             case 'competition':
                 $menu

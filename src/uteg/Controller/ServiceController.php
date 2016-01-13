@@ -60,6 +60,7 @@ class ServiceController extends DefaultController
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
 
         return $module->reportingGroup($request, $comp, $format);
     }

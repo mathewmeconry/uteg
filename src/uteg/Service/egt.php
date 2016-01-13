@@ -32,6 +32,7 @@ class egt
     public function init()
     {
         $this->eventDispatcher->addListener('uteg.addServiceMenu', array($this, 'onAddServiceMenu'));
+        $this->eventDispatcher->addListener('uteg.addReportingMenu', array($this, 'onAddReportingMenu'));
     }
 
     public function onAddServiceMenu(MenuEvent $event)
@@ -40,8 +41,11 @@ class egt
         $menu->addChild('egt.nav.grouping', array('uri' => '#', 'icon' => 'object-group', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
         $menu['egt.nav.grouping']->addChild('egt.nav.departments', array('route' => 'department', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
         $menu['egt.nav.grouping']->addChild('egt.nav.divisions', array('route' => 'division', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
+    }
 
-        $menu->addChild('egt.nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+    public function onAddReportingMenu(MenuEvent $event)
+    {
+        $menu = $event->getMenu();
         $menu['egt.nav.reporting']->addChild('egt.nav.grouping', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
     }
 
@@ -285,8 +289,9 @@ class egt
         }
     }
 
-    public function reportingGroup(Request $request, \uteg\Entity\Competition $competition, $format) {
-        if($format === "pdf") {
+    public function reportingGroup(Request $request, \uteg\Entity\Competition $competition, $format)
+    {
+        if ($format === "pdf") {
             return $this->renderPdf('egt/reporting/divisions.pdf.twig', array("comp" => $competition));
         }
 
@@ -295,7 +300,8 @@ class egt
         ));
     }
 
-    private function renderPdf($path, $additional) {
+    private function renderPdf($path, $additional)
+    {
         $facade = $this->container->get('ps_pdf.facade');
         $response = new Response();
         $this->container->get('templating')->renderResponse($path, $additional, $response);
