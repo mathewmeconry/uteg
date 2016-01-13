@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new JMS\TranslationBundle\JMSTranslationBundle(),
         	new Liip\ImagineBundle\LiipImagineBundle(),
         	new BCC\ExtraToolsBundle\BCCExtraToolsBundle(),
+            new Ps\PdfBundle\PsPdfBundle(),
             new uteg\uteg(),
         );
 

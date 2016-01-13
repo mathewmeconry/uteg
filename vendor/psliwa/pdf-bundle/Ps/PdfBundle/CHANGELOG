@@ -1,0 +1,24 @@
+2012-09-23
+* update composer.json file
+
+2012-01-30
+* support for bundle based path placeholder in fonts and document xml files
+
+2012-01-07
+* update supported PHPPdf version to 1.1.1 tag
+
+2012-01-01
+* update supported PHPPdf version to 1.1.x branch
+
+2011-12-29
+* fix support for PHPPdf 1.1.0-DEV version
+* rename config option ps_pdf.enhancements_file to ps_pdf.complex_attributes_file
+* new config options: ps_pdf.nodes_file and ps_pdf.colors_file
+
+2011-11-11
+* new @Pdf annotation option: enableCache (boolean)
+* fix DI configuration
+
+2011-11-11:
+* new branch: zf1-in-backend - version compatible with "zf1-in-backend" branch of PHPPdf library and PHPPdf 1.0.0
+* master branch is now compatible with PHPPdf 1.0.1 and newer, supported version of Zend Framework components is 2.0.0-beta1 and newer.

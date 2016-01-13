@@ -44,8 +44,6 @@ class ComposerAutoloaderInit196f13ed2edc720f5d2ffc23379ca912
         foreach ($includeFiles as $file) {
             composerRequire196f13ed2edc720f5d2ffc23379ca912($file);
         }
-        
-        $includeFiles = require __DIR__.'/../phpoffice/phpexcel/Classes/PHPExcel.php';
 
         return $loader;
     }

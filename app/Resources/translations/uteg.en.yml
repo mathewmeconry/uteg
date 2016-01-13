@@ -393,6 +393,8 @@ egt:
         grouping: 'Starter Grouping'
         departments: 'Departments'
         divisions: 'Divisions'
+        reporting: 'Reporting'
+        grouping: 'Starter Grouping'
     grouping:
         path: 'Grouping'
     divisions:

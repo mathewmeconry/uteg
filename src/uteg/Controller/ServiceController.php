@@ -50,4 +50,17 @@ class ServiceController extends DefaultController
 
         return $module->divisionAssign($request, $comp);
     }
+
+    /**
+     * @Route("{compid}/reporting/grouping/{format}", name="grouping", defaults={"format": "html"}, requirements={"format": "html|pdf"})
+     * @Method("GET")
+     */
+    public function groupingAction(Request $request, $compid, $format)
+    {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+
+        return $module->reportingGroup($request, $comp, $format);
+    }
 }

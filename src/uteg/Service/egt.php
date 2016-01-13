@@ -41,6 +41,8 @@ class egt
         $menu['egt.nav.grouping']->addChild('egt.nav.departments', array('route' => 'department', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
         $menu['egt.nav.grouping']->addChild('egt.nav.divisions', array('route' => 'division', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
 
+        $menu->addChild('egt.nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        $menu['egt.nav.reporting']->addChild('egt.nav.grouping', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
     }
 
     public function getS2c()
@@ -281,5 +283,27 @@ class egt
         } else {
             return new Response('access_denied');
         }
+    }
+
+    public function reportingGroup(Request $request, \uteg\Entity\Competition $competition, $format) {
+        if($format === "pdf") {
+            return $this->renderPdf('egt/reporting/divisions.pdf.twig', array("comp" => $competition));
+        }
+
+        return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
+            "comp" => $competition
+        ));
+    }
+
+    private function renderPdf($path, $additional) {
+        $facade = $this->container->get('ps_pdf.facade');
+        $response = new Response();
+        $this->container->get('templating')->renderResponse($path, $additional, $response);
+
+        $xml = $response->getContent();
+
+        $content = $facade->render($xml);
+
+        return new Response($content, 200, array('content-type' => 'application/pdf'));
     }
 }

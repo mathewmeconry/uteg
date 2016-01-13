@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'ZendPdf\\' => array($vendorDir . '/zendframework/zendpdf/library'),
     'Twig_Extensions_' => array($vendorDir . '/twig/extensions/lib'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Symfony\\' => array($vendorDir . '/symfony/symfony/src'),
@@ -15,6 +16,8 @@ return array(
     'Sensio\\Bundle\\DistributionBundle' => array($vendorDir . '/sensio/distribution-bundle'),
     'SensioLabs\\Security' => array($vendorDir . '/sensiolabs/security-checker'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
+    'Ps\\PdfBundle' => array($vendorDir . '/psliwa/pdf-bundle'),
+    'PHPPdf' => array($vendorDir . '/psliwa/php-pdf/lib'),
     'PHPParser' => array($vendorDir . '/nikic/php-parser/lib'),
     'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
     'Liip\\ImagineBundle' => array($vendorDir . '/liip/imagine-bundle'),
@@ -23,7 +26,7 @@ return array(
     'JMS\\TranslationBundle' => array($vendorDir . '/jms/translation-bundle'),
     'JMS\\I18nRoutingBundle' => array($vendorDir . '/jms/i18n-routing-bundle'),
     'Incenteev\\ParameterHandler' => array($vendorDir . '/incenteev/composer-parameter-handler'),
-    'Imagine' => array($vendorDir . '/imagine/imagine/lib'),
+    'Imagine' => array($vendorDir . '/imagine/imagine/lib', $vendorDir . '/psliwa/php-pdf/lib'),
     'Gedmo\\' => array($vendorDir . '/gedmo/doctrine-extensions/lib'),
     'FOS\\UserBundle' => array($vendorDir . '/friendsofsymfony/user-bundle'),
     'EWZ\\Bundle\\RecaptchaBundle\\' => array($vendorDir . '/excelwebzone/recaptcha-bundle'),
