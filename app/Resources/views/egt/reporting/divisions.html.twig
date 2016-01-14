@@ -4,6 +4,18 @@
 
 {% block title %}{{ 'egt.reporting.divisions.title'|trans }}{% endblock %}
 
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            selectPicker('.select', false, true);
+
+            $('#report-settings-button').click(function () {
+                $('.panel-heading-settings').toggleClass('panel-heading-settings-show');
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-md-12">
@@ -11,9 +23,23 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ 'egt.reporting.divisions.header'|trans }}</h3>
                     <ul class="panel-controls">
+                        <li><a href="#" class="control-primary" id="report-settings-button"><span
+                                        class="fa fa-gear"></span></a></li>
                         <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
                         </li>
                     </ul>
+                </div>
+                <div class="panel-heading-settings">
+                    {% for i in 1..4 %}
+                        <div>
+                            {{ i }}. {{ 'egt.reporting.divisions.groupby' | trans }}:
+                            <select class="select" name="groupby[0]">
+                                {% for grouping in groupings %}
+                                    <option value="{{ grouping.value }}">{{ grouping.name | trans }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% endfor %}
                 </div>
                 <div class="panel-body">
                     <div class="row">

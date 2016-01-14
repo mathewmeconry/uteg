@@ -295,8 +295,16 @@ class egt
             return $this->renderPdf('egt/reporting/divisions.pdf.twig', array("comp" => $competition));
         }
 
+        $groupings = [];
+        $groupings[] = array("value" => "none", "name" => "egt.reporting.divisions.none");
+        $groupings[] = array("value" => "category", "name" => "egt.reporting.divisions.category");
+        $groupings[] = array("value" => "club", "name" => "egt.reporting.divisions.club");
+        $groupings[] = array("value" => "department", "name" => "egt.reporting.divisions.department");
+        $groupings[] = array("value" => "device", "name" => "egt.reporting.divisions.device");
+
         return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
-            "comp" => $competition
+            "comp" => $competition,
+            "groupings" => $groupings
         ));
     }
 
