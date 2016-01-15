@@ -40,6 +40,13 @@
                     }
                 });
                 Cookies.set("division-report", settings);
+
+                $.ajax({
+                    url: "{{ path('reportingDivisionsPost', { 'compid': app.request.get('compid')}) }}",
+                    method: "POST"
+                }).success(function(data) {
+                   $('#report').html(data);
+                });
             });
         });
     </script>
