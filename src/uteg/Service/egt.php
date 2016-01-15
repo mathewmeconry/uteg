@@ -322,7 +322,8 @@ class egt
         $groupedStarters = $this->generateDivisionsReport($request);
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
-            "starters" => $groupedStarters
+            "starters" => $groupedStarters,
+            "colspan" => $this->countLastDim($groupedStarters)
         ));
     }
 
