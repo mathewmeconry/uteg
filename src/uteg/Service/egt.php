@@ -292,8 +292,13 @@ class egt
 
     public function reportingDivisions(Request $request, \uteg\Entity\Competition $competition, $format)
     {
+        $groupedStarters = $this->generateDivisionsReport($request);
+
         if ($format === "pdf") {
-            return $this->renderPdf('egt/reporting/divisions.pdf.twig', array("comp" => $competition));
+            return $this->renderPdf('egt/reporting/divisions.pdf.twig', array(
+                "comp" => $competition,
+                "starters" => $groupedStarters
+            ));
         }
 
         $groupings = [];
@@ -303,8 +308,6 @@ class egt
         $groupings[] = array("value" => "department", "name" => "egt.reporting.divisions.department");
         $groupings[] = array("value" => "device", "name" => "egt.reporting.divisions.device");
 
-        $groupedStarters = $this->generateDivisionsReport($request);
-
         return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
             "comp" => $competition,
             "groupings" => $groupings,
@@ -312,7 +315,8 @@ class egt
         ));
     }
 
-    public function reportingDivisionsPost(Request $request, \uteg\Entity\Competition $competition) {
+    public function reportingDivisionsPost(Request $request, \uteg\Entity\Competition $competition)
+    {
         $groupedStarters = $this->generateDivisionsReport($request);
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
@@ -354,8 +358,7 @@ class egt
 
         $defaultSort = array('gender');
 
-        if ($cookies->has('division-report'))
-        {
+        if ($cookies->has('division-report')) {
             $cookieVal = json_decode($cookies->get('division-report'));
         } else {
             $cookieVal = array('gender', 'category', 'department', 'device');
