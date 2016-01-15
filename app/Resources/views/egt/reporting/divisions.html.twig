@@ -73,24 +73,11 @@
                             id="save-report-settings">{{ 'egt.reporting.divisions.save' | trans }}</button>
                 </div>
                 <div class="panel-body">
-                    <div class="row">
-                        {{ _self.buildReport(starters) }}
+                    <div class="row" id="report">
+                        {{ include("egt/reporting/divisionsReport.html.twig") }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
-
-{% macro buildReport(values) %}
-    {% for key, value in values %}
-        {% if value.firstname is defined %}
-            <li>{{ value.firstname }}</li>
-        {% else %}
-            <ul>
-                {{ key }}
-                {{ _self.buildReport(value) }}
-            </ul>
-        {% endif %}
-    {% endfor %}
-{% endmacro %}

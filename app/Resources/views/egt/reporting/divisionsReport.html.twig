@@ -1,0 +1,16 @@
+{% trans_default_domain 'uteg' %}
+
+{% macro buildReport(values) %}
+    {% for key, value in values %}
+        {% if value.firstname is defined %}
+            <li>{{ value.firstname }}</li>
+        {% else %}
+            <ul>
+                {{ key }}
+                {{ _self.buildReport(value) }}
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{{ _self.buildReport(starters) }}
