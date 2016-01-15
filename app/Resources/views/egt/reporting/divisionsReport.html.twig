@@ -9,16 +9,16 @@
                 {% endfor %}
             </tr>
         {% else %}
-            <tr>
-                <td colspan="{{ colspan }}">
-                    {{ key | trans }}
-                </td>
-            </tr>
-            {{ _self.buildReport(value, colspan) }}
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <td colspan="{{ colspan }}">
+                        {{ key | trans }}
+                    </td>
+                </tr>
+                {{ _self.buildReport(value, colspan) }}
+            </table>
         {% endif %}
     {% endfor %}
 {% endmacro %}
 
-<table class="table table-bordered table-striped">
     {{ _self.buildReport(starters, colspan) }}
-</table>
