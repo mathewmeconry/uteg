@@ -63,7 +63,22 @@ i.icon-view-green:before {
     font-size: 10px;
 }
 
+.panel-heading-settings {
+    background: #F5F5F5;
+    border-color: #E5E5E5;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    padding: 10px;
+    margin-top: 50px;
+    -webkit-box-shadow: 0 5px 6px #9E9E9E;
+    box-shadow: 0 5px 6px #9E9E9E;
+}
+
 .panel-heading-settings > div {
-    width: 100%;
-    padding-top: 10px;
+    padding: 3px;
+}
+
+.panel-heading-settings > button {
+    margin-top: -30px;
+    margin-right: 10px;
 }

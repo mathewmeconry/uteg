@@ -4,13 +4,43 @@
 
 {% block title %}{{ 'egt.reporting.divisions.title'|trans }}{% endblock %}
 
+{% block jsplugins %}
+    <script type="text/javascript" src='{{ asset("js/plugins/cookie/js.cookie.js") }}'></script>
+{% endblock %}
+
 {% block script %}
     <script>
         $(document).ready(function () {
+            var settings = Cookies.getJSON("division-report");
+
+            if (settings !== undefined) {
+                $.each(settings, function (key, value) {
+                    console.log(value);
+                    $('#groupby-' + (key + 1)).val(value);
+                });
+            }
             selectPicker('.select', false, true);
 
+            $(".panel-heading-settings").hide();
+
             $('#report-settings-button').click(function () {
-                $('.panel-heading-settings').toggleClass('panel-heading-settings-show');
+                if ($(".panel-heading-settings:first").is(":hidden")) {
+                    $(".panel-heading-settings").slideDown(300);
+                } else {
+                    $(".panel-heading-settings").slideUp(300);
+                }
+            });
+
+            $('#save-report-settings').click(function () {
+                var settings = [];
+                $(".panel-heading-settings").slideUp(300);
+
+                $.each($('.report-settings'), function (key, select) {
+                    if ($(select).val() !== "") {
+                        settings.push($(select).val());
+                    }
+                });
+                Cookies.set("division-report", settings);
             });
         });
     </script>
@@ -33,13 +63,15 @@
                     {% for i in 1..4 %}
                         <div>
                             {{ i }}. {{ 'egt.reporting.divisions.groupby' | trans }}:
-                            <select class="select" name="groupby[0]">
+                            <select class="select report-settings" id="groupby-{{ i }}" name="groupby[{{ i }}]">
                                 {% for grouping in groupings %}
                                     <option value="{{ grouping.value }}">{{ grouping.name | trans }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     {% endfor %}
+                    <button class="btn btn-success btn-rounded pull-right"
+                            id="save-report-settings">{{ 'egt.reporting.divisions.save' | trans }}</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">
