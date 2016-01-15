@@ -46,7 +46,7 @@ class egt
     public function onAddReportingMenu(MenuEvent $event)
     {
         $menu = $event->getMenu();
-        $menu['egt.nav.reporting']->addChild('egt.nav.grouping', array('route' => 'grouping', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
+        $menu['egt.nav.reporting']->addChild('egt.nav.grouping', array('route' => 'reportingDivisions', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
     }
 
     public function getS2c()
@@ -290,7 +290,7 @@ class egt
         }
     }
 
-    public function reportingGroup(Request $request, \uteg\Entity\Competition $competition, $format)
+    public function reportingDivisions(Request $request, \uteg\Entity\Competition $competition, $format)
     {
         if ($format === "pdf") {
             return $this->renderPdf('egt/reporting/divisions.pdf.twig', array("comp" => $competition));
@@ -318,7 +318,7 @@ class egt
             $response->headers->setCookie($cookie);
         }
 
-        $groupedStarters = $this->reportingDivision(array_merge($defaultSort, $cookieVal));
+        $groupedStarters = $this->generateDivisionsReport(array_merge($defaultSort, $cookieVal));
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
             "comp" => $competition,
@@ -340,7 +340,7 @@ class egt
         return new Response($content, 200, array('content-type' => 'application/pdf'));
     }
 
-    private function reportingDivision(array $grouping)
+    private function generateDivisionsReport(array $grouping)
     {
 
         $em = $this->container->get('doctrine')->getManager();
