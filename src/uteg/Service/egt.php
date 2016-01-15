@@ -298,7 +298,7 @@ class egt
             return $this->renderPdf('egt/reporting/divisions.pdf.twig', array(
                 "comp" => $competition,
                 "starters" => $groupedStarters,
-                "colspan" => $this->countLastDim($groupedStarters)
+                "colspan" => count($this->getLastDim($groupedStarters))
             ));
         }
 
@@ -313,7 +313,7 @@ class egt
             "comp" => $competition,
             "groupings" => $groupings,
             "starters" => $groupedStarters,
-            "colspan" => $this->countLastDim($groupedStarters)
+            "colspan" => count($this->getLastDim($groupedStarters))
         ));
     }
 
@@ -323,7 +323,7 @@ class egt
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
             "starters" => $groupedStarters,
-            "colspan" => $this->countLastDim($groupedStarters)
+            "colspan" => count($this->getLastDim($groupedStarters))
         ));
     }
 
@@ -414,11 +414,10 @@ class egt
         return $return;
     }
 
-    private function countLastDim($array)
-    {
+    private function getLastDim($array) {
         if ($this->countdim($array) > 1) {
-            return $this->countLastDim(end($array));
+            return $this->getLastDim(end($array));
         }
-        return count($array);
+        return $array;
     }
 }
