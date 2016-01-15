@@ -297,7 +297,8 @@ class egt
         if ($format === "pdf") {
             return $this->renderPdf('egt/reporting/divisions.pdf.twig', array(
                 "comp" => $competition,
-                "starters" => $groupedStarters
+                "starters" => $groupedStarters,
+                "colspan" => $this->countLastDim($groupedStarters)
             ));
         }
 
@@ -311,7 +312,8 @@ class egt
         return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
             "comp" => $competition,
             "groupings" => $groupings,
-            "starters" => $groupedStarters
+            "starters" => $groupedStarters,
+            "colspan" => $this->countLastDim($groupedStarters)
         ));
     }
 
@@ -341,8 +343,6 @@ class egt
     {
         $cookies = $request->cookies;
 
-        $defaultSort = array('gender');
-
         if ($cookies->has('division-report')) {
             $cookieVal = json_decode($cookies->get('division-report'));
         } else {
@@ -352,10 +352,11 @@ class egt
             $response->headers->setCookie($cookie);
         }
 
-        return $this->reportingSort(array_merge($defaultSort, $cookieVal), $this->getCompleteStarters());
+        return $this->reportingSort($cookieVal, $this->getCompleteStarters());
     }
 
-    private function getCompleteStarters() {
+    private function getCompleteStarters()
+    {
         $em = $this->container->get('doctrine')->getManager();
 
         $starters = $em
@@ -391,7 +392,10 @@ class egt
             if ($this->countdim($value) > 1) {
                 $newarr[$key] = $this->groupByRecursive($value, $groupBy);
             } else {
-                $newarr[$value[$groupBy]][] = $value;
+                $gb = $value[$groupBy];
+                unset($value[$groupBy]);
+
+                $newarr[$gb][] = $value;
             }
         }
 
@@ -407,5 +411,13 @@ class egt
         }
 
         return $return;
+    }
+
+    private function countLastDim($array)
+    {
+        if ($this->countdim($array) > 1) {
+            return $this->countLastDim(end($array));
+        }
+        return count($array);
     }
 }

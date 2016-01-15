@@ -1,16 +1,24 @@
 {% trans_default_domain 'uteg' %}
 
-{% macro buildReport(values) %}
+{% macro buildReport(values, colspan) %}
     {% for key, value in values %}
         {% if value.firstname is defined %}
-            <li>{{ value.firstname }}</li>
+            <tr>
+                {% for val in value %}
+                    <td>{{ val }}</td>
+                {% endfor %}
+            </tr>
         {% else %}
-            <ul>
-                {{ key | trans }}
-                {{ _self.buildReport(value) }}
-            </ul>
+            <tr>
+                <td colspan="{{ colspan }}">
+                    {{ key | trans }}
+                </td>
+            </tr>
+            {{ _self.buildReport(value, colspan) }}
         {% endif %}
     {% endfor %}
 {% endmacro %}
 
-{{ _self.buildReport(starters) }}
+<table class="table table-bordered table-striped">
+    {{ _self.buildReport(starters, colspan) }}
+</table>

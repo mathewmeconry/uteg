@@ -419,3 +419,4 @@ egt:
             department: 'Department'
             device: 'Device'
             save: 'Save'
+            pagenumbering: '%s / %s'

@@ -44,8 +44,8 @@
                 $.ajax({
                     url: "{{ path('reportingDivisionsPost', { 'compid': app.request.get('compid')}) }}",
                     method: "POST"
-                }).success(function(data) {
-                   $('#report').html(data);
+                }).success(function (data) {
+                    $('#report').html(data);
                 });
             });
         });
@@ -81,7 +81,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="row" id="report">
-                        {{ include("egt/reporting/divisionsReport.html.twig") }}
+                        {% include "egt/reporting/divisionsReport.html.twig" %}
                     </div>
                 </div>
             </div>
