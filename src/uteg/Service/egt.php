@@ -228,6 +228,7 @@ class egt
                         ->join('s.starter', 'st', 'WITH', 'st.gender = :gender')
                         ->where('s.division is NULL')
                         ->andWhere('s.category = :category')
+                        ->andWhere('s.medicalcert = 0')
                         ->addOrderBy('s.club', 'ASC')
                         ->addOrderBy('st.firstname', 'ASC')
                         ->setParameters(array('competition' => $competition->getId(),
@@ -302,6 +303,8 @@ class egt
         $groupings[] = array("value" => "department", "name" => "egt.reporting.divisions.department");
         $groupings[] = array("value" => "device", "name" => "egt.reporting.divisions.device");
 
+        \Doctrine\Common\Util\Debug::dump($this->reportingDivision(array("asd" => "asd")));
+
         return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
             "comp" => $competition,
             "groupings" => $groupings
@@ -319,5 +322,24 @@ class egt
         $content = $facade->render($xml);
 
         return new Response($content, 200, array('content-type' => 'application/pdf'));
+    }
+
+    private function reportingDivision(array $grouping)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+
+        $query = $em
+            ->getRepository('uteg:Starters2CompetitionsEGT')
+            ->createQueryBuilder('s')
+            ->select('st.firstname as firstname, st.lastname as lastname, st.gender as gender, st.birthyear as birthyear, c.name as club, ca.name as category, d.number as department, de.name as device')
+            ->join('s.starter', 'st')
+            ->join('s.club', 'c')
+            ->join('s.division', 'di')
+            ->join('di.department', 'd')
+            ->join('d.category', 'ca')
+            ->join('di.device', 'de')
+            ->where('s.medicalcert = 0')->getQuery()->getResult();
+
+        return $query;
     }
 }
