@@ -6,7 +6,7 @@
             <li>{{ value.firstname }}</li>
         {% else %}
             <ul>
-                {{ key }}
+                {{ key | trans }}
                 {{ _self.buildReport(value) }}
             </ul>
         {% endif %}
