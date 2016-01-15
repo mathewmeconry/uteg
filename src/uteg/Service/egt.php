@@ -303,11 +303,27 @@ class egt
         $groupings[] = array("value" => "department", "name" => "egt.reporting.divisions.department");
         $groupings[] = array("value" => "device", "name" => "egt.reporting.divisions.device");
 
-        $this->reportingDivision(array("gender", "category", "club"));
+        $request = $this->container->get('request');
+        $cookies = $request->cookies;
+
+        $defaultSort = array('gender');
+
+        if ($cookies->has('division-report'))
+        {
+            $cookieVal = json_decode($cookies->get('division-report'));
+        } else {
+            $cookieVal = array('gender', 'category', 'department', 'device');
+            $cookie = new Cookie('division-report', json_encode($cookieVal));
+            $response = new Response();
+            $response->headers->setCookie($cookie);
+        }
+
+        $groupedStarters = $this->reportingDivision(array_merge($defaultSort, $cookieVal));
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
             "comp" => $competition,
-            "groupings" => $groupings
+            "groupings" => $groupings,
+            "starters" => $groupedStarters
         ));
     }
 
