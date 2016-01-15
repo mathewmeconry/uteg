@@ -303,7 +303,7 @@ class egt
         $groupings[] = array("value" => "department", "name" => "egt.reporting.divisions.department");
         $groupings[] = array("value" => "device", "name" => "egt.reporting.divisions.device");
 
-        \Doctrine\Common\Util\Debug::dump($this->reportingDivision(array("asd" => "asd")));
+        $this->reportingDivision(array("gender", "category", "club"));
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
             "comp" => $competition,
@@ -326,9 +326,10 @@ class egt
 
     private function reportingDivision(array $grouping)
     {
+
         $em = $this->container->get('doctrine')->getManager();
 
-        $query = $em
+        $starters = $em
             ->getRepository('uteg:Starters2CompetitionsEGT')
             ->createQueryBuilder('s')
             ->select('st.firstname as firstname, st.lastname as lastname, st.gender as gender, st.birthyear as birthyear, c.name as club, ca.name as category, d.number as department, de.name as device')
@@ -340,6 +341,42 @@ class egt
             ->join('di.device', 'de')
             ->where('s.medicalcert = 0')->getQuery()->getResult();
 
-        return $query;
+        return $this->reportingSort($grouping, $starters);
+    }
+
+    private function reportingSort(array $grouping, array $starters)
+    {
+        foreach ($grouping as $groupBy) {
+            if ($groupBy !== "none") {
+                $starters = $this->groupByRecursive($starters, $groupBy);
+            }
+        }
+
+        return $starters;
+    }
+
+    private function groupByRecursive(array $values, $groupBy)
+    {
+        $newarr = [];
+        foreach ($values as $key => $value) {
+            if ($this->countdim($value) > 1) {
+                $newarr[$key] = $this->groupByRecursive($value, $groupBy);
+            } else {
+                $newarr[$value[$groupBy]][] = $value;
+            }
+        }
+
+        return $newarr;
+    }
+
+    private function countdim($array)
+    {
+        if (is_array(reset($array))) {
+            $return = $this->countdim(reset($array)) + 1;
+        } else {
+            $return = 1;
+        }
+
+        return $return;
     }
 }
