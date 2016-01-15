@@ -303,26 +303,19 @@ class egt
         $groupings[] = array("value" => "department", "name" => "egt.reporting.divisions.department");
         $groupings[] = array("value" => "device", "name" => "egt.reporting.divisions.device");
 
-        $request = $this->container->get('request');
-        $cookies = $request->cookies;
-
-        $defaultSort = array('gender');
-
-        if ($cookies->has('division-report'))
-        {
-            $cookieVal = json_decode($cookies->get('division-report'));
-        } else {
-            $cookieVal = array('gender', 'category', 'department', 'device');
-            $cookie = new Cookie('division-report', json_encode($cookieVal));
-            $response = new Response();
-            $response->headers->setCookie($cookie);
-        }
-
-        $groupedStarters = $this->generateDivisionsReport(array_merge($defaultSort, $cookieVal));
+        $groupedStarters = $this->generateDivisionsReport($request);
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
             "comp" => $competition,
             "groupings" => $groupings,
+            "starters" => $groupedStarters
+        ));
+    }
+
+    public function reportingDivisionsPost(Request $request, \uteg\Entity\Competition $competition) {
+        $groupedStarters = $this->generateDivisionsReport($request);
+
+        return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
             "starters" => $groupedStarters
         ));
     }
@@ -340,7 +333,7 @@ class egt
         return new Response($content, 200, array('content-type' => 'application/pdf'));
     }
 
-    private function generateDivisionsReport(array $grouping)
+    private function generateDivisionsReport(Request $request)
     {
 
         $em = $this->container->get('doctrine')->getManager();
@@ -357,7 +350,21 @@ class egt
             ->join('di.device', 'de')
             ->where('s.medicalcert = 0')->getQuery()->getResult();
 
-        return $this->reportingSort($grouping, $starters);
+        $cookies = $request->cookies;
+
+        $defaultSort = array('gender');
+
+        if ($cookies->has('division-report'))
+        {
+            $cookieVal = json_decode($cookies->get('division-report'));
+        } else {
+            $cookieVal = array('gender', 'category', 'department', 'device');
+            $cookie = new Cookie('division-report', json_encode($cookieVal));
+            $response = new Response();
+            $response->headers->setCookie($cookie);
+        }
+
+        return $this->reportingSort(array_merge($defaultSort, $cookieVal), $starters);
     }
 
     private function reportingSort(array $grouping, array $starters)

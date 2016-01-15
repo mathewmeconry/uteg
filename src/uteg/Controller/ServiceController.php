@@ -66,6 +66,14 @@ class ServiceController extends DefaultController
     }
 
     /**
-     * @Route("{compid}/reporting/divisions
+     * @Route("{compid}/reporting/divisions", name="reportingDivisionsPost")
+     * @Method("POST")
      */
+    public function reportingDivisionsPostAction(Request $request, $compid) {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+
+        return $module->reportingDivisionsPost($request, $comp);
+    }
 }
