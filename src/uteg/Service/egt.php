@@ -339,7 +339,23 @@ class egt
 
     private function generateDivisionsReport(Request $request)
     {
+        $cookies = $request->cookies;
 
+        $defaultSort = array('gender');
+
+        if ($cookies->has('division-report')) {
+            $cookieVal = json_decode($cookies->get('division-report'));
+        } else {
+            $cookieVal = array('gender', 'category', 'department', 'device');
+            $cookie = new Cookie('division-report', json_encode($cookieVal));
+            $response = new Response();
+            $response->headers->setCookie($cookie);
+        }
+
+        return $this->reportingSort(array_merge($defaultSort, $cookieVal), $this->getCompleteStarters());
+    }
+
+    private function getCompleteStarters() {
         $em = $this->container->get('doctrine')->getManager();
 
         $starters = $em
@@ -354,20 +370,7 @@ class egt
             ->join('di.device', 'de')
             ->where('s.medicalcert = 0')->getQuery()->getResult();
 
-        $cookies = $request->cookies;
-
-        $defaultSort = array('gender');
-
-        if ($cookies->has('division-report')) {
-            $cookieVal = json_decode($cookies->get('division-report'));
-        } else {
-            $cookieVal = array('gender', 'category', 'department', 'device');
-            $cookie = new Cookie('division-report', json_encode($cookieVal));
-            $response = new Response();
-            $response->headers->setCookie($cookie);
-        }
-
-        return $this->reportingSort(array_merge($defaultSort, $cookieVal), $starters);
+        return $starters;
     }
 
     private function reportingSort(array $grouping, array $starters)
