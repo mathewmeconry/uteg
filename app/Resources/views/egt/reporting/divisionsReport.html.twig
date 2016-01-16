@@ -63,7 +63,7 @@
                             <complex-attribute name="border" color="white" size="0px" type="top+right+bottom+left"/>
                         </stylesheet>
                     {% endif %}
-                    {{ key | trans }}
+                    <strong>{{ key | trans }}</strong>
                 </td>
             </tr>
             {{ _self.buildReport(value, colspan, true, type) }}
