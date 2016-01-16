@@ -415,6 +415,7 @@ egt:
             groupby: 'Group by'
             category: 'Category'
             none: 'None'
+            gender: 'Gender'
             club: 'Club'
             department: 'Department'
             device: 'Device'

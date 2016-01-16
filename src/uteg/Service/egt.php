@@ -305,6 +305,7 @@ class egt
 
         $groupings = [];
         $groupings[] = array("value" => "none", "name" => "egt.reporting.divisions.none");
+        $groupings[] = array("value" => "gender", "name" => "egt.reporting.divisions.gender");
         $groupings[] = array("value" => "category", "name" => "egt.reporting.divisions.category");
         $groupings[] = array("value" => "club", "name" => "egt.reporting.divisions.club");
         $groupings[] = array("value" => "department", "name" => "egt.reporting.divisions.department");
