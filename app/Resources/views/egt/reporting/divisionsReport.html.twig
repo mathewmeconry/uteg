@@ -1,24 +1,80 @@
 {% trans_default_domain 'uteg' %}
 
-{% macro buildReport(values, colspan) %}
+{% macro buildReport(values, colspan, notFirst, type) %}
     {% for key, value in values %}
+        {% if notFirst == false %}
+            <table>
+            {% if type == "pdf" %}
+                <stylesheet>
+                    <complex-attribute name="border" color="white" size="0px" type="top+right+bottom+left"/>
+                </stylesheet>
+            {% endif %}
+        {% endif %}
         {% if value.firstname is defined %}
             <tr>
+                {% if type == "pdf" %}
+                    <stylesheet>
+                        <complex-attribute name="border" color="white" size="0px" type="top+right+bottom+left"/>
+                    </stylesheet>
+                {% endif %}
                 {% for val in value %}
-                    <td>{{ val | trans }}</td>
+                    <td>{{ val | trans }}
+                        {% if type == "pdf" %}
+                            <stylesheet>
+                                <complex-attribute name="border" color="white" size="0px" type="top+right+bottom+left"/>
+                            </stylesheet>
+                        {% endif %}
+                    </td>
                 {% endfor %}
             </tr>
         {% else %}
-            <table class="table table-bordered table-striped">
+            {% if notFirst %}
                 <tr>
-                    <td colspan="{{ colspan }}">
-                        {{ key | trans }}
-                    </td>
+                    {% if type == "pdf" %}
+                        <stylesheet>
+                            <complex-attribute name="border" color="white" size="0px" type="top+right+bottom+left"/>
+                        </stylesheet>
+                    {% endif %}
+                    {% if type == "pdf" %}
+                        <td colspan="{{ colspan }}">
+                            <stylesheet>
+                                <attribute name="color" value="white"/>
+                                <complex-attribute name="border" color="white" size="0px"/>
+                                <complex-attribute name="background" color="white"/>
+                                <attribute name="height" value="5px"/>
+                            </stylesheet>
+                            a
+                        </td>
+                    {% elseif type == "html" %}
+                        <td colspan="{{ colspan }}"
+                            style="background: white; text-color: white; border: none; height: 5px;"></td>
+                    {% endif %}
                 </tr>
-                {{ _self.buildReport(value, colspan) }}
+            {% endif %}
+            <tr>
+                {% if type == "pdf" %}
+                    <stylesheet>
+                        <complex-attribute name="border" color="white" size="0px" type="top+right+bottom+left"/>
+                    </stylesheet>
+                {% endif %}
+                <td colspan="{{ colspan }}">
+                    {% if type == "pdf" %}
+                        <stylesheet>
+                            <complex-attribute name="border" color="white" size="0px" type="top+right+bottom+left"/>
+                        </stylesheet>
+                    {% endif %}
+                    {{ key | trans }}
+                </td>
+            </tr>
+            {{ _self.buildReport(value, colspan, true, type) }}
+        {% endif %}
+        {% if notFirst == false %}
             </table>
+            <div height="30px">
+            </div>
         {% endif %}
     {% endfor %}
 {% endmacro %}
 
-{{ _self.buildReport(starters, colspan) }}
+
+{{ _self.buildReport(starters, colspan, false, type) }}

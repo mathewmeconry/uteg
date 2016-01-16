@@ -298,7 +298,8 @@ class egt
             return $this->renderPdf('egt/reporting/divisions.pdf.twig', array(
                 "comp" => $competition,
                 "starters" => $groupedStarters,
-                "colspan" => count($this->getLastDim($groupedStarters))
+                "colspan" => count($this->getLastDim($groupedStarters)),
+                "type" => "pdf"
             ));
         }
 
@@ -313,7 +314,8 @@ class egt
             "comp" => $competition,
             "groupings" => $groupings,
             "starters" => $groupedStarters,
-            "colspan" => count($this->getLastDim($groupedStarters))
+            "colspan" => count($this->getLastDim($groupedStarters)),
+            "type" => "html"
         ));
     }
 
@@ -323,7 +325,8 @@ class egt
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
             "starters" => $groupedStarters,
-            "colspan" => count($this->getLastDim($groupedStarters))
+            "colspan" => count($this->getLastDim($groupedStarters)),
+            "type" => "html"
         ));
     }
 
