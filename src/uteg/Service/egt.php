@@ -333,15 +333,16 @@ class egt
 
     private function renderPdf($path, $additional)
     {
-        $facade = $this->container->get('ps_pdf.facade');
-        $response = new Response();
-        $this->container->get('templating')->renderResponse($path, $additional, $response);
+        $html = $this->container->get('templating')->render($path, $additional);
 
-        $xml = $response->getContent();
-
-        $content = $facade->render($xml);
-
-        return new Response($content, 200, array('content-type' => 'application/pdf'));
+        return new Response(
+            $this->container->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => 'attachment; filename="DivisionsReport.pdf"'
+            )
+        );
     }
 
     private function generateDivisionsReport(Request $request)
