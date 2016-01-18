@@ -3,13 +3,13 @@
 {% macro buildReport(values, colspan) %}
     {% for key, value in values %}
         {% if value.firstname is defined %}
-            <tr>
+            <tr class="report-content-tr">
                 {% for val in value %}
-                    <td>{{ val | trans }}</td>
+                    <td class="report-content-td">{{ val | trans }}</td>
                 {% endfor %}
             </tr>
         {% else %}
-            <tr>
+            <tr class="report-tr">
                 <th class="report-th" colspan="{{ colspan }}">
                     {{ key | trans }}
                 </th>
