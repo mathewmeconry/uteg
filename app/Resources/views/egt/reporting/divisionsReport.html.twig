@@ -9,16 +9,28 @@
                 {% endfor %}
             </tr>
         {% else %}
-            <table>
-                <tr>
-                    <td colspan="{{ colspan }}">
-                        {{ key | trans }}
-                    </td>
-                </tr>
-                {{ _self.buildReport(value, colspan) }}
-            </table>
+            <tr>
+                <th class="report-th" colspan="{{ colspan }}">
+                    {{ key | trans }}
+                </th>
+            </tr>
+            {{ _self.buildReport(value, colspan) }}
         {% endif %}
     {% endfor %}
 {% endmacro %}
 
-{{ _self.buildReport(starters, colspan) }}
+
+<meta charset="UTF-8"/>
+
+<style>
+    #report-table {
+        width: 100%
+    }
+
+    .report-th {
+        border-bottom:2px solid #5d5b5b;
+    }
+</style>
+<table id="report-table">
+    {{ _self.buildReport(starters, colspan) }}
+</table>
