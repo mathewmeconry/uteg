@@ -331,9 +331,14 @@ class egt
     private function renderPdf($path, $additional)
     {
         $html = $this->container->get('templating')->render($path, $additional);
+        $pdf = $this->container->get('knp_snappy.pdf');
+        $pdf->setOption('orientation', 'portrait');
+        $pdf->setOption('footer-center', '[page] / [topage]');
+        $pdf->setOption('footer-font-name', 'Quicksand');
+        $pdf->setOption('footer-font-size', 8);
 
         return new Response(
-            $this->container->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            $pdf->getOutputFromHtml($html),
             200,
             array(
                 'Content-Type' => 'application/pdf',
