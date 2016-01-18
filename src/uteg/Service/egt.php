@@ -336,8 +336,8 @@ class egt
             $this->container->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,
             array(
-                'Content-Type'          => 'application/pdf',
-                'Content-Disposition'   => 'inline; filename="DivisionsReport.pdf"'
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="DivisionsReport.pdf"'
             )
         );
     }
@@ -406,6 +406,10 @@ class egt
                 $gb = $value[$groupBy];
                 unset($value[$groupBy]);
 
+                if ($groupBy === "department") {
+                    $gb = $this->container->get('translator')->trans('egt.reporting.divisions.department', array(), 'uteg') . ' ' . $gb;
+                }
+
                 $newarr[$gb][] = $value;
             }
         }
@@ -424,7 +428,8 @@ class egt
         return $return;
     }
 
-    private function getLastDim($array) {
+    private function getLastDim($array)
+    {
         if ($this->countdim($array) > 1) {
             return $this->getLastDim(end($array));
         }
