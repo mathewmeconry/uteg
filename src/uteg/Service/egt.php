@@ -375,7 +375,15 @@ class egt
             ->join('di.department', 'd')
             ->join('d.category', 'ca')
             ->join('di.device', 'de')
-            ->where('s.medicalcert = 0')->getQuery()->getResult();
+            ->where('s.medicalcert = 0')
+            ->orderBy('st.gender', 'ASC')
+            ->addOrderBy('s.category', 'ASC')
+            ->addOrderBy('di.department', 'ASC')
+            ->addOrderBy('s.division', 'ASC')
+            ->addOrderBy('s.club', 'ASC')
+            ->addOrderBy('st.firstname', 'ASC')
+            ->addOrderBy('st.lastname', 'ASC')
+            ->getQuery()->getResult();
 
         return $starters;
     }
