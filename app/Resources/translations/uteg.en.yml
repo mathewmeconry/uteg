@@ -1,3 +1,6 @@
+male: 'Male'
+female: 'Female'
+
 login:
     title: 'Log in'
     nav_button: 'Log in'
