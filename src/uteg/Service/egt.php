@@ -295,11 +295,10 @@ class egt
         $groupedStarters = $this->generateDivisionsReport($request);
 
         if ($format === "pdf") {
-            return $this->renderPdf('egt/reporting/divisions.pdf.twig', array(
+            return $this->renderPdf('egt/reporting/divisionsReport.html.twig', array(
                 "comp" => $competition,
                 "starters" => $groupedStarters,
-                "colspan" => count($this->getLastDim($groupedStarters)),
-                "type" => "pdf"
+                "colspan" => count($this->getLastDim($groupedStarters))
             ));
         }
 
@@ -315,8 +314,7 @@ class egt
             "comp" => $competition,
             "groupings" => $groupings,
             "starters" => $groupedStarters,
-            "colspan" => count($this->getLastDim($groupedStarters)),
-            "type" => "html"
+            "colspan" => count($this->getLastDim($groupedStarters))
         ));
     }
 
@@ -326,8 +324,7 @@ class egt
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
             "starters" => $groupedStarters,
-            "colspan" => count($this->getLastDim($groupedStarters)),
-            "type" => "html"
+            "colspan" => count($this->getLastDim($groupedStarters))
         ));
     }
 
@@ -340,7 +337,7 @@ class egt
             200,
             array(
                 'Content-Type'          => 'application/pdf',
-                'Content-Disposition'   => 'attachment; filename="DivisionsReport.pdf"'
+                'Content-Disposition'   => 'inline; filename="DivisionsReport.pdf"'
             )
         );
     }
