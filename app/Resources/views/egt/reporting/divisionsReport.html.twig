@@ -30,6 +30,12 @@
 {% endif %}
 
 <style>
+    #columns {
+        -webkit-column-count: {{ columncount }}; /* Chrome, Safari, Opera */
+        -moz-column-count: {{ columncount }}; /* Firefox */
+        column-count: {{ columncount }};
+    }
+
     #report-table {
         width: 100%;
         text-align: left;
@@ -81,6 +87,8 @@
         background-color: #c7c7c7;
     }
 </style>
+<div id="columns">
 <table id="report-table">
     {{ _self.buildReport(starters, colspan, 0) }}
 </table>
+</div>

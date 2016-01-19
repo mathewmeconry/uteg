@@ -14,9 +14,11 @@
             var settings = Cookies.getJSON("division-report");
 
             if (settings !== undefined) {
-                $.each(settings, function (key, value) {
+                $.each(settings[0], function (key, value) {
                     $('#groupby-' + (key + 1)).val(value);
                 });
+
+                $('#report-settings-columncount').val(settings[1]);
             }
             selectPicker('.select', false, true);
 
@@ -32,13 +34,18 @@
 
             $('#save-report-settings').click(function () {
                 var settings = [];
+                var groupby = [];
                 $(".panel-heading-settings").slideUp(300);
 
-                $.each($('.report-settings'), function (key, select) {
+                $.each($('.report-settings-groupby'), function (key, select) {
                     if ($(select).val() !== "") {
-                        settings.push($(select).val());
+                        groupby.push($(select).val());
                     }
                 });
+
+                settings.push(groupby);
+                settings.push($('#report-settings-columncount').val());
+
                 Cookies.set("division-report", settings);
 
                 $.ajax({
@@ -66,18 +73,36 @@
                     </ul>
                 </div>
                 <div class="panel-heading-settings">
-                    {% for i in 1..4 %}
-                        <div>
-                            {{ i }}. {{ 'egt.reporting.divisions.groupby' | trans }}:
-                            <select class="select report-settings" id="groupby-{{ i }}" name="groupby[{{ i }}]">
-                                {% for grouping in groupings %}
-                                    <option value="{{ grouping.value }}">{{ grouping.name | trans }}</option>
-                                {% endfor %}
-                            </select>
+                    <form class="form-horizontal">
+                        {% for i in 1..4 %}
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-12 control-label">{{ i }}
+                                    . {{ 'egt.reporting.divisions.groupby' | trans }}
+                                    :</label>
+                                <div class="col-md-6">
+                                    <select class="form-control select report-settings-groupby" id="groupby-{{ i }}"
+                                            name="groupby[{{ i }}]">
+                                        {% for grouping in groupings %}
+                                            <option value="{{ grouping.value }}">{{ grouping.name | trans }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="form-group">
+                            <label class="col-md-3 col-xs-12 control-label">{{ 'egt.reporting.divisions.columncount'|trans }}
+                                :</label>
+                            <div class="col-md-6">
+                                <input type="number" name="columncount"
+                                       id="report-settings-columncount"
+                                       class="form-control report-settings-columncount"/>
+                            </div>
                         </div>
-                    {% endfor %}
-                    <button class="btn btn-success btn-rounded pull-right"
-                            id="save-report-settings">{{ 'egt.reporting.divisions.save' | trans }}</button>
+                        <div class="form-group">
+                            <button class="btn btn-success btn-rounded pull-right"
+                                    id="save-report-settings">{{ 'egt.reporting.divisions.save' | trans }}</button>
+                        </div>
+                    </form>
                 </div>
                 <div class="panel-body">
                     <div class="row" id="report">

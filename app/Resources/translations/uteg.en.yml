@@ -422,4 +422,5 @@ egt:
             club: 'Club'
             department: 'Department'
             device: 'Device'
+            columncount: 'Number of columns'
             save: 'Save'

@@ -8,6 +8,7 @@
 
 namespace uteg\Service;
 
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -298,7 +299,8 @@ class egt
             return $this->renderPdf('egt/reporting/divisionsReport.html.twig', array(
                 "comp" => $competition,
                 "starters" => $groupedStarters,
-                "colspan" => count($this->getLastDim($groupedStarters))
+                "colspan" => count($this->getLastDim($groupedStarters)),
+                "columncount" => json_decode($request->cookies->get('division-report'))[1]
             ));
         }
 
@@ -314,7 +316,8 @@ class egt
             "comp" => $competition,
             "groupings" => $groupings,
             "starters" => $groupedStarters,
-            "colspan" => count($this->getLastDim($groupedStarters))
+            "colspan" => count($this->getLastDim($groupedStarters)),
+            "columncount" => json_decode($request->cookies->get('division-report'))[1]
         ));
     }
 
@@ -324,7 +327,8 @@ class egt
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
             "starters" => $groupedStarters,
-            "colspan" => count($this->getLastDim($groupedStarters))
+            "colspan" => count($this->getLastDim($groupedStarters)),
+            "columncount" => json_decode($request->cookies->get('division-report'))[1]
         ));
     }
 
@@ -354,13 +358,13 @@ class egt
         if ($cookies->has('division-report')) {
             $cookieVal = json_decode($cookies->get('division-report'));
         } else {
-            $cookieVal = array('gender', 'category', 'department', 'device');
+            $cookieVal = array(array('gender', 'category', 'department', 'device'), '1');
             $cookie = new Cookie('division-report', json_encode($cookieVal));
             $response = new Response();
             $response->headers->setCookie($cookie);
         }
 
-        return $this->reportingSort($cookieVal, $this->getCompleteStarters());
+        return $this->reportingSort($cookieVal[0], $this->getCompleteStarters());
     }
 
     private function getCompleteStarters()
