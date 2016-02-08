@@ -76,7 +76,7 @@ class DepartmentController extends DefaultController
 
         $dateList = [];
         foreach ($dateRange as $date) {
-            $dateList[$dateFormatter->format($date, "short", "none", $request->getPreferredLanguage())] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
+            $dateList[$dateFormatter->format($date, "short", "none", "en")] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
         }
 
         $department = new Department();
@@ -88,7 +88,6 @@ class DepartmentController extends DefaultController
             $department = $form->getData();
 
             $department->setDate(new \DateTime($department->getDate()));
-
             $department->setCompetition($competition);
             $department->setStarted(false);
             $department->setEnded(false);
@@ -139,7 +138,7 @@ class DepartmentController extends DefaultController
 
         $dateList = [];
         foreach ($dateRange as $date) {
-            $dateList[$dateFormatter->format($date, "short", "none", $request->getPreferredLanguage())] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
+            $dateList[$dateFormatter->format($date, "short", "none", "en")] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
         }
 
         $department = $em->find('uteg:Department', $id);
