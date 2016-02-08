@@ -1,9 +1,12 @@
+male: 'Male'
+female: 'Female'
+
 login:
     title: 'Log in'
     nav_button: 'Log in'
     header: 'Log in'
-    username: Username
-    password: Password
+    username: 'Username'
+    password: 'Password'
     remember_me: 'Remember me'
     button: 'Log in'
 
@@ -37,6 +40,7 @@ competitionlist:
         startdate: 'Start date'
         enddate: 'End date'
         submit: 'Add'
+        cancel: 'Cancel'
         success: 'Competition created successfully'
     delcomp:
         success: 'Competition deleted successfully'
@@ -110,7 +114,7 @@ starters:
         firstname: 'Firstname'
         lastname: 'Lastname'
         birthyear: 'Birth year'
-        sex: 'Sex'
+        gender: 'Gender'
         club: 'Club'
         category: 'Category'
         present: 'Present'
@@ -130,7 +134,7 @@ starters:
             firstname: 'Firstname'
             lastname: 'Lastname'
             birthyear: 'Birth year'
-            sex: 'Sex'
+            gender: 'Gender'
             category: 'Category'
             club: 'Club'
             present: 'Present'
@@ -158,7 +162,7 @@ starters:
             firstname: 'Firstname'
             lastname: 'Lastname'
             birthyear: 'Birth year'
-            sex: 'Sex'
+            gender: 'Gender'
             male: 'Male'
             female: 'Female'
             category: 'Category'
@@ -251,7 +255,7 @@ invite:
             firstname: 'Firstname'
             lastname: 'Lastname'
             birthyear: 'Birth year'
-            sex: 'Sex'
+            gender: 'Gender'
             category: 'Category'
             male: 'Male'
             female: 'Female'
@@ -336,18 +340,87 @@ permissions:
         search: 'Search'
         searchPlaceholder: 'Search...'
         zeroRecords: 'No Permissions given'
+
 service:
     egt: 'EGT'
-    grouping:
-        path: 'Grouping'
-        path.male: 'Male'
-        path.female: 'Female'
+
+department:
+    add:
+        number: 'Number'
+        date: 'Date'
+        female: 'Female'
+        male: 'Male'
+        gender: 'Gender'
+        category: 'Category'
+        save: 'Save'
+        cancel: 'Cancel'
+        success: 'Departemnt successfully added'
+    edit:
+        modalHeader: 'Edit Department'
+        success: 'Departemnt successfully edited'
+    remove:
+        modalHeader: 'Delete Department'
+        question: 'Do you really want remove this Department: '
+        confirm: 'Confirm'
+        cancel: 'Cancel'
+        ok: 'OK'
+        success: 'Department successfully deleted'
+        access_denied: 'You have no permissions to delete this Department'
+
+departments:
+    title: 'Departments'
+    header: 'Departments'
+    path: 'Departments'
+    table:
+            all: 'All'
+            next: 'Next'
+            previous: 'Previous'
+            search: 'Search'
+            searchPlaceholder: 'Search...'
+            zeroRecords: 'No Departments defined'
+            number: 'Number'
+            date: 'Date'
+            category: 'Category'
+            gender: 'Gender'
+            actions: 'Actions'
+device:
+    floor: 'Floor'
+    rings: 'Swinging Rings'
+    vault: 'Vault'
+    parallel-bars: 'Parallel Bars'
+    horizontal-bar: 'Horizontal Bar'
+
 
 egt:
     nav:
         grouping: 'Starter Grouping'
-        grouping.female: 'Female'
-        grouping.male: 'Male'
+        departments: 'Departments'
+        divisions: 'Divisions'
+        reporting: 'Reporting'
+        grouping: 'Starter Grouping'
     grouping:
-        title: 'Starter Grouping'
-        header: 'Starter Grouping'
+        path: 'Grouping'
+    divisions:
+        title: 'Divisions'
+        header: 'Divisions'
+        path: 'Divisions'
+        female: 'Female'
+        male: 'Male'
+        all: 'All'
+        department: 'Department'
+        header-unassigned: 'Unassigned Starters'
+    reporting:
+        path: 'Reports'
+        divisions:
+            title: 'Report Divisions'
+            header: 'Report Divisions'
+            path: 'Divisions'
+            groupby: 'Group by'
+            category: 'Category'
+            none: 'None'
+            gender: 'Gender'
+            club: 'Club'
+            department: 'Department'
+            device: 'Device'
+            columncount: 'Number of columns'
+            save: 'Save'

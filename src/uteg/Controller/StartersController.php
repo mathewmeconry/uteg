@@ -5,7 +5,6 @@ namespace uteg\Controller;
 use uteg\Entity\Club;
 use uteg\Form\Type\StarterType;
 use uteg\Form\Type\S2cType;
-use uteg\Entity\Starters2Competitions;
 use uteg\Entity\Starter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -20,10 +19,10 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 class StartersController extends DefaultController
 {
     /**
-     * @Route("/{compid}/starters/{sex}", name="starters", defaults={"sex": "male"}, requirements={"sex": "male|female"})
+     * @Route("/{compid}/starters/{gender}", name="starters", defaults={"gender": "male"}, requirements={"gender": "male|female"})
      * @Method("GET")
      */
-    public function startersGetAction($sex, Request $request, $compid)
+    public function startersGetAction($gender, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
 
@@ -36,33 +35,30 @@ class StartersController extends DefaultController
         if (end($requestUri) !== 'male' && end($requestUri) !== 'female') {
             return $this->redirect($request->getRequestUri() . "/male", 301);
         } else {
-            $sexshort = (end($requestUri) == 'female') ? 'f' : 'm';
-            $sextrans = ($sex == 'female') ? 'starters.female' : 'starters.male';
+            $gendershort = (end($requestUri) == 'female') ? 'f' : 'm';
+            $gendertrans = ($gender == 'female') ? 'starters.female' : 'starters.male';
 
             return $this->render('starters.html.twig', array(
-                "sex" => $sexshort,
-                "sextrans" => $sextrans,
+                "gender" => $gendershort,
+                "gendertrans" => $gendertrans,
                 "comp" => $comp
             ));
         }
     }
 
     /**
-     * @Route("/{compid}/starters/{sex}/{cat}", name="starterspost", defaults={"sex": "male", "cat": "0"}, requirements={"sex": "male|female", "cat": "\d+"})
+     * @Route("/{compid}/starters/{gender}/{cat}", name="starterspost", defaults={"gender": "male", "cat": "0"}, requirements={"gender": "male|female", "cat": "\d+"})
      * @Method("POST")
      */
-    public function startersPostAction($sex, $cat, Request $request, $compid)
+    public function startersPostAction($gender, $cat, Request $request, $compid)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
-        setlocale(LC_TIME, $request->getLocale());
-        $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
 
-
-        if ($sex !== 'male' && $sex !== 'female') {
+        if ($gender !== 'male' && $gender !== 'female') {
             return $this->redirect($request->getRequestUri() . "/male", 301);
         } else {
             $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $request->getSession()->get('comp'));
-            $s2cs = ($cat == 0) ? $comp->getS2csBySex($sex) : $comp->getS2csBySexCat($sex, $cat);
+            $s2cs = ($cat == 0) ? $comp->getS2csByGender($gender) : $comp->getS2csByGenderCat($gender, $cat);
             $starters["data"] = array();
 
             foreach ($s2cs as $s2c) {
@@ -71,7 +67,7 @@ class StartersController extends DefaultController
                     "lastname" => $s2c->getStarter()->getLastname(),
                     "birthyear" => $s2c->getStarter()->getBirthyear(),
                     "club" => $s2c->getClub()->getName(),
-                    "category" => ($s2c->getCategory()->getNumber() == 8) ? ($s2c->getStarter()->getSex() == 'female') ? $s2c->getCategory()->getName() . "D" : $s2c->getCategory()->getName() . "H" : $s2c->getCategory()->getName(),
+                    "category" => ($s2c->getCategory()->getNumber() == 8) ? ($s2c->getStarter()->getGender() == 'female') ? $s2c->getCategory()->getName() . "D" : $s2c->getCategory()->getName() . "H" : $s2c->getCategory()->getName(),
                     "present" => $s2c->getPresent(),
                     "medicalcert" => $s2c->getMedicalcert()
                 );
@@ -123,25 +119,25 @@ class StartersController extends DefaultController
             $em = $this->getDoctrine()->getEntityManager();
             $formdata = $form->getData();
 
-            $starter = $em->getRepository('uteg:Starter')->findOneBy(array("firstname" => $formdata['firstname'], "lastname" => $formdata['lastname'], "birthyear" => $formdata['birthyear'], "sex" => $formdata['sex']));
+            $starter = $em->getRepository('uteg:Starter')->findOneBy(array("firstname" => $formdata['firstname'], "lastname" => $formdata['lastname'], "birthyear" => $formdata['birthyear'], "gender" => $formdata['gender']));
             if (!$starter) {
-                $starter = $em->getRepository('uteg:Starter')->findOneBy(array("lastname" => $formdata['firstname'], "firstname" => $formdata['lastname'], "birthyear" => $formdata['birthyear'], "sex" => $formdata['sex']));
+                $starter = $em->getRepository('uteg:Starter')->findOneBy(array("lastname" => $formdata['firstname'], "firstname" => $formdata['lastname'], "birthyear" => $formdata['birthyear'], "gender" => $formdata['gender']));
                 if (!$starter) {
                     $starter = new Starter();
                     $starter->setFirstname($formdata['firstname']);
                     $starter->setLastname($formdata['lastname']);
                     $starter->setBirthyear($formdata['birthyear']);
-                    $starter->setSex($formdata['sex']);
+                    $starter->setGender($formdata['gender']);
                     $s2c = false;
                 } else {
-                    $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $comp));
+                    $s2c = $module->findS2c(array("starter" => $starter, "competition" => $comp));
                 }
             } else {
-                $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $comp));
+                $s2c = $module->findS2c(array("starter" => $starter, "competition" => $comp));
             }
 
             if (!$s2c) {
-                $s2c = new Starters2Competitions();
+                $s2c = $module->getS2c();
                 $s2c->setStarter($starter);
                 $s2c->setCompetition($comp);
 
@@ -239,9 +235,9 @@ class StartersController extends DefaultController
                 }
 
                 //  Get worksheet dimensions
-                $sheetData = $objPHPExcel->getActiveSheet();
-                $highestRow = $sheetData->getHighestRow();
-                $highestColumn = $sheetData->getHighestColumn();
+                $sheetData = $objPHPExcel->setActiveSheetIndex(0);
+                $highestRow = $sheetData->getHighestDataRow();
+                $highestColumn = $sheetData->getHighestDataColumn();
                 $highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn);
                 ($fs->exists($file)) ? $fs->remove($file) : '';
 
@@ -253,7 +249,7 @@ class StartersController extends DefaultController
                         ($sheetData->getCellByColumnAndRow(0, $row)->getValue() == 'Firstname' ||
                             $sheetData->getCellByColumnAndRow(1, $row)->getValue() == 'Lastname' ||
                             $sheetData->getCellByColumnAndRow(2, $row)->getValue() == 'Brith year' ||
-                            $sheetData->getCellByColumnAndRow(3, $row)->getValue() == 'Sex' ||
+                            $sheetData->getCellByColumnAndRow(3, $row)->getValue() == 'Gender' ||
                             $sheetData->getCellByColumnAndRow(4, $row)->getValue() == 'Category' ||
                             $sheetData->getCellByColumnAndRow(5, $row)->getValue() == 'Club') ? $row++ : $row;
 
@@ -283,9 +279,9 @@ class StartersController extends DefaultController
                             $errors[$index]['birthyear'] = 'starter.error.birthyearMax';
                         }
 
-                        $sex = strtolower($sheetData->getCellByColumnAndRow(3, $row)->getValue());
-                        if ($sex !== 'male' && $sex !== 'female') {
-                            $errors[$index]['sex'] = 'starter.error.sex';
+                        $gender = strtolower($sheetData->getCellByColumnAndRow(3, $row)->getValue());
+                        if ($gender !== 'male' && $gender !== 'female') {
+                            $errors[$index]['gender'] = 'starter.error.gender';
                         }
 
                         $clubname = $sheetData->getCellByColumnAndRow(5, $row)->getValue();
@@ -311,7 +307,7 @@ class StartersController extends DefaultController
                         $starters[] = array("firstname" => $firstname,
                             'lastname' => $lastname,
                             'birthyear' => $birthyear,
-                            'sex' => $sex,
+                            'gender' => $gender,
                             'category' => $category,
                             'club' => $club
                         );
@@ -319,7 +315,7 @@ class StartersController extends DefaultController
                         unset($firstname);
                         unset($lastname);
                         unset($birthyear);
-                        unset($sex);
+                        unset($gender);
                         unset($club);
                         unset($clubname);
                         unset($category);
@@ -384,7 +380,7 @@ class StartersController extends DefaultController
     /**
      * @Route("/{compid}/starter/edit/{id}", name="starterEdit", defaults={"id": ""}, requirements={"id": "\d+"})
      */
-    public function starterEditAction($id, Request $request, $compid)
+    public function starterEditAction(Request $request, $compid, $id)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
@@ -392,7 +388,7 @@ class StartersController extends DefaultController
         $module = $this->get($comp->getModule()->getServiceName());
         $module->init();
 
-        $s2c = $this->getDoctrine()->getEntityManager()->find('uteg:Starters2Competitions', $id);
+        $s2c = $module->findS2c(array("id" => $id));
 
         $form = $this->createForm(new S2cType(), $s2c);
 
@@ -417,9 +413,9 @@ class StartersController extends DefaultController
     }
 
     /**
-     * @Route("/starter/remove", name="starterRemove")
+     * @Route("/{compid}/starter/remove/{id}", name="starterRemove", defaults={"id": ""}, requirements={"id": "\d+"})
      */
-    public function starterRemoveAction(Request $request, $compid)
+    public function starterRemoveAction(Request $request, $compid, $id)
     {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
 
@@ -428,7 +424,7 @@ class StartersController extends DefaultController
         $module->init();
 
         $em = $this->getDoctrine()->getEntityManager();
-        $s2c = $em->find('uteg:Starters2Competitions', $_POST['id']);
+        $s2c = $module->findS2c(array("id" => $id));
 
         $comp->removeS2c($s2c);
         $em->persist($comp);

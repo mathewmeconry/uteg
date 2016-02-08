@@ -44,7 +44,7 @@
                 source: substringMatcher(starters),
                 templates: {
                     suggestion: function (starter) {
-                        return '<p><span class="' + starter.sex + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';
+                        return '<p><span class="' + starter.gender + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.gender == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';
                     }
                 }
             });
@@ -52,7 +52,7 @@
 
         $(document).ready(function () {
             {% for starter in starters %}
-            {% if starter.sex is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.sex }}");
+            {% if starter.gender is defined %}$('#gender{{ loop.index0 }}').val("{{ starter.gender }}");
             {% endif %}
             {% if starter.club.id is defined %}$('#club{{ loop.index0 }}').val("{{ starter.club.id }}");
             {% endif %}
@@ -60,14 +60,8 @@
             {% endif %}
             {% endfor %}
 
-            $('.selectSearch').selectpicker({
-                liveSearch: true,
-                size: 10
-            });
-
-            $('.select').selectpicker({
-                size: 10
-            });
+            selectPicker('.selectSearch', true);
+            selectPicker('.select', false);
 
             $('#submit').click(function () {
                 $('#starters').submit();
@@ -86,7 +80,7 @@
                 row.find('[name*="firstname"]').typeahead('val', starter.firstname);
                 row.find('[name*="lastname"]').typeahead('val', starter.lastname);
                 row.find('[name*="birthyear"]').typeahead('val', starter.birthyear);
-                row.find('[name*="sex"]').selectpicker('val', starter.sex);
+                row.find('[name*="gender"]').selectpicker('val', starter.gender);
             });
         });
     </script>
@@ -107,7 +101,7 @@
                                 <th>{{ 'starters.import.table.firstname'|trans }}</th>
                                 <th>{{ 'starters.import.table.lastname'|trans }}</th>
                                 <th>{{ 'starters.import.table.birthyear'|trans }}</th>
-                                <th>{{ 'starters.import.table.sex'|trans }}</th>
+                                <th>{{ 'starters.import.table.gender'|trans }}</th>
                                 <th>{{ 'starters.import.table.club'|trans }}</th>
                                 <th>{{ 'starters.import.table.category'|trans }}</th>
                             </tr>
@@ -135,14 +129,14 @@
                                                 class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
                                     </td>
                                     <td>
-                                        <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]"
+                                        <select id="gender{{ loop.index0 }}" name="data[{{ loop.index0 }}][gender]"
                                                 class="form-control select">
                                             <option value="">{{ 'starters.import.choose'|trans }}</option>
                                             <option value="male">{{ 'starters.import.table.male'|trans }}</option>
                                             <option value="female">{{ 'starters.import.table.female'|trans }}</option>
                                         </select>
-                                        {% if errors[loop.index0].sex is defined %}<label
-                                                class="error">{{ errors[loop.index0].sex|trans }}</label>{% endif %}
+                                        {% if errors[loop.index0].gender is defined %}<label
+                                                class="error">{{ errors[loop.index0].gender|trans }}</label>{% endif %}
                                     </td>
                                     <td>
                                         <select id="club{{ loop.index0 }}" name="data[{{ loop.index0 }}][club]"

@@ -1,6 +1,6 @@
 {% trans_default_domain 'uteg' %}
 
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
     <!-- META SECTION -->
@@ -18,9 +18,7 @@
     {% block cssplugins %}{% endblock %}
     <!-- EOF CSS INCLUDE -->
 
-    <style>
         {% block css %}{% endblock %}
-    </style>
 </head>
 <body>
 <!-- START PAGE CONTAINER -->
@@ -271,6 +269,9 @@
 
 <script type="text/javascript" src="{{ asset("js/plugins/moment.min.js") }}"></script>
 <script type="text/javascript" src="{{ asset("js/plugins/daterangepicker/daterangepicker.js") }}"></script>
+
+<script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+
 {% block jsplugins %}{% endblock %}
 <!-- END THIS PAGE PLUGINS-->
 
@@ -290,6 +291,22 @@
         }).success(function (flashbag) {
             eval(flashbag);
         });
+    }
+
+    function selectPicker(sl, search, showSubtext) {
+        search = typeof search !== 'undefined' ? search : false;
+        search = typeof search !== 'undefined' ? search : false;
+
+        $(sl).selectpicker({
+            liveSearch: false,
+            size: 10,
+            liveSearch: search,
+            showSubtext: showSubtext
+        });
+
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            $(sl).selectpicker('mobile');
+        }
     }
 
     $(document).ready(function () {

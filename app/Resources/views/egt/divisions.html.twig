@@ -1,0 +1,311 @@
+{% trans_default_domain 'uteg' %}
+
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'egt.divisions.title'|trans }}{% endblock %}
+
+{% block jsplugins %}
+    <script type="text/javascript" src='{{ asset("js/plugins/nestable/jquery.nestable.js") }}'></script>
+{% endblock %}
+
+{% block css %}
+    <style>
+        .sortable {
+            padding-top: 20px;
+        }
+
+        .sortable-list {
+            border: 1px solid #D5D5D5;
+            padding: 5px;
+            background: rgba(242, 242, 242, 0.4);
+            overflow-y: auto;
+            max-height: 95%;
+            -moz-border-radius: 5px 5px 5px 5px;
+            -webkit-border-radius: 5px 5px 5px 5px;
+            border-radius: 5px 5px 5px 5px;
+            position: static;
+        }
+
+        .device > ul {
+            max-height: 30%;
+        }
+
+        .display-none {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function init() {
+            selectPicker('.select', false, true);
+            selectPicker('.selectSearch', true, true);
+
+            $('.select, .selectSearch').change(function () {
+                selectChange($(this).data('filter'));
+            });
+
+            $(".sortable-list").sortable({
+                connectWith: ".sortable-list",
+                items: "> li",
+                revert: true,
+                receive: function (event, ui) {
+                    assignStarter(ui);
+                    numberSortable();
+                }
+            });
+
+            selectChange('gender');
+
+            $(window).resize(function () {
+                sizeDivs();
+            });
+        }
+
+        function sizeDivs() {
+            sizeDiv('#divisions-unassigned-starters > ul');
+            sizeDiv('.device > ul');
+        }
+
+        function sizeDiv(selector) {
+            if (selector == "#divisions-unassigned-starters > ul") {
+                $(selector).height($(window).height() / 100 * 70);
+                $(selector).css('min-height', $(window).height() / 100 * 70);
+            } else {
+                $(selector).height($(window).height() / 100 * 31);
+                $(selector).css('min-height', $(window).height() / 100 * 31);
+            }
+        }
+
+        function update(source) {
+            switch (source) {
+                case 'gender':
+                    $('#divisions-filter-category').selectpicker('val', $('#divisions-filter-category option')[0].value);
+                    break;
+                case 'category':
+                    $('#divisions-filter-department').selectpicker('val', $('#divisions-filter-department option')[0].value);
+                    break;
+                case 'department':
+                    $('#divisions-filter-club').selectpicker('val', $('#divisions-filter-club option')[0].value);
+                    break;
+            }
+        }
+
+        function selectChange(filter) {
+            var filterSerialize = $('#divisions-filter').serialize();
+
+            return $.ajax({
+                url: "{{ path('divisionFilter', { 'compid': app.request.get('compid')}) }}?by=" + filter,
+                method: "POST",
+                data: filterSerialize
+            }).success(function (data) {
+                switch (data.filteredBy) {
+                    case 'gender':
+                        $('#divisions-filter-category').html('');
+                        $.each(data.value, function (key, value) {
+                            $('#divisions-filter-category').append('<option value="' + value.number + '">' + value.name + '</option>');
+                        });
+                        $('#divisions-filter-category').selectpicker('refresh');
+
+                        if ($('#divisions-filter-gender').selectpicker('val') === "male") {
+                            $('.male').removeClass("display-none");
+                            $('.display').removeClass('col-md-6');
+                            $('.display').addClass('col-md-4');
+                        } else {
+                            $('.male').addClass("display-none");
+                            $('.display').removeClass('col-md-4');
+                            $('.display').addClass('col-md-6');
+                        }
+
+                        break;
+                    case 'category':
+                        $('#divisions-filter-department').html('');
+                        $.each(data.value, function (key, day) {
+                            var optgroup = $('<optgroup>');
+                            optgroup.attr('label', day.date);
+
+                            $.each(day.deps, function (key, value) {
+                                $(optgroup).append('<option value="' + value.id + '" data-subtext="' + value.date + '">{{ 'egt.divisions.department' | trans }} ' + value.number + '</option>');
+                            });
+
+                            $('#divisions-filter-department').append(optgroup);
+
+                        });
+                        $('#divisions-filter-department').selectpicker('refresh');
+                        break;
+                    case 'department':
+                        $('#divisions-filter-club').html('<option value="all">{{ 'egt.divisions.all' | trans }}</option>');
+                        $.each(data.value, function (key, value) {
+                            $('#divisions-filter-club').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                        $('#divisions-filter-club').selectpicker('refresh');
+                        break;
+                    case 'club':
+                        $(".sortable-list").html('');
+
+                        if (typeof(data.value) !== "undefined") {
+                            if (typeof(data.value.unassigned) !== "undefined") {
+                                $.each(data.value.unassigned, function (key, value) {
+                                    $('#divisions-unassigned-starters ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[1]) !== "undefined") {
+                                $.each(data.value.assigned[1].starters, function (key, value) {
+                                    $('#device-1 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[2]) !== "undefined") {
+                                $.each(data.value.assigned[2].starters, function (key, value) {
+                                    $('#device-2 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[3]) !== "undefined") {
+                                $.each(data.value.assigned[3].starters, function (key, value) {
+                                    $('#device-3 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[4]) !== "undefined") {
+                                $.each(data.value.assigned[4].starters, function (key, value) {
+                                    $('#device-4 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            if (typeof(data.value.assigned[5]) !== "undefined") {
+                                $.each(data.value.assigned[5].starters, function (key, value) {
+                                    $('#device-5 ul').append(buildSortable(value));
+                                });
+                            }
+
+                            $('#device-1 ul').data('id', data.value.assigned[1].id);
+                            $('#device-2 ul').data('id', data.value.assigned[2].id);
+                            $('#device-3 ul').data('id', data.value.assigned[3].id);
+                            if (typeof(data.value.assigned[4]) !== "undefined") {
+                                $('#device-4 ul').data('id', data.value.assigned[4].id);
+                            }
+                            $('#device-5 ul').data('id', data.value.assigned[5].id);
+                        }
+
+                        $(".sortable-list").sortable('refresh');
+
+                        sizeDivs();
+                        numberSortable();
+                }
+
+                update(data.filteredBy);
+            });
+        }
+
+        function buildSortable(starter) {
+            return '<li class="dd-item dd3-item" data-id="' + starter.id + '"><div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">' + starter.firstname + ' ' + starter.lastname + ' <span class="small-text">' + starter.club + '</span></div></li>';
+        }
+
+        function numberSortable() {
+            $('#divisions-unassigned-starters h3 span').html($('#divisions-unassigned-starters ul li').length);
+            $('#device-1 h3 span').html($('#device-1 ul li').length);
+            $('#device-2 h3 span').html($('#device-2 ul li').length);
+            $('#device-3 h3 span').html($('#device-3 ul li').length);
+            $('#device-4 h3 span').html($('#device-4 ul li').length);
+            $('#device-5 h3 span').html($('#device-5 ul li').length);
+        }
+
+        function assignStarter(ui) {
+            var starterId = ui.item.data('id');
+            var divisionId = $(ui.item).parent().data('id');
+            console.log($(ui.item).parent());
+            return $.ajax({
+                url: "{{ path('divisionAssign', { 'compid': app.request.get('compid')}) }}",
+                method: "POST",
+                data: {division: divisionId, starter: starterId}
+            }).success(function (data) {
+                if (data == 'access_denied') {
+                    showFlashbag();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            init();
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel_divisions" class="panel panel-default" style="min-height: 400px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ 'egt.divisions.header'|trans }}</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <form id="divisions-filter">
+                            <div class="col-md-3">
+                                <select id="divisions-filter-gender" name="divisions-filter[gender]" class="select"
+                                        data-width="100%" data-filter="gender">
+                                    <option value="female">{{ 'egt.divisions.female' | trans }}</option>
+                                    <option value="male">{{ 'egt.divisions.male' | trans }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select id="divisions-filter-category" name="divisions-filter[category]"
+                                        class="select" data-width="100%" data-filter="category">
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select id="divisions-filter-department" name="divisions-filter[department]"
+                                        class="select" data-width="100%" data-filter="department">
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select id="divisions-filter-club" name="divisions-filter[club]" class="selectSearch"
+                                        data-width="100%" data-filter="club">
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 sortable" id="divisions-unassigned-starters">
+                            <h3>{{ 'egt.divisions.header-unassigned' | trans }} <span class="small-text"></span></h3>
+                            <ul class="sortable-list"></ul>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-6 device sortable" id="device-1">
+                                    <h3>{{ 'device.floor' | trans }} <span class="small-text"></span></h3>
+                                    <ul class="sortable-list"></ul>
+                                </div>
+                                <div class="col-md-6 device sortable" id="device-2">
+                                    <h3>{{ 'device.rings' | trans }} <span class="small-text"></span></h3>
+                                    <ul class="sortable-list"></ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 display device sortable" id="device-3">
+                                    <h3>{{ 'device.vault' | trans }} <span class="small-text"></span></h3>
+                                    <ul class="sortable-list"></ul>
+                                </div>
+                                <div class="col-md-4 male display-none device sortable" id="device-4">
+                                    <h3>{{ 'device.parallel-bars' | trans }} <span class="small-text"></span></h3>
+                                    <ul class="sortable-list"></ul>
+                                </div>
+                                <div class="col-md-6 display device sortable" id="device-5">
+                                    <h3>{{ 'device.horizontal-bar' | trans }} <span class="small-text"></span></h3>
+                                    <ul class="sortable-list"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

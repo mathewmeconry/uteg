@@ -35,9 +35,15 @@ class Category
      */
     protected $starters;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Department", mappedBy="category")
+     */
+    protected $departments;
+
     public function __construct()
     {
         $this->starters = new ArrayCollection();
+        $this->departments = new ArrayCollection();
     }
 
     public function __toString()
@@ -132,5 +138,38 @@ class Category
         $this->number = $number;
 
         return $this;
+    }
+
+    /**
+     * Add departments
+     *
+     * @param \uteg\Entity\Department $departments
+     * @return Category
+     */
+    public function addDepartment(\uteg\Entity\Department $departments)
+    {
+        $this->departments[] = $departments;
+
+        return $this;
+    }
+
+    /**
+     * Remove departments
+     *
+     * @param \uteg\Entity\Department $departments
+     */
+    public function removeDepartment(\uteg\Entity\Department $departments)
+    {
+        $this->departments->removeElement($departments);
+    }
+
+    /**
+     * Get departments
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDepartments()
+    {
+        return $this->departments;
     }
 }

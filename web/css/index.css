@@ -1,24 +1,23 @@
 html, body {
-	font-family: 'Quicksand', sans-serif;
+    font-family: 'Quicksand', sans-serif;
     overflow-x: auto !important;
 }
 
 .button {
     width: 110px;
-    background:#3399cc;
-    display:inline-block;
-
-    padding:10px;
-    text-align:center;
-    text-decoration:none;
-    color:#fff;
-    transition:background .3s;
-    -webkit-transition:background .3s;
+    background: #3399cc;
+    display: inline-block;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    transition: background .3s;
+    -webkit-transition: background .3s;
     cursor: pointer;
 }
 
-.button:hover{
-    background:#2288bb;
+.button:hover {
+    background: #2288bb;
 }
 
 .btn-icon {
@@ -34,7 +33,7 @@ html, body {
     width: auto;
 }
 
-.btn-icon:hover span{
+.btn-icon:hover span {
     padding-left: 2px;
     display: inline;
 }
@@ -57,4 +56,29 @@ i.icon-view-black:before {
 
 i.icon-view-green:before {
     background-image: url('/icons/icon-view-green.png');
+}
+
+.small-text {
+    color: #A8A8A8;
+    font-size: 10px;
+}
+
+.panel-heading-settings {
+    background: #F5F5F5;
+    border-color: #E5E5E5;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    padding: 10px;
+    margin-top: 50px;
+    -webkit-box-shadow: 0 5px 6px #9E9E9E;
+    box-shadow: 0 5px 6px #9E9E9E;
+}
+
+.panel-heading-settings > div {
+    padding: 3px;
+}
+
+.panel-heading-settings > button {
+    margin-top: -30px;
+    margin-right: 10px;
 }

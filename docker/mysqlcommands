@@ -1,0 +1,18 @@
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '';
+use uteg;
+INSERT INTO ute_user (username, username_canonical, email, email_canonical, enabled, salt, password, last_login, locked, expired, expires_at, confirmation_token, password_requested_at, roles, credentials_expired, credentials_expire_at, firstname, lastname, profilepicture) VALUES ("admin", "admin", "admin@getu.ch", "admin@getu.ch", 1, "fmqne4g93v48koggosksk4ssw88g84w", "xfm6sQdBtS1sGpoAHL3wo+Zff7H4QX3M8kJHmY0ieRmObx8h+7NQfMVCIW0a8XX+iEIEqoaWIbSpPW7QLU3j+Q==", null, 0, 0, null, null, null, "a:0:{}", 0, null, "admin", "admin", null);
+INSERT INTO ute_module (`displayName`, `serviceName`) VALUES ('service.egt', 'uteg.egt');
+INSERT INTO ute_category (`number`, `name`) VALUES ('1', 'K1');
+INSERT INTO ute_category (`number`, `name`) VALUES ('2', 'K2');
+INSERT INTO ute_category (`number`, `name`) VALUES ('3', 'K3');
+INSERT INTO ute_category (`number`, `name`) VALUES ('4', 'K4');
+INSERT INTO ute_category (`number`, `name`) VALUES ('5', 'K5');
+INSERT INTO ute_category (`number`, `name`) VALUES ('6', 'K6');
+INSERT INTO ute_category (`number`, `name`) VALUES ('7', 'K7');
+INSERT INTO ute_category (`number`, `name`) VALUES ('8', 'KD/H');
+
+INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('1', '1', 'device.floor');
+INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('2', '2', 'device.rings');
+INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('3', '3', 'device.vault');
+INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('4', '5', 'device.horizontal-bar');
+INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('5', '4', 'device.parallel-bars');

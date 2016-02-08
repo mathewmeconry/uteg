@@ -29,8 +29,8 @@ class MenuBuilder extends ContainerAware
         ($acl->isGranted('DASHBOARD')) ? $menu->addChild('nav.dashboard', array('route' => 'dashboard', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'dashboard', 'labelAttributes' => array('class' => 'xn-text'))) : '';
         if ($acl->isGranted('STARTERS_VIEW')) {
             $menu->addChild('nav.starters', array('uri' => '#', 'icon' => 'user', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
-            $menu['nav.starters']->addChild('nav.starters.male', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'sex' => 'male'), 'icon' => 'mars'));
-            $menu['nav.starters']->addChild('nav.starters.female', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'sex' => 'female'), 'icon' => 'venus'));
+            $menu['nav.starters']->addChild('nav.starters.male', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'gender' => 'male'), 'icon' => 'mars'));
+            $menu['nav.starters']->addChild('nav.starters.female', array('route' => 'starters', 'routeParameters' => array('compid' => $request->get('compid'), 'gender' => 'female'), 'icon' => 'venus'));
             ($acl->isGranted('STARTERS_EDIT')) ? $menu['nav.starters']->addChild('nav.starters.import', array('route' => 'starterImport', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'upload')) : '';
         }
 
@@ -43,6 +43,10 @@ class MenuBuilder extends ContainerAware
         }
 
         $eventDispatcher->dispatch(MenuEvent::SERVICE_MENU, new MenuEvent($this->factory, $menu, $request));
+
+        $menu->addChild('egt.nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+
+        $eventDispatcher->dispatch(MenuEvent::REPORTING_MENU, new MenuEvent($this->factory, $menu, $request));
 
         ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'cogs', 'labelAttributes' => array('class' => 'xn-text'))) : '';
         ($acl->isGranted('PERMISSIONS_VIEW')) ? $menu->addChild('nav.permissions', array('route' => 'permissions', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'lock', 'labelAttributes' => array('class' => 'xn-text'))) : '';
@@ -105,15 +109,21 @@ class MenuBuilder extends ContainerAware
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
-            case 'grouping':
-                $uri = $request->getRequestUri();
-
-
-                $menu->addChild('service.grouping.path');
-                if (strpos($uri, 'male') === true) {
-                    $menu->addChild((strpos($uri, 'female') == false) ? 'service.grouping.path.male' : 'service.grouping.path.female')
-                        ->setCurrent(true);
-                }
+            case 'department':
+                $menu->addChild('egt.grouping.path');
+                $menu
+                    ->addChild('departments.path')
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
+                ;
+                break;
+            case 'division':
+                $menu->addChild('egt.grouping.path');
+                $menu
+                    ->addChild('egt.divisions.path')
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
+                ;
+                break;
+            case 'reporting':
                 break;
             case 'competition':
                 $menu

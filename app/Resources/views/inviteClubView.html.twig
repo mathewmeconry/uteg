@@ -16,7 +16,7 @@
 {% block script %}
     <script>
         var category = '{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}';
-        var sex = '<option value="male">{{ 'invite.club.table.male'|trans }}</option><option value="female">{{ 'invite.club.table.female'|trans }}</option>';
+        var gender = '<option value="male">{{ 'invite.club.table.male'|trans }}</option><option value="female">{{ 'invite.club.table.female'|trans }}</option>';
         var starters = JSON.parse('{{ render(controller("uteg:Default:autocompleteStarters")) }}');
         var indexCounter = {{ starters|length }};
 
@@ -47,7 +47,7 @@
                 source: substringMatcher(starters),
                 templates: {
                     suggestion: function (starter) {
-                        return '<p><span class="' + starter.sex + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.sex == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';                    }
+                        return '<p><span class="' + starter.gender + '"><i style="padding-right: 10px;" class="fa fa-' + ((starter.gender == 'female') ? 'venus' : 'mars' ) + '"></i>' + starter.firstname + ' ' + starter.lastname + ' </span><span class="birthyear">' + starter.birthyear + '</span></p>';                    }
                 }
             });
         }
@@ -59,7 +59,7 @@
                     <td><input name="data[' + indexCounter + '][firstname]" type="text" class="form-control typeahead" placeholder="{{ 'invite.club.table.firstname'|trans }}"></td>\
                     <td><input name="data[' + indexCounter + '][lastname]" type="text" class="form-control typeahead" placeholder="{{ 'invite.club.table.lastname'|trans }}"></td>\
                     <td><input name="data[' + indexCounter + '][birthyear]" type="number" min="1950" class="form-control typeahead" placeholder="{{ 'invite.club.table.birthyear'|trans }}"></td>\
-                    <td><select name="data[' + indexCounter + '][sex]" class="form-control select">' + sex + '</select></td>\
+                    <td><select name="data[' + indexCounter + '][gender]" class="form-control select">' + gender + '</select></td>\
                     <td><select name="data[' + indexCounter + '][category]" class="form-control select">' + category + '</select></td>\
                     <td><div class="btn-group"><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon starter-remove"><i class="fa fa-times"></i><span>Remove</span></button></div></td>\
                 </tr>');
@@ -72,7 +72,7 @@
                         }
                     });
 
-                    $('#starters table tbody tr:last td select.select').selectpicker();
+                    selectPicker('#starters table tbody tr:last td select.select', false);
 
                     autoComplete('#starters table tbody tr:last td input.typeahead[name*="firstname"]', 'firstname');
                     autoComplete('#starters table tbody tr:last td input.typeahead[name*="lastname"]', 'lastname');
@@ -83,7 +83,7 @@
                         row.find('[name*="firstname"]').typeahead('val', starter.firstname);
                         row.find('[name*="lastname"]').typeahead('val', starter.lastname);
                         row.find('[name*="birthyear"]').typeahead('val', starter.birthyear);
-                        row.find('[name*="sex"]').selectpicker('val', starter.sex);
+                        row.find('[name*="gender"]').selectpicker('val', starter.gender);
                     });
 
                     addNewLineEvent();
@@ -92,11 +92,11 @@
         }
 
         $(document).ready(function () {
-            $('select[id*="sex"]').html(sex);
+            $('select[id*="gender"]').html(gender);
             $('select[id*="category"]').html(category);
 
             {% for starter in starters %}
-            {% if starter.sex is defined %}$('#sex{{ loop.index0 }}').val("{{ starter.sex }}");
+            {% if starter.gender is defined %}$('#gender{{ loop.index0 }}').val("{{ starter.gender }}");
             {% endif %}
             {% if starter.category.id is defined %}$('#category{{ loop.index0 }}').val("{{ starter.category.id }}");
             {% endif %}
@@ -106,7 +106,7 @@
                     <td><input name="data[' + indexCounter + '][firstname]" type="text" class="form-control typeahead" placeholder="{{ 'invite.club.table.firstname'|trans }}"></td>\
                     <td><input name="data[' + indexCounter + '][lastname]" type="text" class="form-control typeahead" placeholder="{{ 'invite.club.table.lastname'|trans }}"></td>\
                     <td><input name="data[' + indexCounter + '][birthyear]" type="number" min="1950" class="form-control typeahead" placeholder="{{ 'invite.club.table.birthyear'|trans }}"></td>\
-                    <td><select name="data[' + indexCounter + '][sex]" class="form-control select">' + sex + '</select></td>\
+                    <td><select name="data[' + indexCounter + '][gender]" class="form-control select">' + gender + '</select></td>\
                     <td><select name="data[' + indexCounter + '][category]" class="form-control select">' + category + '</select></td>\
                     <td><div class="btn-group"><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon starter-remove"><i class="fa fa-times"></i><span>Remove</span></button></div></td>\
                 </tr>');
@@ -114,7 +114,7 @@
 
             addNewLineEvent();
 
-            $('.select').selectpicker();
+            selectPicker('.select', false);
 
             autoComplete('.typeahead[name*="firstname"]', 'firstname');
             autoComplete('.typeahead[name*="lastname"]', 'lastname');
@@ -125,7 +125,7 @@
                 row.find('[name*="firstname"]').typeahead('val', starter.firstname);
                 row.find('[name*="lastname"]').typeahead('val', starter.lastname);
                 row.find('[name*="birthyear"]').typeahead('val', starter.birthyear);
-                row.find('[name*="sex"]').selectpicker('val', starter.sex);
+                row.find('[name*="gender"]').selectpicker('val', starter.gender);
             });
 
             $('button.starter-remove').click(function (e) {
@@ -158,7 +158,7 @@
                                 <th>{{ 'invite.club.table.firstname'|trans }}</th>
                                 <th>{{ 'invite.club.table.lastname'|trans }}</th>
                                 <th>{{ 'invite.club.table.birthyear'|trans }}</th>
-                                <th>{{ 'invite.club.table.sex'|trans }}</th>
+                                <th>{{ 'invite.club.table.gender'|trans }}</th>
                                 <th>{{ 'invite.club.table.category'|trans }}</th>
                                 <th style="width: 105px;"></th>
                             </tr>
@@ -188,10 +188,10 @@
                                                 class="error">{{ errors[loop.index0].birthyear|trans }}</label>{% endif %}
                                     </td>
                                     <td>
-                                        <select id="sex{{ loop.index0 }}" name="data[{{ loop.index0 }}][sex]"
+                                        <select id="gender{{ loop.index0 }}" name="data[{{ loop.index0 }}][gender]"
                                                 class="form-control select"></select>
-                                        {% if errors[loop.index0].sex is defined %}<label
-                                                class="error">{{ errors[loop.index0].sex|trans }}</label>{% endif %}
+                                        {% if errors[loop.index0].gender is defined %}<label
+                                                class="error">{{ errors[loop.index0].gender|trans }}</label>{% endif %}
                                     </td>
                                     <td>
                                         <select id="category{{ loop.index0 }}" name="data[{{ loop.index0 }}][category]"

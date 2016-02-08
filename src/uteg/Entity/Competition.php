@@ -90,6 +90,11 @@ class Competition
     protected $module;
 
     /**
+     * @ORM\OneToMany(targetEntity="Department", mappedBy="competition")
+     */
+    protected $departments;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -97,6 +102,7 @@ class Competition
         $this->users = new ArrayCollection();
         $this->s2cs = new ArrayCollection();
         $this->c2is = new ArrayCollection();
+        $this->departments = new ArrayCollection();
     }
 
     /**
@@ -382,12 +388,12 @@ class Competition
         return $this->s2cs;
     }
 
-    public function getS2csBySex($sex)
+    public function getS2csByGender($gender)
     {
         $return = array();
 
         foreach ($this->s2cs as $s2c) {
-            if ($s2c->getStarterBySex($sex) !== null) {
+            if ($s2c->getStarterByGender($gender) !== null) {
                 $return[] = $s2c;
             }
         }
@@ -395,12 +401,12 @@ class Competition
         return $return;
     }
 
-    public function getS2csBySexCat($sex, $category)
+    public function getS2csByGenderCat($gender, $category)
     {
         $return = array();
 
         foreach ($this->s2cs as $s2c) {
-            if ($s2c->getStarterBySexCat($sex, $category) !== null) {
+            if ($s2c->getStarterByGenderCat($gender, $category) !== null) {
                 $return[] = $s2c;
             }
         }
@@ -441,11 +447,132 @@ class Competition
         return $this->c2is;
     }
 
-    public function getModule() {
+    public function getModule()
+    {
         return $this->module;
     }
 
-    public function setModule(\uteg\Entity\Module $module) {
+    public function setModule(\uteg\Entity\Module $module)
+    {
         $this->module = $module;
+    }
+
+    /**
+     * Add departments
+     *
+     * @param \uteg\Entity\Department $departments
+     * @return Competition
+     */
+    public function addDepartment(\uteg\Entity\Department $departments)
+    {
+        $this->departments[] = $departments;
+
+        return $this;
+    }
+
+    /**
+     * Remove departments
+     *
+     * @param \uteg\Entity\Department $departments
+     */
+    public function removeDepartment(\uteg\Entity\Department $departments)
+    {
+        $this->departments->removeElement($departments);
+    }
+
+    /**
+     * Get departments
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDepartments()
+    {
+        return $this->departments;
+    }
+
+    public function getDepartmentsByCat(\uteg\Entity\Category $category)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getCategory() === $category) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
+    public function getDepartmentsByCatDate(\uteg\Entity\Category $category, \DateTime $dateTime)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getCategory() === $category && $department->getDate() == $dateTime) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
+    public function getDepartmentsByCatDateGender(\uteg\Entity\Category $category, \DateTime $dateTime, $gender)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getCategory() === $category && $department->getDate() == $dateTime && $department->getGender() == $gender) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
+    public function getDepartmentsByCatGender(\uteg\Entity\Category $category, $gender)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getCategory() == $category && $department->getGender() == $gender) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
+    public function getDepartmentsByGender($gender)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getGender() == $gender) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+
+    public function isDepOf(\uteg\Entity\Department $checkDep)
+    {
+        foreach ($this->departments as $department) {
+            if ($department === $checkDep) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function isS2cOf(\uteg\Entity\Starters2Competitions $starters2Competitions) {
+        foreach ($this->s2cs as $s2c) {
+            if($s2c === $starters2Competitions) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

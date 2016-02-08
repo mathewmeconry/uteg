@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Starter;
-use uteg\Entity\Starters2Competitions;
 use uteg\Entity\Club;
 
 class DefaultController extends Controller
@@ -56,7 +55,7 @@ class DefaultController extends Controller
                 "firstname" => $starter->getFirstname(),
                 "lastname" => $starter->getLastname(),
                 "birthyear" => $starter->getBirthyear(),
-                "sex" => $starter->getSex());
+                "gender" => $starter->getGender());
         }
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
@@ -66,30 +65,31 @@ class DefaultController extends Controller
 
     public function addMassiveAction($competition, $starters, $club = null)
     {
+        $module = $this->get($competition->getModule()->getServiceName());
         $em = $this->getDoctrine()->getManager();
         $return = array();
         $errorMessages = array();
         $fails = array();
         foreach ($starters as $starterPost) {
-            $starter = $em->getRepository('uteg:Starter')->findOneBy(array("firstname" => $starterPost['firstname'], "lastname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "sex" => $starterPost['sex']));
+            $starter = $em->getRepository('uteg:Starter')->findOneBy(array("firstname" => $starterPost['firstname'], "lastname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "gender" => $starterPost['gender']));
             if (!$starter) {
-                $starter = $em->getRepository('uteg:Starter')->findOneBy(array("lastname" => $starterPost['firstname'], "firstname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "sex" => $starterPost['sex']));
+                $starter = $em->getRepository('uteg:Starter')->findOneBy(array("lastname" => $starterPost['firstname'], "firstname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "gender" => $starterPost['gender']));
                 if (!$starter) {
                     $starter = new Starter();
                     $starter->setFirstname($starterPost['firstname']);
                     $starter->setLastname($starterPost['lastname']);
                     $starter->setBirthyear($starterPost['birthyear']);
-                    $starter->setSex($starterPost['sex']);
+                    $starter->setGender($starterPost['gender']);
                     $s2c = false;
                 } else {
-                    $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+                    $s2c = $module->findS2c(array("starter" => $starter, "competition" => $competition));
                 }
             } else {
-                $s2c = $em->getRepository('uteg:Starters2Competitions')->findOneBy(array("starter" => $starter, "competition" => $competition));
+                $s2c = $module->findS2c(array("starter" => $starter, "competition" => $competition));
             }
 
             if (!$s2c) {
-                $s2c = new Starters2Competitions();
+                $s2c = $module->getS2c();
                 $s2c->setStarter($starter);
                 $s2c->setCompetition($competition);
 

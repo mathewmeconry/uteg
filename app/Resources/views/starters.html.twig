@@ -19,11 +19,11 @@
 {% block script %}
     <script>
         function dataTable(table) {
-            var sex = ('{{ sex }}' == 'f') ? 'female' : 'male';
+            var gender = ('{{ gender }}' == 'f') ? 'female' : 'male';
 
             $(table).DataTable({
                 "ajax": {
-                    "url": "{{ path('starterspost', { 'compid': app.request.get('compid')}) }}/" + sex + "/" + $(table).data('cat'),
+                    "url": "{{ path('starterspost', { 'compid': app.request.get('compid')}) }}/" + gender + "/" + $(table).data('cat'),
                     "method": "POST"
                 },
                 "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "starters.table.all"|trans }}"]],
@@ -75,7 +75,7 @@
                 dataTable(table);
             });
 
-            dataTable($('#{{ sex|raw }}_all'));
+            dataTable($('#{{ gender|raw }}_all'));
 
             $('.table').on('init.dt', function () {
                 onload();
@@ -87,10 +87,10 @@
 
             $('.panel-refresh').click(function () {
                 panel_refresh(
-                        $('#panel_{{ sex|raw }}'),
+                        $('#panel_{{ gender|raw }}'),
                         $('div.tab-pane.active table').DataTable().ajax.reload(function () {
                             setTimeout(function () {
-                                panel_refresh($('#panel_{{ sex|raw }}'));
+                                panel_refresh($('#panel_{{ gender|raw }}'));
                             }, 500);
                         }, false)
                 );
@@ -107,14 +107,8 @@
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
-                    $('.selectSearch').selectpicker({
-                        liveSearch: true,
-                        size: 10
-                    });
-                    $('.select').selectpicker({
-                        liveSearch: false,
-                        size: 10
-                    });
+                    selectPicker('.selectSearch', true);
+                    selectPicker('.select', false);
                 });
 
                 $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
@@ -156,8 +150,7 @@
             $('#starter-remove').click(function () {
                 $.ajax({
                     type: "POST",
-                    url: "{{ path('starterRemove', { 'compid': app.request.get('compid')}) }}",
-                    data: {id: $("#dialog-remove").data('s2c_id')}
+                    url: "{{ path('starterRemove', { 'compid': app.request.get('compid')}) }}" + "/" + $("#dialog-remove").data('s2c_id')
                 }).success(function (data) {
                     if (data == 'true') {
                         $('#dialog-remove').modal('hide');
@@ -173,14 +166,8 @@
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
-                    $('.selectSearch').selectpicker({
-                        liveSearch: true,
-                        size: 10
-                    });
-                    $('.select').selectpicker({
-                        liveSearch: false,
-                        size: 10
-                    });
+                    selectPicker('.selectSearch', true);
+                    selectPicker('.select', false);
                 });
 
                 $('#dialog-edit-modal-title').html('Add new');
@@ -194,14 +181,15 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <div id="panel_{{ sex|raw }}" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
+            <div id="panel_{{ gender|raw }}" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Starters {{ sextrans|trans }}</h3>
+                    <h3 class="panel-title">Starters {{ gendertrans|trans }}</h3>
                     <ul class="panel-controls">
                         {% if is_granted("STARTERS_EDIT", comp) %}
                             <li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a>
                             </li>
-                            <li><a href="{{ path('starterImport', { 'compid': app.request.get('compid')}) }}" class="control-primary"><span
+                            <li><a href="{{ path('starterImport', { 'compid': app.request.get('compid')}) }}"
+                                   class="control-primary"><span
                                             class="fa fa-upload"></span></a></li>
                         {% endif %}
                         <li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
@@ -213,7 +201,7 @@
                         {% for i in 1..8 %}
                             <li {% if i == 1 %}class="active"{% endif %}>
                                 <a href="#{{ i }}" data-toggle="tab"
-                                   aria-expanded="true">K{% if i == 8 %}{% if sex|raw == 'm' %}H{% else %}D{% endif %}{% else %}{{ i }}{% endif %}</a>
+                                   aria-expanded="true">K{% if i == 8 %}{% if gender|raw == 'm' %}H{% else %}D{% endif %}{% else %}{{ i }}{% endif %}</a>
                             </li>
                         {% endfor %}
                         <li>
@@ -224,7 +212,7 @@
                 <div class="panel-body tab-content">
                     {% for i in 1..8 %}
                         <div id="{{ i }}" class="tab-pane{% if i == 1 %} active{% endif %}">
-                            <table id="{{ sex|raw }}_{{ i }}" class="table table-striped cat-table" data-cat="{{ i }}"
+                            <table id="{{ gender|raw }}_{{ i }}" class="table table-striped cat-table" data-cat="{{ i }}"
                                    width="100%">
                                 <thead>
                                 <tr>
@@ -244,7 +232,7 @@
                         </div>
                     {% endfor %}
                     <div id="all" class="tab-pane">
-                        <table id="{{ sex|raw }}_all" class="table responsive table-striped" data-cat="0" width="100%">
+                        <table id="{{ gender|raw }}_all" class="table responsive table-striped" data-cat="0" width="100%">
                             <thead>
                             <tr>
                                 <th class="max-tablet-p"></th>
