@@ -25,7 +25,7 @@ register:
 
 competitionlist:
     title: 'Competitions'
-    nav_button: 'My Competitions'
+    nav_button: 'Competitions'
     header: 'Competitions'
     add_new: 'Add new'
     logout: 'Logout'
