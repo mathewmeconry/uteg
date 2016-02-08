@@ -281,7 +281,12 @@ class egt
         $s2c = $em->getRepository('uteg:Starters2CompetitionsEGT')->findOneBy(array("id" => $s2cId));
         $division = $em->getRepository('uteg:DivisionEGT')->findOneBy(array("id" => $divisionId));
 
-        if ($competition->isS2cOf($s2c) && $competition->isDepOf($division->getDepartment())) {
+        if (is_null($division)) {
+            $s2c->setDivision($division);
+            $em->persist($s2c);
+            $em->flush();
+            return new Response('true');
+        } elseif ($competition->isS2cOf($s2c) && $competition->isDepOf($division->getDepartment())) {
             $s2c->setDivision($division);
             $em->persist($s2c);
             $em->flush();
