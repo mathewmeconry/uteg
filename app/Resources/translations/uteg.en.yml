@@ -64,6 +64,18 @@ competitionlist:
 
 judging:
     nav_button: 'Judging'
+    title: 'Judging'
+    header: 'Judging'
+    form:
+        name: 'Competition name'
+        gym: 'Gym'
+        location: 'Location'
+        zip_code: 'Zip code'
+        device: 'Device'
+        start_date: 'Start date'
+        end_date: 'End date'
+        actions: 'Actions'
+        judge: 'Judge'
 
 profile:
     edit:
