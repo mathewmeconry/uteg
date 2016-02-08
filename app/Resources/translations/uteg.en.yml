@@ -1,9 +1,12 @@
+male: 'Male'
+female: 'Female'
+
 login:
     title: 'Log in'
     nav_button: 'Log in'
     header: 'Log in'
-    username: Username
-    password: Password
+    username: 'Username'
+    password: 'Password'
     remember_me: 'Remember me'
     button: 'Log in'
 
@@ -393,6 +396,8 @@ egt:
         grouping: 'Starter Grouping'
         departments: 'Departments'
         divisions: 'Divisions'
+        reporting: 'Reporting'
+        grouping: 'Starter Grouping'
     grouping:
         path: 'Grouping'
     divisions:
@@ -404,3 +409,18 @@ egt:
         all: 'All'
         department: 'Department'
         header-unassigned: 'Unassigned Starters'
+    reporting:
+        path: 'Reports'
+        divisions:
+            title: 'Report Divisions'
+            header: 'Report Divisions'
+            path: 'Divisions'
+            groupby: 'Group by'
+            category: 'Category'
+            none: 'None'
+            gender: 'Gender'
+            club: 'Club'
+            department: 'Department'
+            device: 'Device'
+            columncount: 'Number of columns'
+            save: 'Save'

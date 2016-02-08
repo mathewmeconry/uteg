@@ -10,6 +10,11 @@ RUN sed -e 's/;listen\.owner/listen.owner/' -i /etc/php5/fpm/pool.d/www.conf
 RUN sed -e 's/;listen\.group/listen.group/' -i /etc/php5/fpm/pool.d/www.conf
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 
+ADD libjpeg8.deb /tmp/libjpeg8.deb
+ADD wkhtmltox-0.12.2-patched.deb /tmp/wkhtmltox-0.12.2-patched.deb
+RUN dpkg -i libjpeg8.deb
+RUN dpkg -i wkhtmltox-0.12.2-patched.deb
+
 ADD vhost.conf /etc/nginx/sites-available/default
 ADD supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 ADD my.cnf /etc/mysql/my.cnf

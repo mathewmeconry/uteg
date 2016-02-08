@@ -1,0 +1,115 @@
+{% trans_default_domain 'uteg' %}
+
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'egt.reporting.divisions.title'|trans }}{% endblock %}
+
+{% block jsplugins %}
+    <script type="text/javascript" src='{{ asset("js/plugins/cookie/js.cookie.js") }}'></script>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            var settings = Cookies.getJSON("division-report");
+
+            if (settings !== undefined) {
+                $.each(settings[0], function (key, value) {
+                    $('#groupby-' + (key + 1)).val(value);
+                });
+
+                $('#report-settings-columncount').val(settings[1]);
+            }
+            selectPicker('.select', false, true);
+
+            $(".panel-heading-settings").hide();
+
+            $('#report-settings-button').click(function () {
+                if ($(".panel-heading-settings:first").is(":hidden")) {
+                    $(".panel-heading-settings").slideDown(300);
+                } else {
+                    $(".panel-heading-settings").slideUp(300);
+                }
+            });
+
+            $('#save-report-settings').click(function () {
+                var settings = [];
+                var groupby = [];
+                $(".panel-heading-settings").slideUp(300);
+
+                $.each($('.report-settings-groupby'), function (key, select) {
+                    if ($(select).val() !== "") {
+                        groupby.push($(select).val());
+                    }
+                });
+
+                settings.push(groupby);
+                settings.push($('#report-settings-columncount').val());
+
+                Cookies.set("division-report", settings);
+
+                $.ajax({
+                    url: "{{ path('reportingDivisionsPost', { 'compid': app.request.get('compid')}) }}",
+                    method: "POST"
+                }).success(function (data) {
+                    $('#report').html(data);
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel_divisions" class="panel panel-default" style="min-height: 400px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ 'egt.reporting.divisions.header'|trans }}</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="control-primary" id="report-settings-button"><span
+                                        class="fa fa-gear"></span></a></li>
+                        <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-heading-settings">
+                    <form class="form-horizontal">
+                        {% for i in 1..4 %}
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-12 control-label">{{ i }}
+                                    . {{ 'egt.reporting.divisions.groupby' | trans }}
+                                    :</label>
+                                <div class="col-md-6">
+                                    <select class="form-control select report-settings-groupby" id="groupby-{{ i }}"
+                                            name="groupby[{{ i }}]">
+                                        {% for grouping in groupings %}
+                                            <option value="{{ grouping.value }}">{{ grouping.name | trans }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="form-group">
+                            <label class="col-md-3 col-xs-12 control-label">{{ 'egt.reporting.divisions.columncount'|trans }}
+                                :</label>
+                            <div class="col-md-6">
+                                <input type="number" name="columncount"
+                                       id="report-settings-columncount"
+                                       class="form-control report-settings-columncount"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success btn-rounded pull-right"
+                                    id="save-report-settings">{{ 'egt.reporting.divisions.save' | trans }}</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-body">
+                    <div class="row" id="report">
+                        {% include "egt/reporting/divisionsReport.html.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

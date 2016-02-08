@@ -28,7 +28,8 @@
         "gedmo/doctrine-extensions": "^2.4",
         "liip/imagine-bundle": "master-dev",
         "bcc/extra-tools-bundle": "^1.0",
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "^1.8",
+        "knplabs/knp-snappy-bundle": "^1.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

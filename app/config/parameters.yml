@@ -15,3 +15,4 @@ parameters:
     mailer_authmode: login
     locale: en
     secret: 1058ba6f5f302fc7263351f52c9e8d52e4a8bb67
+

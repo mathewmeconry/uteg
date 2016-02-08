@@ -8,6 +8,7 @@
 
 namespace uteg\Service;
 
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +33,7 @@ class egt
     public function init()
     {
         $this->eventDispatcher->addListener('uteg.addServiceMenu', array($this, 'onAddServiceMenu'));
+        $this->eventDispatcher->addListener('uteg.addReportingMenu', array($this, 'onAddReportingMenu'));
     }
 
     public function onAddServiceMenu(MenuEvent $event)
@@ -40,7 +42,12 @@ class egt
         $menu->addChild('egt.nav.grouping', array('uri' => '#', 'icon' => 'object-group', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
         $menu['egt.nav.grouping']->addChild('egt.nav.departments', array('route' => 'department', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
         $menu['egt.nav.grouping']->addChild('egt.nav.divisions', array('route' => 'division', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
+    }
 
+    public function onAddReportingMenu(MenuEvent $event)
+    {
+        $menu = $event->getMenu();
+        $menu['egt.nav.reporting']->addChild('egt.nav.grouping', array('route' => 'reportingDivisions', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
     }
 
     public function getS2c()
@@ -222,6 +229,7 @@ class egt
                         ->join('s.starter', 'st', 'WITH', 'st.gender = :gender')
                         ->where('s.division is NULL')
                         ->andWhere('s.category = :category')
+                        ->andWhere('s.medicalcert = 0')
                         ->addOrderBy('s.club', 'ASC')
                         ->addOrderBy('st.firstname', 'ASC')
                         ->setParameters(array('competition' => $competition->getId(),
@@ -281,5 +289,159 @@ class egt
         } else {
             return new Response('access_denied');
         }
+    }
+
+    public function reportingDivisions(Request $request, \uteg\Entity\Competition $competition, $format)
+    {
+        $groupedStarters = $this->generateDivisionsReport($request);
+
+        if ($format === "pdf") {
+            return $this->renderPdf('egt/reporting/divisionsReport.html.twig', array(
+                "comp" => $competition,
+                "starters" => $groupedStarters,
+                "colspan" => count($this->getLastDim($groupedStarters)),
+                "columncount" => json_decode($request->cookies->get('division-report'))[1]
+            ));
+        }
+
+        $groupings = [];
+        $groupings[] = array("value" => "none", "name" => "egt.reporting.divisions.none");
+        $groupings[] = array("value" => "gender", "name" => "egt.reporting.divisions.gender");
+        $groupings[] = array("value" => "category", "name" => "egt.reporting.divisions.category");
+        $groupings[] = array("value" => "club", "name" => "egt.reporting.divisions.club");
+        $groupings[] = array("value" => "department", "name" => "egt.reporting.divisions.department");
+        $groupings[] = array("value" => "device", "name" => "egt.reporting.divisions.device");
+
+        return $this->container->get('templating')->renderResponse('egt/reporting/divisions.html.twig', array(
+            "comp" => $competition,
+            "groupings" => $groupings,
+            "starters" => $groupedStarters,
+            "colspan" => count($this->getLastDim($groupedStarters)),
+            "columncount" => json_decode($request->cookies->get('division-report'))[1]
+        ));
+    }
+
+    public function reportingDivisionsPost(Request $request, \uteg\Entity\Competition $competition)
+    {
+        $groupedStarters = $this->generateDivisionsReport($request);
+
+        return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
+            "starters" => $groupedStarters,
+            "colspan" => count($this->getLastDim($groupedStarters)),
+            "columncount" => json_decode($request->cookies->get('division-report'))[1]
+        ));
+    }
+
+    private function renderPdf($path, $additional)
+    {
+        $html = $this->container->get('templating')->render($path, $additional);
+        $pdf = $this->container->get('knp_snappy.pdf');
+        $pdf->setOption('orientation', 'portrait');
+        $pdf->setOption('footer-center', '[page] / [topage]');
+        $pdf->setOption('footer-font-name', 'Quicksand');
+        $pdf->setOption('footer-font-size', 8);
+
+        return new Response(
+            $pdf->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="DivisionsReport.pdf"'
+            )
+        );
+    }
+
+    private function generateDivisionsReport(Request $request)
+    {
+        $cookies = $request->cookies;
+
+        if ($cookies->has('division-report')) {
+            $cookieVal = json_decode($cookies->get('division-report'));
+        } else {
+            $cookieVal = array(array('gender', 'category', 'department', 'device'), '1');
+            $cookie = new Cookie('division-report', json_encode($cookieVal));
+            $response = new Response();
+            $response->headers->setCookie($cookie);
+        }
+
+        return $this->reportingSort($cookieVal[0], $this->getCompleteStarters());
+    }
+
+    private function getCompleteStarters()
+    {
+        $em = $this->container->get('doctrine')->getManager();
+
+        $starters = $em
+            ->getRepository('uteg:Starters2CompetitionsEGT')
+            ->createQueryBuilder('s')
+            ->select('st.firstname as firstname, st.lastname as lastname, st.gender as gender, st.birthyear as birthyear, c.name as club, ca.name as category, d.number as department, de.name as device')
+            ->join('s.starter', 'st')
+            ->join('s.club', 'c')
+            ->join('s.division', 'di')
+            ->join('di.department', 'd')
+            ->join('d.category', 'ca')
+            ->join('di.device', 'de')
+            ->where('s.medicalcert = 0')
+            ->orderBy('st.gender', 'ASC')
+            ->addOrderBy('s.category', 'ASC')
+            ->addOrderBy('di.department', 'ASC')
+            ->addOrderBy('s.division', 'ASC')
+            ->addOrderBy('s.club', 'ASC')
+            ->addOrderBy('st.firstname', 'ASC')
+            ->addOrderBy('st.lastname', 'ASC')
+            ->getQuery()->getResult();
+
+        return $starters;
+    }
+
+    private function reportingSort(array $grouping, array $starters)
+    {
+        foreach ($grouping as $groupBy) {
+            if ($groupBy !== "none") {
+                $starters = $this->groupByRecursive($starters, $groupBy);
+            }
+        }
+
+        return $starters;
+    }
+
+    private function groupByRecursive(array $values, $groupBy)
+    {
+        $newarr = [];
+        foreach ($values as $key => $value) {
+            if ($this->countdim($value) > 1) {
+                $newarr[$key] = $this->groupByRecursive($value, $groupBy);
+            } else {
+                $gb = $value[$groupBy];
+                unset($value[$groupBy]);
+
+                if ($groupBy === "department") {
+                    $gb = $this->container->get('translator')->trans('egt.reporting.divisions.department', array(), 'uteg') . ' ' . $gb;
+                }
+
+                $newarr[$gb][] = $value;
+            }
+        }
+
+        return $newarr;
+    }
+
+    private function countdim($array)
+    {
+        if (is_array(reset($array))) {
+            $return = $this->countdim(reset($array)) + 1;
+        } else {
+            $return = 1;
+        }
+
+        return $return;
+    }
+
+    private function getLastDim($array)
+    {
+        if ($this->countdim($array) > 1) {
+            return $this->getLastDim(end($array));
+        }
+        return $array;
     }
 }
