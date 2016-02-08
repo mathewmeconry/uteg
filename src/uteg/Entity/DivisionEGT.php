@@ -58,7 +58,7 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
          $return = [];
 
          foreach ($this->s2cs as $s2c) {
-             if($s2c->getClub === $club) {
+             if($s2c->getClub() === $club) {
                 $return[] = $s2c;
              }
          }

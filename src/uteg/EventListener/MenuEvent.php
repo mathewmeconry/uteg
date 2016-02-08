@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class MenuEvent extends Event
 {
     const SERVICE_MENU = 'uteg.addServiceMenu';
+    const REPORTING_MENU = 'uteg.addReportingMenu';
 
     private $factory;
     private $menu;

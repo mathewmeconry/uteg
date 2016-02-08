@@ -235,9 +235,9 @@ class StartersController extends DefaultController
                 }
 
                 //  Get worksheet dimensions
-                $sheetData = $objPHPExcel->getActiveSheet();
-                $highestRow = $sheetData->getHighestRow();
-                $highestColumn = $sheetData->getHighestColumn();
+                $sheetData = $objPHPExcel->setActiveSheetIndex(0);
+                $highestRow = $sheetData->getHighestDataRow();
+                $highestColumn = $sheetData->getHighestDataColumn();
                 $highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn);
                 ($fs->exists($file)) ? $fs->remove($file) : '';
 

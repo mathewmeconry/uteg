@@ -45,8 +45,12 @@
                     <h3 class="panel-title">{{ 'starters.upload.header'|trans }}</h3>
                 </div>
                 <div class="panel-body">
+                    {% if error is defined %}
+                        {{ error }}
+                    {% endif %}
                     <form enctype="multipart/form-data" id="starterUpload" name="starterUpload"
-                          class="dropzone dz-clickable" action="{{ path('starterProcess', { 'compid': app.request.get('compid')}) }}" method="POST">
+                          class="dropzone dz-clickable"
+                          action="{{ path('starterProcess', { 'compid': app.request.get('compid')}) }}" method="POST">
                     </form>
                     <div class="pull-right">
                         <button id="process" class="btn btn-success active"><span
