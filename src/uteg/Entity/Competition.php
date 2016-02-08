@@ -84,6 +84,11 @@ class Competition
     protected $c2is;
 
     /**
+     * @ORM\OneToMany(targetEntity="Judges2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     */
+    protected $j2cs;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Module", inversedBy="competitions", cascade={"persist"})
      * @ORM\JoinColumn(name="module_id", referencedColumnName="module_id")
      */
@@ -102,6 +107,7 @@ class Competition
         $this->users = new ArrayCollection();
         $this->s2cs = new ArrayCollection();
         $this->c2is = new ArrayCollection();
+        $this->j2cs = new ArrayCollection();
         $this->departments = new ArrayCollection();
     }
 
@@ -574,5 +580,38 @@ class Competition
         }
 
         return false;
+    }
+
+    /**
+     * Add j2cs
+     *
+     * @param \uteg\Entity\Judges2Competitions $j2cs
+     * @return Competition
+     */
+    public function addJ2c(\uteg\Entity\Judges2Competitions $j2cs)
+    {
+        $this->j2cs[] = $j2cs;
+
+        return $this;
+    }
+
+    /**
+     * Remove j2cs
+     *
+     * @param \uteg\Entity\Judges2Competitions $j2cs
+     */
+    public function removeJ2c(\uteg\Entity\Judges2Competitions $j2cs)
+    {
+        $this->j2cs->removeElement($j2cs);
+    }
+
+    /**
+     * Get j2cs
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getJ2cs()
+    {
+        return $this->j2cs;
     }
 }
