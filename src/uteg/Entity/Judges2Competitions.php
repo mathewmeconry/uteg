@@ -32,8 +32,8 @@ class Judges2Competitions
     protected $competition;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Competition", cascade={"persist"})
-     * @ORM\JoinColumn(name="device_id", referencedColumnName="device_id")
+     * @ORM\ManyToOne(targetEntity="Device", cascade={"persist"})
+     * @ORM\JoinColumn(name="dev_id", referencedColumnName="dev_id")
      */
     protected $device;
 
@@ -96,10 +96,10 @@ class Judges2Competitions
     /**
      * Set device
      *
-     * @param \uteg\Entity\Competition $device
+     * @param \uteg\Entity\Device $device
      * @return Judges2Competitions
      */
-    public function setDevice(\uteg\Entity\Competition $device = null)
+    public function setDevice(\uteg\Entity\Device $device = null)
     {
         $this->device = $device;
 
@@ -109,7 +109,7 @@ class Judges2Competitions
     /**
      * Get device
      *
-     * @return \uteg\Entity\Competition
+     * @return \uteg\Entity\Device
      */
     public function getDevice()
     {
