@@ -124,10 +124,10 @@ class CompetitionController extends DefaultController
     }
 
     /**
-     * @Route("/comp/del", name="delComp")
+     * @Route("/{compid}/comp/del", name="delComp")
      * @Method("POST")
      */
-    public function delCompAction(Request $request)
+    public function delCompAction(Request $request, $compid)
     {
         $aclcomp = $this->get('acl_competition');
 
@@ -135,7 +135,7 @@ class CompetitionController extends DefaultController
 
         if (isset($_POST['compid'])) {
             $em = $this->getDoctrine()->getManager();
-            $comp = $em->getRepository('uteg:Competition')->findOneBy(array("id" => $_POST['compid']));
+            $comp = $em->getRepository('uteg:Competition')->findOneBy(array("id" => $compid));
             $request->getSession()->set('comp', $comp->getId());
             if ($aclcomp->isGranted('DELETE')) {
                 $em->remove($comp);
