@@ -32,7 +32,9 @@
                 }
             });
 
-            $('#save-report-settings').click(function () {
+            $('#save-report-settings').click(function (e) {
+                e.preventDefault();
+
                 var settings = [];
                 var groupby = [];
                 $(".panel-heading-settings").slideUp(300);
