@@ -39,7 +39,7 @@ class egt
     public function onAddServiceMenu(MenuEvent $event)
     {
         $menu = $event->getMenu();
-        $menu->addChild('egt.nav.judges', array('route' => 'judges', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'gavel'));
+        $menu->addChild('egt.nav.judges', array('route' => 'judges', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'gavel', 'labelAttributes' => array('class' => 'xn-text')));
         $menu->addChild('egt.nav.grouping', array('uri' => '#', 'icon' => 'object-group', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
         $menu['egt.nav.grouping']->addChild('egt.nav.departments', array('route' => 'department', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
         $menu['egt.nav.grouping']->addChild('egt.nav.divisions', array('route' => 'division', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
