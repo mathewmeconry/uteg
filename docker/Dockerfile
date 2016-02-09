@@ -19,12 +19,13 @@ RUN chmod u+x /init.sh
 
 EXPOSE 80
 =======
-RUN apt-get install -y nginx php5-fpm php5-mysqlnd php5-cli mysql-server supervisor php5-intl php5-dev
+RUN apt-get install -y nginx php5-fpm php5-mysqlnd php5-cli mysql-server supervisor php5-intl php5-dev php5-gd
 
 RUN sed -e 's/;daemonize = yes/daemonize = no/' -i /etc/php5/fpm/php-fpm.conf
 RUN sed -e 's/;listen\.owner/listen.owner/' -i /etc/php5/fpm/pool.d/www.conf
 RUN sed -e 's/;listen\.group/listen.group/' -i /etc/php5/fpm/pool.d/www.conf
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
+RUN echo "extension=gd.so" >> /etc/php5/fpm/php.ini
 
 ADD libjpeg8.deb /tmp/libjpeg8.deb
 ADD wkhtmltox-0.12.2-patched.deb /tmp/wkhtmltox-0.12.2-patched.deb

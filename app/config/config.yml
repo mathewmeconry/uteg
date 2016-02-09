@@ -136,6 +136,7 @@ liip_imagine:
           web_path: ~
     
     filter_sets:
+        cache: ~
         profilepic:
             quality: 75
             filters:
