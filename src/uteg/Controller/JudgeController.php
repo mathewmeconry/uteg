@@ -43,7 +43,10 @@ class JudgeController extends DefaultController
     public function judgesAction(Request $request, $compid) {
         $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
 
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
 
+        return $module->judges($request, $comp);
     }
 
 

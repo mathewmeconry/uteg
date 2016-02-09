@@ -405,6 +405,14 @@ device:
     parallel-bars: 'Parallel Bars'
     horizontal-bar: 'Horizontal Bar'
 
+judges:
+    path: 'Judges'
+grouping:
+    path: 'Grouping'
+divisions:
+    path: 'Divisions'
+reporting:
+    path: 'Reports'
 
 egt:
     nav:
@@ -414,8 +422,9 @@ egt:
         divisions: 'Divisions'
         reporting: 'Reporting'
         grouping: 'Starter Grouping'
-    grouping:
-        path: 'Grouping'
+    judges:
+        title: 'Judges'
+        header: 'Judges'
     divisions:
         title: 'Divisions'
         header: 'Divisions'
@@ -426,7 +435,6 @@ egt:
         department: 'Department'
         header-unassigned: 'Unassigned Starters'
     reporting:
-        path: 'Reports'
         divisions:
             title: 'Report Divisions'
             header: 'Report Divisions'

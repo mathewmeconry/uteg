@@ -85,6 +85,12 @@ class egt
         return 'DivsionEGT';
     }
 
+    public function judges(Request $request, Competition $competition)
+    {
+        return $this->container->get('templating')->renderResponse('egt/judges.html.twig', array(
+            "j2cs" => $competition->getJ2cs()
+        ));
+    }
 
     public function divisions(Request $request, Competition $competition)
     {
