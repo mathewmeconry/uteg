@@ -41,10 +41,10 @@
                 <div class="profile">
                     <div class="profile-image">
                         <img src="{% if app.user.profilepicturepath is defined %}{% if app.user.profilepicturepath %}{{ ('/profilepictures/' ~ app.user.profilepicturepath) | imagine_filter('profilepic') }}{% else %}{{ asset('profilepictures/default')| imagine_filter('profilepic') }}{% endif %}{% endif %}"
-                             alt="{% if app.user.firstname is defined %}{{ app.user.firstname }}{% endif %}{% if app.user.lastname is defined %}{{ app.user.lastname }}{% endif %}"/>
+                             alt="{% if app.user.firstname is defined %}{{ app.user.firstname }}{% endif %} {% if app.user.lastname is defined %}{{ app.user.lastname }}{% endif %}"/>
                     </div>
                     <div class="profile-data">
-                        <div class="profile-data-name">{% if app.user.firstname is defined %}{{ app.user.firstname }}{% endif %}{% if app.user.lastname is defined %}{{ app.user.lastname }}{% endif %}</div>
+                        <div class="profile-data-name">{% if app.user.firstname is defined %}{{ app.user.firstname }}{% endif %} {% if app.user.lastname is defined %}{{ app.user.lastname }}{% endif %}</div>
                         <div class="profile-data-title"></div>
                     </div>
                     <div class="profile-controls">
