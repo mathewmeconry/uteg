@@ -408,6 +408,7 @@ device:
 
 egt:
     nav:
+        judges: 'Judges'
         grouping: 'Starter Grouping'
         departments: 'Departments'
         divisions: 'Divisions'

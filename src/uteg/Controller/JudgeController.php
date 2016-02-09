@@ -37,6 +37,17 @@ class JudgeController extends DefaultController
     }
 
     /**
+     * @Route("/{compid}/judges", name="judges")
+     * @Method("GET")
+     */
+    public function judgesAction(Request $request, $compid) {
+        $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
+
+
+    }
+
+
+    /**
      * @Route("/{compid}/judge", name="judge")
      * @Method("GET")
      */
