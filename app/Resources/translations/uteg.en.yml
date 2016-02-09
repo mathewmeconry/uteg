@@ -142,6 +142,9 @@ starters:
         search: 'Search'
         searchPlaceholder: 'Search...'
         zeroRecords: 'No matching starters found'
+    add:
+        modal:
+            header: 'Add new Starter'
     edit:
         modal:
             save: 'Save'
