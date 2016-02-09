@@ -48,7 +48,7 @@ class egt
     public function onAddReportingMenu(MenuEvent $event)
     {
         $menu = $event->getMenu();
-        $menu['egt.nav.reporting']->addChild('egt.nav.grouping', array('route' => 'reportingDivisions', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
+        $menu['nav.reporting']->addChild('egt.nav.grouping', array('route' => 'reportingDivisions', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
     }
 
     public function getS2c()

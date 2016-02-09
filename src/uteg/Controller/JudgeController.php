@@ -45,6 +45,7 @@ class JudgeController extends DefaultController
 
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
 
         return $module->judges($request, $comp);
     }

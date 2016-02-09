@@ -44,7 +44,7 @@ class MenuBuilder extends ContainerAware
 
         $eventDispatcher->dispatch(MenuEvent::SERVICE_MENU, new MenuEvent($this->factory, $menu, $request));
 
-        $menu->addChild('egt.nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        $menu->addChild('nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
 
         $eventDispatcher->dispatch(MenuEvent::REPORTING_MENU, new MenuEvent($this->factory, $menu, $request));
 

@@ -102,6 +102,7 @@ nav:
     invites: 'Invites'
     invites.invite: 'Invite'
     invites.list: 'Current Invites'
+    reporting: 'Reporting'
     competition: 'Competition'
     competitions: 'Competitions'
     permissions: 'Permissions'
@@ -420,7 +421,6 @@ egt:
         grouping: 'Starter Grouping'
         departments: 'Departments'
         divisions: 'Divisions'
-        reporting: 'Reporting'
         grouping: 'Starter Grouping'
     judges:
         title: 'Judges'
