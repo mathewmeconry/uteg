@@ -1,0 +1,11 @@
+SET SQL_SAFE_UPDATES=0;
+UPDATE `uteg`.`acl_entries` SET `mask` = 262144 WHERE `mask` = 131072;
+UPDATE `uteg`.`acl_entries` SET `mask` = 131072 WHERE `mask` = 65536;
+UPDATE `uteg`.`acl_entries` SET `mask` = 65536 WHERE `mask` = 32768;
+UPDATE `uteg`.`acl_entries` SET `mask` = 32768 WHERE `mask` = 16384;
+UPDATE `uteg`.`acl_entries` SET `mask` = 16384 WHERE `mask` = 8192;
+UPDATE `uteg`.`acl_entries` SET `mask` = 8192 WHERE `mask` = 4096;
+UPDATE `uteg`.`acl_entries` SET `mask` = 4096 WHERE `mask` = 2048;
+UPDATE `uteg`.`acl_entries` SET `mask` = 2048 WHERE `mask` = 1024;
+UPDATE `uteg`.`acl_entries` SET `mask` = 1024 WHERE `mask` = 512;
+UPDATE `uteg`.`acl_entries` SET `mask` = 512 WHERE `mask` = 256;
