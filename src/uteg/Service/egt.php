@@ -298,7 +298,7 @@ class egt
 
     public function reportingDivisions(Request $request, \uteg\Entity\Competition $competition, $format)
     {
-        $groupedStarters = $this->generateDivisionsReport($request);
+        $groupedStarters = $this->generateDivisionsReport($request, $competition);
 
         if ($format === "pdf") {
             return $this->renderPdf('egt/reporting/divisionsReport.html.twig', array(
@@ -328,7 +328,7 @@ class egt
 
     public function reportingDivisionsPost(Request $request, \uteg\Entity\Competition $competition)
     {
-        $groupedStarters = $this->generateDivisionsReport($request);
+        $groupedStarters = $this->generateDivisionsReport($request, $competition);
 
         return $this->container->get('templating')->renderResponse('egt/reporting/divisionsReport.html.twig', array(
             "starters" => $groupedStarters,
@@ -356,7 +356,7 @@ class egt
         );
     }
 
-    private function generateDivisionsReport(Request $request)
+    private function generateDivisionsReport(Request $request, \uteg\Entity\Competition $competition)
     {
         $cookies = $request->cookies;
 
@@ -369,10 +369,10 @@ class egt
             $response->headers->setCookie($cookie);
         }
 
-        return $this->reportingSort($cookieVal[0], $this->getCompleteStarters());
+        return $this->reportingSort($cookieVal[0], $this->getCompleteStarters($competition));
     }
 
-    private function getCompleteStarters()
+    private function getCompleteStarters($competition)
     {
         $em = $this->container->get('doctrine')->getManager();
 
@@ -387,6 +387,7 @@ class egt
             ->join('d.category', 'ca')
             ->join('di.device', 'de')
             ->where('s.medicalcert = 0')
+            ->andWhere('d.competition = ?1')
             ->orderBy('st.gender', 'ASC')
             ->addOrderBy('s.category', 'ASC')
             ->addOrderBy('di.department', 'ASC')
@@ -394,6 +395,7 @@ class egt
             ->addOrderBy('s.club', 'ASC')
             ->addOrderBy('st.firstname', 'ASC')
             ->addOrderBy('st.lastname', 'ASC')
+            ->setParameter(1, $competition)
             ->getQuery()->getResult();
 
         return $starters;
