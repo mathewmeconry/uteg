@@ -31,6 +31,10 @@
 {% endif %}
 
 <style>
+    @media print {
+        .report-level-1 {page-break-after: always;}
+    }
+
     #columns {
         -webkit-column-count: {{ columncount }}; /* Chrome, Safari, Opera */
         -moz-column-count: {{ columncount }}; /* Firefox */
@@ -58,6 +62,7 @@
 
     .report-level-1 {
         padding-left: 0px;
+        page-break-after: always;
     }
 
     .report-tr-level-1 + .report-tr-level-2 > th.report-level-2 {
