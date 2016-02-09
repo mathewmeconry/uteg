@@ -406,7 +406,6 @@ class egt
                 $starters = $this->groupByRecursive($starters, $groupBy);
             }
         }
-
         return $starters;
     }
 
