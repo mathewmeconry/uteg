@@ -425,6 +425,18 @@ egt:
     judges:
         title: 'Judges'
         header: 'Judges'
+        table:
+            all: 'All'
+            next: 'Next'
+            previous: 'Previous'
+            search: 'Search'
+            searchPlaceholder: 'Search...'
+            zeroRecords: 'No judges found...'
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            email: 'E-Mail'
+            device: 'Device'
+            actions: 'Actions'
     divisions:
         title: 'Divisions'
         header: 'Divisions'

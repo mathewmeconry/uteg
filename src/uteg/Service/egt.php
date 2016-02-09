@@ -88,8 +88,26 @@ class egt
     public function judges(Request $request, Competition $competition)
     {
         return $this->container->get('templating')->renderResponse('egt/judges.html.twig', array(
-            "j2cs" => $competition->getJ2cs()
+            "comp" => $competition
         ));
+    }
+
+    public function judgesPost(Request $request, Competition $competition)
+    {
+        $j2cs = $competition->getJ2cs();
+        $arr['data'] = [];
+
+        foreach ($j2cs as $j2c) {
+            $arr['data'][] = array("id" => $j2c->getId(),
+                "firstname" => $j2c->getUser()->getFirstname(),
+                "lastname" => $j2c->getUser()->getLastname(),
+                "email" => $j2c->getUser()->getEmail(),
+                "device" => $this->container->get('translator')->trans($j2c->getDevice()->getName(), array(), 'uteg'));
+        }
+        $response = new Response(json_encode($arr));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 
     public function divisions(Request $request, Competition $competition)

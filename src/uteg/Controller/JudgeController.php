@@ -50,6 +50,20 @@ class JudgeController extends DefaultController
         return $module->judges($request, $comp);
     }
 
+    /**
+     * @Route("/{compid}/judges", name="judgesPost")
+     * @Method("POST")
+     */
+    public function judgesPostAction(Request $request, $compid) {
+        $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
+        return $module->judgesPost($request, $comp);
+    }
+
 
     /**
      * @Route("/{compid}/judge", name="judge")
