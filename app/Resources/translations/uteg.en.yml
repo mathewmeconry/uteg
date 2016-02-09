@@ -437,6 +437,13 @@ egt:
             email: 'E-Mail'
             device: 'Device'
             actions: 'Actions'
+        modal:
+            add:
+                header: 'Add new judge'
+            edit:
+                header: 'Edit judge'
+                save: 'Save'
+                cancel: 'Cancel'
     divisions:
         title: 'Divisions'
         header: 'Divisions'
