@@ -409,6 +409,7 @@ egt:
         all: 'All'
         department: 'Department'
         header-unassigned: 'Unassigned Starters'
+        hint: 'Use CTRL and Shift for more efficiency'
     reporting:
         path: 'Reports'
         divisions:
