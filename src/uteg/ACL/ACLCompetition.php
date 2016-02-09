@@ -130,14 +130,14 @@ class ACLCompetition
         return $users;
     }
 
-    private function grantAdmin()
+    private function grantAdmin($compid)
     {
         $admin = $this->em->getRepository('uteg:User')->findOneBy(array('username' => 'admin'));
         $admin->addCompetition($this->comp);
         $this->em->persist($admin);
         $this->em->flush();
 
-        $this->addPermission(MaskBuilder::MASK_MASTER, array('username' => 'admin'));
+        $this->addPermission(MaskBuilder::MASK_MASTER, array('username' => 'admin'), $compid);
 
         $this->isadmin = false;
     }
@@ -145,10 +145,10 @@ class ACLCompetition
     private function updateAcl($compid = false)
     {
         if (!$compid) {
-            $this->comp = $this->em->find('uteg:Competition', $this->requestStack->getCurrentRequest()->get('compid'));
-        } else {
-            $this->comp = $this->em->find('uteg:Competition', $compid);
+            $compid = $this->requestStack->getCurrentRequest()->get('compid');
         }
+
+        $this->comp = $this->em->find('uteg:Competition', $compid);
 
         $objectIdentity = ObjectIdentity::fromDomainObject($this->comp);
 
@@ -156,7 +156,7 @@ class ACLCompetition
             $this->acl = $this->aclProvider->findAcl($objectIdentity);
         } catch (AclNotFoundException $e) {
             $this->acl = $this->aclProvider->createAcl($objectIdentity);
-            (!$this->isadmin) ? $this->grantAdmin() : "";
+            (!$this->isadmin) ? $this->grantAdmin($compid) : "";
         }
     }
 
