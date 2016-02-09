@@ -183,37 +183,40 @@ class ACLCompetition
 
         switch ($mask) {
             case 256:
-                $permissions['dashboard'] = 1;
+                $permissions['judge'] = 1;
                 break;
             case 512:
-                $permissions['starters_view'] = 1;
+                $permissions['dashboard'] = 1;
                 break;
             case 1024:
                 $permissions['starters_view'] = 1;
-                $permissions['starters_edit'] = 1;
                 break;
             case 2048:
-                $permissions['clubs_view'] = 1;
+                $permissions['starters_view'] = 1;
+                $permissions['starters_edit'] = 1;
                 break;
             case 4096:
                 $permissions['clubs_view'] = 1;
-                $permissions['clubs_edit'] = 1;
                 break;
             case 8192:
-                $permissions['settings_view'] = 1;
+                $permissions['clubs_view'] = 1;
+                $permissions['clubs_edit'] = 1;
                 break;
             case 16384:
                 $permissions['settings_view'] = 1;
-                $permissions['settings_edit'] = 1;
                 break;
             case 32768:
-                $permissions['permissions_view'] = 1;
+                $permissions['settings_view'] = 1;
+                $permissions['settings_edit'] = 1;
                 break;
             case 65536:
                 $permissions['permissions_view'] = 1;
-                $permissions['permissions_edit'] = 1;
                 break;
             case 131072:
+                $permissions['permissions_view'] = 1;
+                $permissions['permissions_edit'] = 1;
+                break;
+            case 524288:
                 $permissions['owner'] = 1;
                 break;
         }
