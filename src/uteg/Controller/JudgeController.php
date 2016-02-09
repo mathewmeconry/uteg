@@ -7,8 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use uteg\Entity\Club;
-use uteg\Form\Type\ClubType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 
 class JudgeController extends DefaultController
 {
@@ -20,14 +20,13 @@ class JudgeController extends DefaultController
     {
         $this->get('acl_competition')->isGrantedUrl('IS_AUTHENTICATED_FULLY', false);
 
-        $comps = array();
+        $j2cs = array();
 
         $user = $this->getUser();
         $authorizationChecker = $this->get('security.authorization_checker');
 
         foreach ($user->getJ2cs() as $j2c) {
-            $request->getSession()->set('comp', $j2c->getCompetition()->getId());
-            if ($authorizationChecker->isGranted('VIEW', $j2c->getCompetition())) {
+            if ($authorizationChecker->isGranted('JUDGE', $j2c->getCompetition())) {
                 $j2cs[] = $j2c;
             }
         }
@@ -35,5 +34,22 @@ class JudgeController extends DefaultController
         return $this->render('judging.html.twig', array(
             "j2cs" => $j2cs
         ));
+    }
+
+    /**
+     * @Route("/{compid}/judge", name="judge")
+     * @Method("GET")
+     */
+    public function judgeAction(Request $request, $compid)
+    {
+        $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $compid);
+        $user = $this->getUser();
+        $j2c = $user->getJ2cByComp($comp);
+
+        if(!$j2c) {
+            throw new AccessDeniedException();
+        }
+
+        return $this->render('base.html.twig');
     }
 }

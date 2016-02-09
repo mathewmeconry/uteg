@@ -75,6 +75,10 @@
                         $(this).removeClass('icon-gavel-green').addClass('icon-gavel-black');
                     }
             );
+
+            $('i[class*="icon-gavel-"]').click(function () {
+                window.location.href = '/' + $(this).parent().parent().data('id') + '/judge';
+            });
         });
     </script>
 {% endblock %}
@@ -115,7 +119,7 @@
                         <td>{{ j2c.competition.gym }}</td>
                         <td>{{ j2c.competition.location }}</td>
                         <td>{{ j2c.competition.zipcode }}</td>
-                        <td>{{ j2c.device.name }}</td>
+                        <td>{{ j2c.device.name | trans }}</td>
                         <td>{{ j2c.competition.startdate|localizeddate('medium', 'none', app.request.preferredLanguage) }}</td>
                         <td>{{ j2c.competition.enddate|localizeddate('medium', 'none', app.request.preferredLanguage) }}</td>
                         <td class="action">

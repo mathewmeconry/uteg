@@ -572,9 +572,10 @@ class Competition
         return false;
     }
 
-    public function isS2cOf(\uteg\Entity\Starters2Competitions $starters2Competitions) {
+    public function isS2cOf(\uteg\Entity\Starters2Competitions $starters2Competitions)
+    {
         foreach ($this->s2cs as $s2c) {
-            if($s2c === $starters2Competitions) {
+            if ($s2c === $starters2Competitions) {
                 return true;
             }
         }
@@ -608,10 +609,21 @@ class Competition
     /**
      * Get j2cs
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getJ2cs()
     {
         return $this->j2cs;
+    }
+
+    public function isJ2cOf(\uteg\Entity\Judges2Competitions $check)
+    {
+        foreach ($this->j2cs as $j2c) {
+            if ($j2c === $check) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

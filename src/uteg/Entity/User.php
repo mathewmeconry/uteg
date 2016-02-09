@@ -361,10 +361,21 @@ class User extends BaseUser
     /**
      * Get j2cs
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getJ2cs()
     {
         return $this->j2cs;
+    }
+
+    public function getJ2cByComp($check)
+    {
+        foreach ($this->j2cs as $j2c) {
+            if ($j2c->getCompetition() === $check) {
+                return $j2c;
+            }
+        }
+
+        return false;
     }
 }
