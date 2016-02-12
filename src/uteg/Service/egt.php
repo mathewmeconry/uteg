@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Competition;
 use uteg\Entity\DivisionEGT;
+use uteg\Entity\Judges2Competitions;
 use uteg\EventListener\MenuEvent;
 use uteg\Entity\Starters2CompetitionsEGT;
 use uteg\Form\Type\J2cType;
@@ -118,9 +119,18 @@ class egt
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em = $this->container->get('doctrine')->getEntityManager();
-            $j2c = $form->getData();
+            $userForm = $form->getData();
 
-            $em->persist($j2c);
+            $user = $em->getRepository('uteg:User')->findOneByEmail($userForm['email']);
+
+            if($user) {
+                $j2c = new Judges2Competitions();
+                $j2c->setUser($user);
+                $j2c->setCompetition($competition);
+                $j2c->setDevice($userForm['device']);
+            } else {
+
+            }
 
             $this->container->get('session')->getFlashBag()->add('success', 'egt.judges.add.success');
 
