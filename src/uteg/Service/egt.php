@@ -13,11 +13,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Constraints\Null;
 use uteg\Entity\Competition;
 use uteg\Entity\DivisionEGT;
 use uteg\EventListener\MenuEvent;
 use uteg\Entity\Starters2CompetitionsEGT;
+use uteg\Form\Type\J2cType;
 
 class egt
 {
@@ -108,6 +108,31 @@ class egt
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
+    }
+
+    public function judgeAdd(Request $request, \uteg\Entity\Competition $competition) {
+        $acl = $this->container->get('acl_competition');
+
+        $form = $this->container->get('form.factory')->create(new J2cType(false));
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $em = $this->container->get('doctrine')->getEntityManager();
+            $j2c = $form->getData();
+
+            $em->persist($j2c);
+
+            $this->container->get('session')->getFlashBag()->add('success', 'egt.judges.add.success');
+
+            return new Response('true');
+        }
+
+        return $this->container->get('templating')->renderResponse('egt/form/judgeEdit.html.twig',
+            array('form' => $form->createView(),
+                'error' => (isset($errorMessages)) ? $errorMessages : '',
+                'target' => 'judgeAdd'
+            )
+        );
     }
 
     public function divisions(Request $request, Competition $competition)

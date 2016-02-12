@@ -35,6 +35,11 @@ class Device
      */
     protected $divisions;
 
+    public function __toString()
+    {
+        return $this->name;
+    }
+
     /**
      * Get id
      *

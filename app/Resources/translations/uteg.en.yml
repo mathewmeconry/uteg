@@ -428,6 +428,11 @@ egt:
     judges:
         title: 'Judges'
         header: 'Judges'
+        add:
+            success: 'Judge successfully added'
+        edit:
+            email: 'E-Mail'
+            device: 'Device'
         table:
             all: 'All'
             next: 'Next'
