@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\File;
+use uteg\Entity\UserInvitation;
 use Symfony\Component\Security\Core\Util\SecureRandom;
 
 /**
@@ -45,6 +46,13 @@ class User extends BaseUser
     protected $competitions;
 
     /**
+     * @ORM\OneToOne(targetEntity="UserInvitation")
+     * @ORM\JoinColumn(referencedColumnName="code")
+     * @Assert\NotNull(message="Your invitation is wrong", groups={"Registration"})
+     */
+    protected $invitation;
+
+    /**
      * @ORM\Column(type="string", name="profilepicture", nullable=true)
      */
     protected $profilePicturePath;
@@ -60,7 +68,7 @@ class User extends BaseUser
     protected $profilePictureFile;
 
     /**
-     * @ORM\OneToMany(targetEntity="Judges2Competitions", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Judges2Competitions", mappedBy="user", cascade={"persist"}, orphanRemoval=TRUE)
      */
     protected $j2cs;
 
@@ -159,6 +167,17 @@ class User extends BaseUser
     public function getCompetitions()
     {
         return $this->competitions;
+    }
+
+
+    public function setInvitation(UserInvitation $invitation)
+    {
+        $this->invitation = $invitation;
+    }
+
+    public function getInvitation()
+    {
+        return $this->invitation;
     }
 
 
