@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Util\SecureRandom;
 use uteg\Entity\Competition;
 use uteg\Entity\DivisionEGT;
 use uteg\Entity\Judges2Competitions;
@@ -132,6 +133,8 @@ class egt
             if($user) {
                 $j2c->setUser($user);
             } else {
+                $secure = new SecureRandom();
+
                 $invite = new UserInvitation();
                 $invite->setEmail($userForm['email']);
                 $em->persist($invite);
@@ -140,6 +143,8 @@ class egt
 
                 $user = new User();
                 $user->setInvitation($invite);
+                $user->setEmail($userForm['email']);
+                $user->setPassword(base64_encode($secure->nextBytes(100)));
                 $em->persist($user);
 
                 $j2c->setUser($user);

@@ -27,12 +27,12 @@ class User extends BaseUser
     protected $id;
 
     /**
-     * @ORM\Column(type="string", name="firstname")
+     * @ORM\Column(type="string", name="firstname", nullable=true)
      */
     protected $firstname;
 
     /**
-     * @ORM\Column(type="string", name="lastname")
+     * @ORM\Column(type="string", name="lastname", nullable=true)
      */
     protected $lastname;
 
