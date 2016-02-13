@@ -11,7 +11,7 @@ class RegistrationFormType extends BaseType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         // add your custom field
-        $builder->add('username', null, array("attr" => array("placeholder" => "register.username"), 'translation_domain' => 'uteg'))
+        $builder
             ->add('firstname', null, array("attr" => array("placeholder" => "register.firstname"), 'translation_domain' => 'uteg'))
             ->add('lastname', null, array("attr" => array("placeholder" => "register.lastname"), 'translation_domain' => 'uteg'))
             ->add('email', 'email', array("attr" => array("placeholder" => "register.email"), 'translation_domain' => 'uteg'))

@@ -28,7 +28,7 @@ class ACLCompetition
 
     public function addPermission($permission, $userSearchArray, $compid = false)
     {
-        $this->isadmin = ($userSearchArray['username'] == "admin") ? true : false;
+        $this->isadmin = ($userSearchArray['username'] == "admin@getu.ch") ? true : false;
 
         if (!$compid) {
             $this->updateAcl();
@@ -132,12 +132,12 @@ class ACLCompetition
 
     private function grantAdmin($compid)
     {
-        $admin = $this->em->getRepository('uteg:User')->findOneBy(array('username' => 'admin'));
+        $admin = $this->em->getRepository('uteg:User')->findOneBy(array('username' => 'admin@getu.ch'));
         $admin->addCompetition($this->comp);
         $this->em->persist($admin);
         $this->em->flush();
 
-        $this->addPermission(MaskBuilder::MASK_MASTER, array('username' => 'admin'), $compid);
+        $this->addPermission(MaskBuilder::MASK_MASTER, array('username' => 'admin@getu.ch'), $compid);
 
         $this->isadmin = false;
     }

@@ -13,8 +13,7 @@ class ProfileFormType extends BaseType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         // add your custom field
-        $builder->add('profilepicturefile', 'file', array('label' => 'profile.edit.profilepicture', "attr" => array("placeholder" => "profile.edit.profilepicture"), 'translation_domain' => 'uteg'))
-            ->add('username', null, array('label' => 'profile.edit.username', "attr" => array("placeholder" => "profile.edit.username"), 'translation_domain' => 'uteg'))
+        $builder->add('profilepicturefile', 'file', array('required' => false, 'label' => 'profile.edit.profilepicture', "attr" => array("placeholder" => "profile.edit.profilepicture"), 'translation_domain' => 'uteg'))
             ->add('firstname', null, array('label' => 'profile.edit.firstname', "attr" => array("placeholder" => "profile.edit.firstname"), 'translation_domain' => 'uteg'))
             ->add('lastname', null, array('label' => 'profile.edit.lastname', "attr" => array("placeholder" => "profile.edit.lastname"), 'translation_domain' => 'uteg'))
             ->add('email', 'email', array('label' => 'profile.edit.email', "attr" => array("placeholder" => "profile.edit.email"), 'translation_domain' => 'uteg'))

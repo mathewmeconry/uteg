@@ -91,6 +91,32 @@ class User extends BaseUser
     }
 
     /**
+     * Sets the email.
+     *
+     * @param string $email
+     * @return User
+     */
+    public function setEmail($email)
+    {
+        $this->setUsername($email);
+
+        return parent::setEmail($email);
+    }
+
+    /**
+     * Set the canonical email.
+     *
+     * @param string $emailCanonical
+     * @return User
+     */
+    public function setEmailCanonical($emailCanonical)
+    {
+        $this->setUsernameCanonical($emailCanonical);
+
+        return parent::setEmailCanonical($emailCanonical);
+    }
+
+    /**
      * Set firstname
      *
      * @param string $firstname

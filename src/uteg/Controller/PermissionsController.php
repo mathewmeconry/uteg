@@ -40,10 +40,8 @@ class PermissionsController extends DefaultController
         $users = $acl->getPermissionsByComp();
         $return = array();
         foreach ($users as $user) {
-            if($user['username'] != 'admin') {
-                $userOptions['username'] = $user['username'];
+            if($user['username'] != 'admin@getu.ch') {
                 $userOptions['email'] = $user['email'];
-
                 $userOptions['dashboard'] = 'fa-lock text-danger';
                 $userOptions['starters'] = 'fa-lock text-danger';
                 $userOptions['clubs'] = 'fa-lock text-danger';

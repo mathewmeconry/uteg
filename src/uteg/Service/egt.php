@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 use uteg\Entity\Competition;
 use uteg\Entity\DivisionEGT;
 use uteg\Entity\Judges2Competitions;
+use uteg\Entity\User;
+use uteg\Entity\UserInvitation;
 use uteg\EventListener\MenuEvent;
 use uteg\Entity\Starters2CompetitionsEGT;
 use uteg\Form\Type\J2cType;
@@ -123,14 +125,28 @@ class egt
 
             $user = $em->getRepository('uteg:User')->findOneByEmail($userForm['email']);
 
-            if($user) {
-                $j2c = new Judges2Competitions();
-                $j2c->setUser($user);
-                $j2c->setCompetition($competition);
-                $j2c->setDevice($userForm['device']);
-            } else {
+            $j2c = new Judges2Competitions();
+            $j2c->setCompetition($competition);
+            $j2c->setDevice($userForm['device']);
 
+            if($user) {
+                $j2c->setUser($user);
+            } else {
+                $invite = new UserInvitation();
+                $invite->setEmail($userForm['email']);
+                $em->persist($invite);
+
+                $invite->send();
+
+                $user = new User();
+                $user->setInvitation($invite);
+                $em->persist($user);
+
+                $j2c->setUser($user);
             }
+
+            $em->persist($j2c);
+            $em->flush();
 
             $this->container->get('session')->getFlashBag()->add('success', 'egt.judges.add.success');
 
