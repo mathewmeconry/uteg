@@ -14,7 +14,7 @@ class Judges2Competitions
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer", name="dev_id")
+     * @ORM\Column(type="integer", name="j2c_id")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
