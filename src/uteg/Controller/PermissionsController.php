@@ -47,6 +47,7 @@ class PermissionsController extends DefaultController
                 $userOptions['clubs'] = 'fa-lock text-danger';
                 $userOptions['settings'] = 'fa-lock text-danger';
                 $userOptions['permissions'] = 'fa-lock text-danger';
+                $userOptions['judge'] = 'fa-times text-danger';
                 $userOptions['owner'] = 'fa-lock text-danger';
 
                 foreach ($user['permissions'] as $key => $permission) {
@@ -77,6 +78,9 @@ class PermissionsController extends DefaultController
                             break;
                         case 'permissions_edit':
                             $userOptions['permissions'] = 'fa-pencil text-warning';
+                            break;
+                        case 'judge':
+                            $userOptions['judge'] = 'fa-check text-success';
                             break;
                         case 'owner':
                             $userOptions['dashboard'] = 'fa-unlock text-success';

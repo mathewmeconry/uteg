@@ -350,6 +350,7 @@ permissions:
         settings: 'Settings'
         permissions: 'Permissions'
         actions: 'Actions'
+        judge: 'Judge'
         owner: 'Owner'
         next: 'Next'
         previous: 'Previous'
