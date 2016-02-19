@@ -14,6 +14,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Util\SecureRandom;
+use uteg\ACL\MaskBuilder;
 use uteg\Entity\Competition;
 use uteg\Entity\DivisionEGT;
 use uteg\Entity\Judges2Competitions;
@@ -148,10 +149,18 @@ class egt
                 $em->persist($user);
 
                 $j2c->setUser($user);
+
+                $em->persist($j2c);
+                $em->flush();
             }
 
-            $em->persist($j2c);
-            $em->flush();
+            if($user) {
+                $acl->addPermission(MaskBuilder::MASK_JUDGE, array('username' => $user->getEmail()), $competition->getId());
+
+                $em->persist($j2c);
+                $em->flush();
+            }
+
 
             $this->container->get('session')->getFlashBag()->add('success', 'egt.judges.add.success');
 
