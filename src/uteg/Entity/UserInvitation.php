@@ -10,7 +10,10 @@ namespace uteg\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity */
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="ute_userIvitation")
+ */
 class UserInvitation
 {
     /** @ORM\Id @ORM\Column(type="string", length=6) */
