@@ -24,7 +24,7 @@ class AppKernel extends Kernel
         	new Liip\ImagineBundle\LiipImagineBundle(),
         	new BCC\ExtraToolsBundle\BCCExtraToolsBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
-            new uteg\uteg(),
+            new uteg\uteg()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
