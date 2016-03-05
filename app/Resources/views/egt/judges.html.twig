@@ -88,18 +88,17 @@
 
             $('tbody').on('click', 'td div button.judges-edit', function (event) {
                 var table = $(this).parent().parent().parent().parent().parent().DataTable();
-                var j2c_id = table.cell($(this).parent().parent().parent(), 1).data();
+                var j2c_id = table.cell($(this).parent().parent().parent(), 0).data();
 
                 $.ajax({
-                    url: "{{ path('starterEdit', { 'compid': app.request.get('compid')}) }}/" + j2c_id,
+                    url: "{{ path('judgeEdit', { 'compid': app.request.get('compid')}) }}/" + j2c_id,
                     method: "POST"
                 }).success(function (data) {
                     $('#dialog-edit-body').html(data);
-                    selectPicker('.selectSearch', true);
                     selectPicker('.select', false);
                 });
 
-                $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
+                $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 1).data() + " " + table.cell($(this).parent().parent().parent(), 2).data());
                 $("#dialog-edit").data('j2c_id', j2c_id).modal('show');
             });
 

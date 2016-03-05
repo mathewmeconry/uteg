@@ -37,7 +37,7 @@ class JudgeController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/judges", name="judges")
+     * @Route("/{compid}/judges", name="judges", requirements={"compid": "\d+"})
      * @Method("GET")
      */
     public function judgesAction(Request $request, $compid) {
@@ -51,7 +51,7 @@ class JudgeController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/judges", name="judgesPost")
+     * @Route("/{compid}/judges", name="judgesPost", requirements={"compid": "\d+"})
      * @Method("POST")
      */
     public function judgesPostAction(Request $request, $compid) {
@@ -65,7 +65,7 @@ class JudgeController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/judge/add", name="judgeAdd")
+     * @Route("/{compid}/judge/add", name="judgeAdd", requirements={"compid": "\d+"})
      * @Method("POST")
      */
     public function judgeAddAction(Request $request, $compid) {
@@ -78,9 +78,24 @@ class JudgeController extends DefaultController
         return $module->judgeAdd($request, $comp);
     }
 
+    /**
+     * @Route("/{compid}/judge/edit/{judgeid}", name="judgeEdit", defaults={"judgeid": ""}, requirements={"judgeid": "\d+", "compid": "\d+"})
+     * @Method("POST")
+     */
+    public function judgeEditAction(Request $request, $compid, $judgeid) {
+        $this->get('acl_competition')->isGrantedUrl('SETTINGS_EDIT');
+
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $judge = $this->getDoctrine()->getEntityManager()->find('uteg:Judges2Competitions', $judgeid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
+        return $module->judgeEdit($request, $comp, $judge);
+    }
+
 
     /**
-     * @Route("/{compid}/judge", name="judge")
+     * @Route("/{compid}/judge", name="judge", requirements={"compid": "\d+"})
      * @Method("GET")
      */
     public function judgeAction(Request $request, $compid)

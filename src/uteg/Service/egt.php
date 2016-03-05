@@ -115,7 +115,8 @@ class egt
         return $response;
     }
 
-    public function judgeAdd(Request $request, \uteg\Entity\Competition $competition) {
+    public function judgeAdd(Request $request, \uteg\Entity\Competition $competition)
+    {
         $acl = $this->container->get('acl_competition');
 
         $form = $this->container->get('form.factory')->create(new J2cType(false));
@@ -131,7 +132,7 @@ class egt
             $j2c->setCompetition($competition);
             $j2c->setDevice($userForm['device']);
 
-            if($user) {
+            if ($user) {
                 $j2c->setUser($user);
             } else {
                 $secure = new SecureRandom();
@@ -154,7 +155,7 @@ class egt
                 $em->flush();
             }
 
-            if($user) {
+            if ($user) {
                 $acl->addPermission(MaskBuilder::MASK_JUDGE, array('username' => $user->getEmail()), $competition->getId());
 
                 $em->persist($j2c);
@@ -165,6 +166,38 @@ class egt
             $this->container->get('session')->getFlashBag()->add('success', 'egt.judges.add.success');
 
             return new Response('true');
+        }
+
+        return $this->container->get('templating')->renderResponse('egt/form/judgeEdit.html.twig',
+            array('form' => $form->createView(),
+                'error' => (isset($errorMessages)) ? $errorMessages : '',
+                'target' => 'judgeAdd'
+            )
+        );
+    }
+
+    public function judgeEdit(Request $request, Competition $competition, Judges2Competitions $judge)
+    {
+        $j2c = new J2cType($judge);
+        $form = $this->container->get('form.factory')->create($j2c);
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $em = $this->container->get('doctrine')->getEntityManager();
+            $userForm = $form->getData();
+
+            $user = $em->getRepository('uteg:User')->findOneByEmail($userForm['email']);
+
+            $j2c->setDevice($userForm['device']);
+
+            if ($user) {
+                $em->persist($j2c);
+                $em->flush();
+
+                $this->container->get('session')->getFlashBag()->add('success', 'egt.judges.add.success');
+
+                return new Response('true');
+            }
         }
 
         return $this->container->get('templating')->renderResponse('egt/form/judgeEdit.html.twig',
