@@ -23,7 +23,7 @@
                     "url": "{{ path('departmentPost', { 'compid': app.request.get('compid')}) }}",
                     "method": "POST"
                 },
-                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "departments.table.all"|trans }}"]],
+                "lengthMenu": [[-1], ["{{ "departments.table.all"|trans }}"]],
                 "search": {
                     "regex": true
                 },
