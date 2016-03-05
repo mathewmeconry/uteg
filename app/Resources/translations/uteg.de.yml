@@ -1,0 +1,17 @@
+
+egt:
+    reporting:
+        path: 'Berichte'
+        divisions:
+            title: 'Riegeneinteilung'
+            header: 'Riegeneinteilung'
+            path: 'Riegen'
+            groupby: 'Gruppieren nache'
+            category: 'Kategorie'
+            none: 'Nichts'
+            gender: 'Geschlecht'
+            club: 'Verein'
+            department: 'Abteilung'
+            device: 'Gerät'
+            columncount: 'Anzahl Spalten'
+            save: 'Speichern'
