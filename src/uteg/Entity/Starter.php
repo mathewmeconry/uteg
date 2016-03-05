@@ -81,6 +81,7 @@ class Starter
 
     public function __toArray()
     {
+        $array['stvid'] = $this->stvid;
         $array['firstname'] = $this->firstname;
         $array['lastname'] = $this->lastname;
         $array['birthyear'] = $this->birthyear;
