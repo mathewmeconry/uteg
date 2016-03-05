@@ -15,7 +15,7 @@ egt:
             title: 'Riegeneinteilung'
             header: 'Riegeneinteilung'
             path: 'Riegen'
-            groupby: 'Gruppieren nache'
+            groupby: 'Gruppieren nach'
             category: 'Kategorie'
             none: 'Nichts'
             gender: 'Geschlecht'
