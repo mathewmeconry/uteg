@@ -178,8 +178,8 @@ class egt
 
     public function judgeEdit(Request $request, Competition $competition, Judges2Competitions $judge)
     {
-        $j2c = new J2cType($judge);
-        $form = $this->container->get('form.factory')->create($j2c);
+        $j2c = new J2cType();
+        $form = $this->container->get('form.factory')->create($j2c, $judge);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -188,10 +188,10 @@ class egt
 
             $user = $em->getRepository('uteg:User')->findOneByEmail($userForm['email']);
 
-            $j2c->setDevice($userForm['device']);
+            $judge->setDevice($userForm['device']);
 
             if ($user) {
-                $em->persist($j2c);
+                $em->persist($judge);
                 $em->flush();
 
                 $this->container->get('session')->getFlashBag()->add('success', 'egt.judges.add.success');

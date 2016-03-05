@@ -40,7 +40,7 @@ class Judges2Competitions
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -63,7 +63,7 @@ class Judges2Competitions
     /**
      * Get user
      *
-     * @return \uteg\Entity\User 
+     * @return \uteg\Entity\User
      */
     public function getUser()
     {
@@ -86,7 +86,7 @@ class Judges2Competitions
     /**
      * Get competition
      *
-     * @return \uteg\Entity\Competition 
+     * @return \uteg\Entity\Competition
      */
     public function getCompetition()
     {
@@ -114,5 +114,10 @@ class Judges2Competitions
     public function getDevice()
     {
         return $this->device;
+    }
+
+    public function getEmail()
+    {
+        return $this->user->getEmail();
     }
 }
