@@ -35,11 +35,11 @@ class Starter
     protected $lastname;
 
     /**
-     * @ORM\Column(type="string", name="sex")
+     * @ORM\Column(type="string", name="gender")
      * @Assert\NotBlank()
-     * @Assert\Choice(choices = {"male", "female"}, message = "starter.error.sex")
+     * @Assert\Choice(choices = {"male", "female"}, message = "starter.error.gender")
      */
-    protected $sex;
+    protected $gender;
 
     /**
      * @ORM\Column(type="integer", name="birthyear", length=4)
@@ -79,7 +79,7 @@ class Starter
         $array['firstname'] = $this->firstname;
         $array['lastname'] = $this->lastname;
         $array['birthyear'] = $this->birthyear;
-        $array['sex'] = $this->sex;
+        $array['gender'] = $this->gender;
         return $array;
     }
 
@@ -242,26 +242,26 @@ class Starter
     }
 
     /**
-     * Set sex
+     * Set gender
      *
-     * @param string $sex
+     * @param string $gender
      * @return Starter
      */
-    public function setSex($sex)
+    public function setGender($gender)
     {
-        $this->sex = $sex;
+        $this->gender = $gender;
 
         return $this;
     }
 
     /**
-     * Get sex
+     * Get gender
      *
      * @return string
      */
-    public function getSex()
+    public function getGender()
     {
-        return $this->sex;
+        return $this->gender;
     }
 
 }
