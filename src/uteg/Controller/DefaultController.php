@@ -76,6 +76,7 @@ class DefaultController extends Controller
                 $starter = $em->getRepository('uteg:Starter')->findOneBy(array("lastname" => $starterPost['firstname'], "firstname" => $starterPost['lastname'], "birthyear" => $starterPost['birthyear'], "gender" => $starterPost['gender']));
                 if (!$starter) {
                     $starter = new Starter();
+                    $starter->setStvid($starterPost['stvid']);
                     $starter->setFirstname($starterPost['firstname']);
                     $starter->setLastname($starterPost['lastname']);
                     $starter->setBirthyear($starterPost['birthyear']);
