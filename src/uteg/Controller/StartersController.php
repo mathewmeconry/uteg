@@ -241,36 +241,43 @@ class StartersController extends DefaultController
                 $highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn);
                 ($fs->exists($file)) ? $fs->remove($file) : '';
 
-                if ($highestColumnIndex == 6) {
+                if ($highestColumnIndex == 7) {
 
                     for ($row = 1; $row <= $highestRow; ++$row) {
                         ++$index;
 
-                        ($sheetData->getCellByColumnAndRow(0, $row)->getValue() == 'Firstname' ||
-                            $sheetData->getCellByColumnAndRow(1, $row)->getValue() == 'Lastname' ||
-                            $sheetData->getCellByColumnAndRow(2, $row)->getValue() == 'Brith year' ||
-                            $sheetData->getCellByColumnAndRow(3, $row)->getValue() == 'Gender' ||
-                            $sheetData->getCellByColumnAndRow(4, $row)->getValue() == 'Category' ||
-                            $sheetData->getCellByColumnAndRow(5, $row)->getValue() == 'Club') ? $row++ : $row;
 
-                        ($sheetData->getCellByColumnAndRow(0, $row)->getValue() == '' &&
-                            $sheetData->getCellByColumnAndRow(1, $row)->getValue() == '' &&
+                        ($sheetData->getCellByColumnAndRow(0, $row)->getValue() == 'STV-Nummer' ||
+                            $sheetData->getCellByColumnAndRow(1, $row)->getValue() == 'Vorname' ||
+                            $sheetData->getCellByColumnAndRow(2, $row)->getValue() == 'Lastname' ||
+                            $sheetData->getCellByColumnAndRow(3, $row)->getValue() == 'Brith year' ||
+                            $sheetData->getCellByColumnAndRow(4, $row)->getValue() == 'Gender' ||
+                            $sheetData->getCellByColumnAndRow(5, $row)->getValue() == 'Category' ||
+                            $sheetData->getCellByColumnAndRow(7, $row)->getValue() == 'Club') ? $row++ : $row;
+
+                        ($sheetData->getCellByColumnAndRow(1, $row)->getValue() == '' &&
                             $sheetData->getCellByColumnAndRow(2, $row)->getValue() == '' &&
                             $sheetData->getCellByColumnAndRow(3, $row)->getValue() == '' &&
                             $sheetData->getCellByColumnAndRow(4, $row)->getValue() == '' &&
-                            $sheetData->getCellByColumnAndRow(5, $row)->getValue() == '') ? $row++ : $row;
+                            $sheetData->getCellByColumnAndRow(5, $row)->getValue() == '' &&
+                            $sheetData->getCellByColumnAndRow(6, $row)->getValue() == '') ? $row++ : $row;
 
-                        $firstname = $sheetData->getCellByColumnAndRow(0, $row)->getValue();
+                        $stvid = $sheetData->getCellByColumnAndRow(0, $row)->getValue();
+                        if (strlen($stvid) <= 0) {
+                            $errors[$index]['stvid'] = 'starter.error.stvid';
+                        }
+
+                        $firstname = $sheetData->getCellByColumnAndRow(1, $row)->getValue();
                         if (strlen($firstname) <= 0) {
                             $errors[$index]['firstname'] = 'starter.error.firstname';
                         }
 
-                        $lastname = $sheetData->getCellByColumnAndRow(1, $row)->getValue();
+                        $lastname = $sheetData->getCellByColumnAndRow(2, $row)->getValue();
                         if (strlen($lastname) <= 0) {
                             $errors[$index]['lastname'] = 'starter.error.lastname';
                         }
 
-                        $birthyear = $sheetData->getCellByColumnAndRow(2, $row)->getValue();
+                        $birthyear = $sheetData->getCellByColumnAndRow(3, $row)->getValue();
                         if (strlen($birthyear) < 4) {
                             $errors[$index]['birthyear'] = 'starter.error.birthyearMin';
                         }
@@ -279,17 +286,25 @@ class StartersController extends DefaultController
                             $errors[$index]['birthyear'] = 'starter.error.birthyearMax';
                         }
 
-                        $gender = strtolower($sheetData->getCellByColumnAndRow(3, $row)->getValue());
+                        $gender = strtolower($sheetData->getCellByColumnAndRow(4, $row)->getValue());
+                        if ($gender === 'w') {
+                            $gender = 'female';
+                        }
+
+                        if ($gender === 'm') {
+                            $gender = 'male';
+                        }
+
                         if ($gender !== 'male' && $gender !== 'female') {
                             $errors[$index]['gender'] = 'starter.error.gender';
                         }
 
-                        $clubname = $sheetData->getCellByColumnAndRow(5, $row)->getValue();
+                        $clubname = $sheetData->getCellByColumnAndRow(6, $row)->getValue();
                         if ($clubname) {
                             $club = $em->getRepository('uteg:Club')->findOneBy(array("name" => $clubname));
                             if (!$club) {
                                 $club = new Club();
-                                $club->setName($sheetData->getCellByColumnAndRow(5, $row)->getValue());
+                                $club->setName($sheetData->getCellByColumnAndRow(6, $row)->getValue());
                                 $em->persist($club);
                                 $em->flush();
                             }
@@ -298,13 +313,22 @@ class StartersController extends DefaultController
                             $errors[$index]['club'] = 'starter.error.club';
                         }
 
-                        $category = $em->getRepository('uteg:Category')->findOneBy(array("name" => $sheetData->getCellByColumnAndRow(4, $row)->getValue()));
+                        $category = $sheetData->getCellByColumnAndRow(5, $row)->getValue();
+                        if (strpos($category, "D") === false || strpos($category, "H") === false) {
+                            $category = "KD/H";
+                        }
+
+                        if (strpos($category, "K") === false) {
+                            $category = "K" . $category;
+                        }
+                        $category = $em->getRepository('uteg:Category')->findOneBy(array("name" => $category));
                         if (!$category) {
                             $category['id'] = 0;
                             $errors[$index]['category'] = 'starter.error.category';
                         }
 
-                        $starters[] = array("firstname" => $firstname,
+                        $starters[] = array("stvid" => $stvid,
+                            "firstname" => $firstname,
                             'lastname' => $lastname,
                             'birthyear' => $birthyear,
                             'gender' => $gender,
@@ -312,6 +336,7 @@ class StartersController extends DefaultController
                             'club' => $club
                         );
 
+                        unset($stvid);
                         unset($firstname);
                         unset($lastname);
                         unset($birthyear);

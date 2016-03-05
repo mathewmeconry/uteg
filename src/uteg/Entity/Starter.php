@@ -23,6 +23,11 @@ class Starter
     protected $id;
 
     /**
+     * @ORM\Column(type="string", name="stvid", nullable=true)
+     */
+    protected $stvid;
+
+    /**
      * @ORM\Column(type="string", name="firstname")
      * @Assert\NotBlank(message="starter.error.firstname")
      */
@@ -76,6 +81,7 @@ class Starter
 
     public function __toArray()
     {
+        $array['stvid'] = $this->stvid;
         $array['firstname'] = $this->firstname;
         $array['lastname'] = $this->lastname;
         $array['birthyear'] = $this->birthyear;
@@ -91,6 +97,15 @@ class Starter
     public function getId()
     {
         return $this->id;
+    }
+
+    public function setStvid($stvid) {
+        $this->stvid = $stvid;
+        return $this;
+    }
+
+    public function getStvid() {
+        return $this->stvid;
     }
 
     /**
