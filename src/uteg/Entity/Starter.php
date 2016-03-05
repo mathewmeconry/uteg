@@ -23,7 +23,7 @@ class Starter
     protected $id;
 
     /**
-     * @ORM\Column(type="string", name="stvid", nullable="true")
+     * @ORM\Column(type="string", name="stvid", nullable=true)
      */
     protected $stvid;
 
