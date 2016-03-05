@@ -14,3 +14,10 @@ egt:
             device: 'Gerät'
             columncount: 'Anzahl Spalten'
             save: 'Speichern'
+
+device:
+    floor: 'Boden'
+    rings: 'Schaukelringe'
+    vault: 'Sprung'
+    parallel-bars: 'Barren'
+    horizontal-bar: 'Reck'
