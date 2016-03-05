@@ -408,6 +408,7 @@ class egt
                 $starters = $this->groupByRecursive($starters, $groupBy);
             }
         }
+        ksort($starters);
         return $starters;
     }
 
