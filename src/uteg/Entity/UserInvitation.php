@@ -61,4 +61,40 @@ class UserInvitation
     {
         $this->sent = true;
     }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     * @return UserInvitation
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Set sent
+     *
+     * @param boolean $sent
+     * @return UserInvitation
+     */
+    public function setSent($sent)
+    {
+        $this->sent = $sent;
+
+        return $this;
+    }
+
+    /**
+     * Get sent
+     *
+     * @return boolean 
+     */
+    public function getSent()
+    {
+        return $this->sent;
+    }
 }
