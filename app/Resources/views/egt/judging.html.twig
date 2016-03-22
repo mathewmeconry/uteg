@@ -1,0 +1,53 @@
+{% trans_default_domain 'uteg' %}
+
+{% extends "baseAnon.html.twig" %}
+
+{% block title %}{{ 'egt.judging.title'|trans }}  {{ device |trans }}{% endblock %}
+
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
+{% endblock %}
+
+{% block jsplugins %}
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+{% endblock %}
+
+{% block css %}
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    {{ dump(starters) }}
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel_judging" class="panel panel-default" style="min-height: 400px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ 'egt.judging.header'|trans }} {{ device |trans }}</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="tabs">
+                    <ul class="nav nav-tabs">
+                        {% for i in 1..8 %}
+                            <li {% if i == 1 %}class="active"{% endif %}>
+                                <a href="#{{ i }}" data-toggle="tab"
+                                   aria-expanded="true">K</a>
+                            </li>
+                        {% endfor %}
+                        <li>
+                            <a href="#all" data-toggle="tab" aria-expanded="true">{{ 'starters.tab.all'|trans }}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

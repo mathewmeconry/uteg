@@ -101,7 +101,8 @@ class JudgeController extends DefaultController
      */
     public function judgeAction(Request $request, $compid)
     {
-        $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $compid);
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
         $user = $this->getUser();
         $j2c = $user->getJ2cByComp($comp);
 
@@ -109,6 +110,6 @@ class JudgeController extends DefaultController
             throw new AccessDeniedException();
         }
 
-        return $this->render('base.html.twig');
+        return $module->judging($request, $comp, $j2c);
     }
 }

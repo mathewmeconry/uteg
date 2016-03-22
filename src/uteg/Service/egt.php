@@ -460,6 +460,33 @@ class egt
         ));
     }
 
+    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Judges2Competitions $j2c) {
+        $em = $this->container->get('Doctrine')->getManager();
+
+        $starters = $em
+            ->getRepository('uteg:Starters2CompetitionsEGT')
+            ->createQueryBuilder('s')
+            ->select('st.firstname as firstname, st.lastname as lastname, c.name as club, d.number as devicenumber')
+            ->join('s.division', 'di')
+            ->join('di.department', 'de')
+            ->join('s.starter', 'st')
+            ->join('s.club', 'c')
+            ->join('di.device', 'd')
+            ->where('de.started = 1')
+            ->andWhere('de.ended = 0')
+            ->getQuery()->getResult();
+
+        foreach($starters as $starter) {
+            $return[$starter['devicenumber']][] = $starter;
+        }
+
+
+        return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
+            "device" => $j2c->getDevice()->getName(),
+            "starters" => $return
+        ));
+    }
+
     private function renderPdf($path, $additional)
     {
         $html = $this->container->get('templating')->render($path, $additional);
