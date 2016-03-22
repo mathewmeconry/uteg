@@ -27,8 +27,6 @@ class JudgeController extends DefaultController
         $authorizationChecker = $this->get('security.authorization_checker');
 
         foreach ($user->getJ2cs() as $j2c) {
-            \Doctrine\Common\Util\Debug::dump($j2c->getCompetition());
-
             if ($authorizationChecker->isGranted('JUDGE', $j2c->getCompetition())) {
                 $j2cs[] = $j2c;
             }

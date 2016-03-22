@@ -99,6 +99,14 @@ class ACLCompetition
         }
     }
 
+    public function isGrantedRaw($permission, $competition) {
+        if ($this->authorizationChecker->isGranted($permission, $competition)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function getPossibleRoute()
     {
         $this->updateAcl();
@@ -142,7 +150,7 @@ class ACLCompetition
         $this->isadmin = false;
     }
 
-    private function updateAcl($compid = false)
+    public function updateAcl($compid = false)
     {
         if (!$compid) {
             $compid = $this->requestStack->getCurrentRequest()->get('compid');

@@ -30,7 +30,6 @@ class PermissionMap extends BasicPermissionMap
     {
         $this->map = array(
             self::PERMISSION_VIEW => array(
-                MaskBuilder::MASK_JUDGE,
                 MaskBuilder::MASK_VIEW,
                 MaskBuilder::MASK_EDIT,
                 MaskBuilder::MASK_OPERATOR,
@@ -50,6 +49,7 @@ class PermissionMap extends BasicPermissionMap
             self::PERMISSIONS_JUDGE => array(
                 MaskBuilder::MASK_OWNER,
                 MaskBuilder::MASK_MASTER,
+                MaskBuilder::MASK_JUDGE
             ),
 
             self::PERMISSION_EDIT => array(
