@@ -84,7 +84,7 @@ class Competition
     protected $c2is;
 
     /**
-     * @ORM\OneToMany(targetEntity="Judges2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="Judges2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE, fetch="EAGER")
      */
     protected $j2cs;
 

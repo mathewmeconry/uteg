@@ -405,7 +405,7 @@ class User extends BaseUser
     /**
      * Get j2cs
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection | \uteg\Entity\Judges2Competitions[]
      */
     public function getJ2cs()
     {

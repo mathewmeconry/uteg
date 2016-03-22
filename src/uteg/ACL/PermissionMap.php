@@ -48,7 +48,8 @@ class PermissionMap extends BasicPermissionMap
             ),
 
             self::PERMISSIONS_JUDGE => array(
-
+                MaskBuilder::MASK_OWNER,
+                MaskBuilder::MASK_MASTER,
             ),
 
             self::PERMISSION_EDIT => array(

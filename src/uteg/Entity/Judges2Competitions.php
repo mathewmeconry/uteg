@@ -76,7 +76,7 @@ class Judges2Competitions
      * @param \uteg\Entity\Competition $competition
      * @return Judges2Competitions
      */
-    public function setCompetition(\uteg\Entity\Competition $competition = null)
+    public function setCompetition(\uteg\Entity\Competition $competition)
     {
         $this->competition = $competition;
 
