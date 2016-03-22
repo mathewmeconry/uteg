@@ -41,16 +41,25 @@ class DepartmentController extends DefaultController
 
         $dateFormatter = $this->get('bcc_extra_tools.date_formatter');
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $translator = $this->container->get('translator');
 
         $deps = $comp->getDepartments();
         $departments["data"] = array();
 
         foreach ($deps as $dep) {
+            if($dep->getStarted() === false && $dep->getEnded() == false) {
+                $state = '<button class="btn btn-primary btn-condensed btn-icon start"><i class="fa fa-play"></i><span>'.$translator->trans('departments.start', array(), 'uteg').'</span></button>';
+            } elseif($dep->getStarted() === true && $dep->getEnded() == false) {
+                $state = '<button class="btn btn-warning btn-condensed btn-icon"><i class="fa fa-hourglass-half"></i><span>'.$translator->trans('departments.running', array(), 'uteg').'</span></button>';;
+            } else {
+                $state = '<button class="btn btn-success btn-condensed btn-icon"><i class="fa fa-check"></i><span>'.$translator->trans('departments.finished', array(), 'uteg').'</span></button>';;
+            }
             $departments["data"][] = array("id" => $dep->getId(),
                 "number" => $dep->getNumber(),
                 "date" => $dateFormatter->format($dep->getDate(), "medium", "none", $request->getPreferredLanguage()),
                 "category" => $dep->getCategory()->getName(),
-                "gender" => $dep->getGender()
+                "gender" => $dep->getGender(),
+                "state" => $state
             );
         }
 
@@ -199,6 +208,22 @@ class DepartmentController extends DefaultController
             $this->container->get('session')->getFlashBag()->add('success', 'department.remove.success');
             return new Response('true');
         }
+    }
+
+    /**
+     * @Route("{compid}/start/{dep}", name="departmentStart", defaults={"dep": ""})
+     * @Method("POST")
+     */
+    public function startDepartmentAction(Request $request, $compid, $dep) {
+        $em = $this->getDoctrine()->getManager();
+        $department = $em->getRepository('uteg:Department')->find($dep);
+
+        $department->setStarted(true);
+        $em->persist($department);
+        $em->flush();
+
+        $this->container->get('session')->getFlashBag()->add('success', 'department.start.success');
+        return new Response('true');
     }
 
     private function adjustDepNumbering(\uteg\Entity\Competition $competition, $srcDepartment, $mode)

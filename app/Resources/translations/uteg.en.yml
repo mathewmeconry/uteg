@@ -383,11 +383,16 @@ department:
         ok: 'OK'
         success: 'Department successfully deleted'
         access_denied: 'You have no permissions to delete this Department'
+    start:
+        success: 'Department started successfully'
 
 departments:
     title: 'Departments'
     header: 'Departments'
     path: 'Departments'
+    start: 'Start'
+    running: 'Running'
+    finished: 'Finished'
     table:
             all: 'All'
             next: 'Next'
@@ -474,3 +479,6 @@ egt:
             device: 'Device'
             columncount: 'Number of columns'
             save: 'Save'
+    judging:
+        title: 'Judging'
+        header: 'Judging'
