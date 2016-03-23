@@ -460,30 +460,40 @@ class egt
         ));
     }
 
-    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Judges2Competitions $j2c) {
+    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device,\uteg\Entity\Judges2Competitions $j2c) {
         $em = $this->container->get('Doctrine')->getManager();
+        $devices = array(1=>1, 2=>2, 3=>3, 5=>5);
 
         $starters = $em
             ->getRepository('uteg:Starters2CompetitionsEGT')
             ->createQueryBuilder('s')
-            ->select('st.firstname as firstname, st.lastname as lastname, c.name as club, d.number as devicenumber')
+            ->select('s.id as id, st.firstname as firstname, st.lastname as lastname, st.gender as gender, c.name as club, d.number as devicenumber, ca.name as category')
             ->join('s.division', 'di')
             ->join('di.department', 'de')
             ->join('s.starter', 'st')
             ->join('s.club', 'c')
             ->join('di.device', 'd')
+            ->join('s.category', 'ca')
             ->where('de.started = 1')
             ->andWhere('de.ended = 0')
             ->getQuery()->getResult();
 
         foreach($starters as $starter) {
             $return[$starter['devicenumber']][] = $starter;
+            if($starter['gender'] === 'male') {
+                $devices[4] = 4;
+            }
         }
 
+        $key = array_search($device->getNumber(), array_keys($devices), true);
+        $slice = array_slice($devices, $key, null, true);
+        array_merge($devices, $slice);
+        var_dump($key);
 
         return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
             "device" => $j2c->getDevice()->getName(),
-            "starters" => $return
+            "starters" => $return,
+            "devices" => $devices
         ));
     }
 

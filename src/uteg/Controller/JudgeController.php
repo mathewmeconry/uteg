@@ -96,12 +96,13 @@ class JudgeController extends DefaultController
 
 
     /**
-     * @Route("/{compid}/judge", name="judge", requirements={"compid": "\d+"})
+     * @Route("/{compid}/{deviceid}/judge", name="judge", requirements={"compid": "\d+", "deviceid": "\d+"})
      * @Method("GET")
      */
-    public function judgeAction(Request $request, $compid)
+    public function judgeAction(Request $request, $compid, $deviceid)
     {
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $device = $this->getDoctrine()->getEntityManager()->find('uteg:Device', $deviceid);
         $module = $this->get($comp->getModule()->getServiceName());
         $user = $this->getUser();
         $j2c = $user->getJ2cByComp($comp);
@@ -110,6 +111,6 @@ class JudgeController extends DefaultController
             throw new AccessDeniedException();
         }
 
-        return $module->judging($request, $comp, $j2c);
+        return $module->judging($request, $comp, $device, $j2c);
     }
 }

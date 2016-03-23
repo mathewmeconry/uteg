@@ -482,3 +482,12 @@ egt:
     judging:
         title: 'Judging'
         header: 'Judging'
+        division: 'Division'
+        pause: 'Pause'
+        table:
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            club: 'Club'
+            category: 'Category'
+            grade: 'Grade'
+            save: 'Save'
