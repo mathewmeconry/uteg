@@ -460,9 +460,20 @@ class egt
         ));
     }
 
-    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device,\uteg\Entity\Judges2Competitions $j2c) {
+    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, \uteg\Entity\Judges2Competitions $j2c)
+    {
         $em = $this->container->get('Doctrine')->getManager();
-        $devices = array(1=>1, 2=>2, 3=>3, 5=>5);
+        $devices = array(1 => 1, 2 => 2, 3 => 3, 5 => 5);
+
+        $departments = $em
+            ->getRepository('uteg:Department')
+            ->createQueryBuilder('d')
+            ->select('d.round as round')
+            ->where('d.started = 1')
+            ->andWhere('d.ended = 0')
+            ->getQuery()->getResult();
+
+        $round = $departments[0]['round'];
 
         $starters = $em
             ->getRepository('uteg:Starters2CompetitionsEGT')
@@ -478,22 +489,44 @@ class egt
             ->andWhere('de.ended = 0')
             ->getQuery()->getResult();
 
-        foreach($starters as $starter) {
-            $return[$starter['devicenumber']][] = $starter;
-            if($starter['gender'] === 'male') {
+        foreach ($starters as $starter) {
+            $did = $starter['devicenumber'] + $round;
+
+            if ($round > 0) {
+                if ($did === 6 && $round === 3 && $starter['gender'] === "female") {
+                    $did = $did - 4;
+                }
+
+                if ($did > 5) {
+                    $did = $did - 5;
+                } elseif ($did > 4 && $starter['gender'] === "female") {
+                    $did = $did - 4;
+                } elseif ($starter['gender'] === "female" && $did === 4) {
+                    $did = 5;
+                }
+            }
+
+            $chunks[$did][] = $starter;
+
+            if ($starter['gender'] === 'male') {
                 $devices[4] = 4;
             }
         }
 
-        $key = array_search($device->getNumber(), array_keys($devices), true);
-        $slice = array_slice($devices, $key, null, true);
-        array_merge($devices, $slice);
-        var_dump($key);
+        foreach($chunks as $key => $chunk ) {
+            $arrchunk = array_splice($chunk, 0, $round);
+            $return[$key] = array_merge($chunk, $arrchunk);
+        }
+
+        $key = array_search($device->getNumber(), array_keys($devices));
+        $splice = array_splice($devices, 0, $key);
+        $devices = array_merge($devices, $splice);
 
         return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
             "device" => $j2c->getDevice()->getName(),
             "starters" => $return,
-            "devices" => $devices
+            "devices" => $devices,
+            "round" => $round + 1
         ));
     }
 

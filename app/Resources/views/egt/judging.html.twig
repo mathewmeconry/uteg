@@ -27,6 +27,9 @@
             {% else %}
             $('#{{ key }}').html('<h1>{{ 'egt.judging.pause'|trans }}<h1>');
             {% endfor %}
+
+            $('#{{ round }}_li').addClass('active');
+            $('#{{ round }}_div').addClass('active');
         });
     </script>
 {% endblock %}
@@ -44,8 +47,8 @@
                 <div class="tabs">
                     <ul class="nav nav-tabs">
                         {% for device in devices %}
-                            <li {% if loop.index == 1 %}class="active"{% endif %}>
-                                <a href="#{{ device }}" data-toggle="tab"
+                            <li id="{{ loop.index }}_li">
+                                <a href="#{{ loop.index }}_div" data-toggle="tab"
                                    aria-expanded="true">{{ 'egt.judging.division'|trans }} {{ loop.index }}</a>
                             </li>
                         {% endfor %}
@@ -53,7 +56,7 @@
                 </div>
                 <div class="panel-body tab-content" style="width: 90%">
                     {% for device in devices %}
-                        <div id="{{ device }}" class="tab-pane{% if loop.index == 1 %} active{% endif %}"  style="width: 100%">
+                        <div id="{{ loop.index }}_div" class="tab-pane"  style="width: 100%">
                             <table id="{{ device }}_table" class="table table-striped table-hover"
                                    data-device="{{ device }}"
                                    width="100%">
