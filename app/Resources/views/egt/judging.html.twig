@@ -20,9 +20,8 @@
     <script>
         $(document).ready(function () {
             {% for key, devicestarters in starters %}
-            {% set device = key %}
             {% for starter in devicestarters %}
-            $('#{{ loop.parent.key }}_table tbody').append('<tr><td>{{ starter.firstname }}</td><td>{{ starter.lastname }}</td><td>{{ starter.club }}</td><td>{{ starter.category }}</td><td><input class="grade form-control" data-starter="{{ starter.id }}"/></tr>');
+            $('#{{ loop.parent.key }}_table tbody').append('<tr><td>{{ starter.firstname }}</td><td>{{ starter.lastname }}</td><td>{{ starter.club }}</td><td>{{ starter.category }}</td><td><input class="grade form-control" data-starter="{{ starter.id }}" length="5" disabled/></tr>');
             {% endfor %}
             {% else %}
             $('#{{ key }}').html('<h1>{{ 'egt.judging.pause'|trans }}<h1>');
@@ -30,6 +29,7 @@
 
             $('#{{ round }}_li').addClass('active');
             $('#{{ round }}_div').addClass('active');
+            $('#{{ round }}_div table tbody tr td input').prop('disabled', false);
         });
     </script>
 {% endblock %}
@@ -56,7 +56,7 @@
                 </div>
                 <div class="panel-body tab-content" style="width: 90%">
                     {% for device in devices %}
-                        <div id="{{ loop.index }}_div" class="tab-pane"  style="width: 100%">
+                        <div id="{{ loop.index }}_div" class="tab-pane" style="width: 100%">
                             <table id="{{ device }}_table" class="table table-striped table-hover"
                                    data-device="{{ device }}"
                                    width="100%">
@@ -72,7 +72,10 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                            <button class="btn pull-right btn-success save" data-device="{{ device }}"><i class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
+                            {% if loop.index == round %}
+                                <button class="btn pull-right btn-success save" data-device="{{ device }}" data-round="{{ round }}"><i
+                                    class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>
