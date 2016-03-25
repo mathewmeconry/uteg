@@ -100,6 +100,11 @@ class Competition
     protected $departments;
 
     /**
+     * @ORM\OneToMany(targetEntity="Grade", mappedBy="competition")
+     */
+    protected $grades;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -625,5 +630,38 @@ class Competition
         }
 
         return false;
+    }
+
+    /**
+     * Add grades
+     *
+     * @param \uteg\Entity\Grade $grades
+     * @return Competition
+     */
+    public function addGrade(\uteg\Entity\Grade $grades)
+    {
+        $this->grades[] = $grades;
+
+        return $this;
+    }
+
+    /**
+     * Remove grades
+     *
+     * @param \uteg\Entity\Grade $grades
+     */
+    public function removeGrade(\uteg\Entity\Grade $grades)
+    {
+        $this->grades->removeElement($grades);
+    }
+
+    /**
+     * Get grades
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGrades()
+    {
+        return $this->grades;
     }
 }

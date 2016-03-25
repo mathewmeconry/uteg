@@ -52,6 +52,11 @@ class Starters2Competitions
     protected $category;
 
     /**
+     * @ORM\OneToMany(targetEntity="Grade", mappedBy="s2c")
+     */
+    protected $grades;
+
+    /**
      * @ORM\Column(type="boolean", name="present", options={"default" = 0})
      */
     protected $present;
@@ -321,5 +326,38 @@ class Starters2Competitions
     public function setGender($gender)
     {
         return $this;
+    }
+
+    /**
+     * Add grades
+     *
+     * @param \uteg\Entity\Grade $grades
+     * @return Starters2Competitions
+     */
+    public function addGrade(\uteg\Entity\Grade $grades)
+    {
+        $this->grades[] = $grades;
+
+        return $this;
+    }
+
+    /**
+     * Remove grades
+     *
+     * @param \uteg\Entity\Grade $grades
+     */
+    public function removeGrade(\uteg\Entity\Grade $grades)
+    {
+        $this->grades->removeElement($grades);
+    }
+
+    /**
+     * Get grades
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGrades()
+    {
+        return $this->grades;
     }
 }

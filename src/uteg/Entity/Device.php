@@ -35,6 +35,11 @@ class Device
      */
     protected $divisions;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Grade", mappedBy="device")
+     */
+    protected $grade;
+
     public function __toString()
     {
         return $this->name;
@@ -134,5 +139,38 @@ class Device
     public function getDivisions()
     {
         return $this->divisions;
+    }
+
+    /**
+     * Add grade
+     *
+     * @param \uteg\Entity\Grade $grade
+     * @return Device
+     */
+    public function addGrade(\uteg\Entity\Grade $grade)
+    {
+        $this->grade[] = $grade;
+
+        return $this;
+    }
+
+    /**
+     * Remove grade
+     *
+     * @param \uteg\Entity\Grade $grade
+     */
+    public function removeGrade(\uteg\Entity\Grade $grade)
+    {
+        $this->grade->removeElement($grade);
+    }
+
+    /**
+     * Get grade
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGrade()
+    {
+        return $this->grade;
     }
 }
