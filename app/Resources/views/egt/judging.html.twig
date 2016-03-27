@@ -78,9 +78,10 @@
                     $('.grade').tooltip();
 
                     if(error) {
-                        noty({text: "{{ 'egt.judging.fixErrors' | trans }}", layout: 'topCenter', type: 'error'});
+                        noty({text: "{{ 'egt.judging.fixErrors' | trans }}", layout: 'topCenter', type: 'error',  timeout: 5000});
                     } else {
-                        noty({text: "{{ 'egt.judging.saveSuccess' | trans }}", layout: 'topCenter', type: 'success'});
+                        noty({text: "{{ 'egt.judging.saveSuccess' | trans }}", layout: 'topCenter', type: 'success',  timeout: 5000});
+                        $('#message-box-wait').toggleClass('open');
                     }
                 }
             });
@@ -132,6 +133,20 @@
                             {% endif %}
                         </div>
                     {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block dialog %}
+    <div class="message-box message-box-info animated fadeIn" id="message-box-wait">
+        <div class="mb-container">
+            <div class="mb-middle">
+                <div class="mb-title"><img src="{{ asset('img/wait.gif') }}" width="200px"> {{ 'egt.judging.waitJudges' | trans }}</div>
+                <div class="mb-content">
+                </div>
+                <div class="mb-footer">
                 </div>
             </div>
         </div>

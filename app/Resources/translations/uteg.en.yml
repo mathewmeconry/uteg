@@ -488,6 +488,7 @@ egt:
         wrongDevice: 'Are you trying hacking me? Sorry, wrong device ;)'
         fixErrors: 'Please fix all errors'
         saveSuccess: 'Grades successfully saved'
+        waitJudges: 'Please wait for the other judges to finish'
         table:
             firstname: 'Firstname'
             lastname: 'Lastname'
