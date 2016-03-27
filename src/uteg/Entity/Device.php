@@ -38,7 +38,7 @@ class Device
     /**
      * @ORM\OneToMany(targetEntity="Grade", mappedBy="device")
      */
-    protected $grade;
+    protected $grades;
 
     public function __toString()
     {

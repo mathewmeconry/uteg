@@ -16,12 +16,11 @@ class Grade
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="grade_id")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
     /**
-     * @ORM\Column(type="decimal", name="grade")
+     * @ORM\Column(type="decimal", precision=4, scale=2, name="grade")
      */
     protected $grade;
 
@@ -32,7 +31,7 @@ class Grade
     protected $s2c;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Device", inversedBy="divisions")
+     * @ORM\ManyToOne(targetEntity="Device", inversedBy="grades")
      * @ORM\JoinColumn(name="dev_id", referencedColumnName="dev_id")
      */
     protected $device;
@@ -42,6 +41,19 @@ class Grade
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return Id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * Get id

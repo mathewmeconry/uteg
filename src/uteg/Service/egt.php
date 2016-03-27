@@ -23,6 +23,7 @@ use uteg\Entity\UserInvitation;
 use uteg\EventListener\MenuEvent;
 use uteg\Entity\Starters2CompetitionsEGT;
 use uteg\Form\Type\J2cType;
+use uteg\Entity\Grade;
 
 class egt
 {
@@ -490,21 +491,7 @@ class egt
             ->getQuery()->getResult();
 
         foreach ($starters as $starter) {
-            $did = $starter['devicenumber'] + $round;
-
-            if ($round > 0) {
-                if ($did === 6 && $round === 3 && $starter['gender'] === "female") {
-                    $did = $did - 4;
-                }
-
-                if ($did > 5) {
-                    $did = $did - 5;
-                } elseif ($did > 4 && $starter['gender'] === "female") {
-                    $did = $did - 4;
-                } elseif ($starter['gender'] === "female" && $did === 4) {
-                    $did = 5;
-                }
-            }
+            $did = $this->rotate($starter['devicenumber'], $round, $starter['gender']);
 
             $chunks[$did][] = $starter;
 
@@ -513,7 +500,7 @@ class egt
             }
         }
 
-        foreach($chunks as $key => $chunk ) {
+        foreach ($chunks as $key => $chunk) {
             $arrchunk = array_splice($chunk, 0, $round);
             $return[$key] = array_merge($chunk, $arrchunk);
         }
@@ -528,6 +515,75 @@ class egt
             "devices" => $devices,
             "round" => $round + 1
         ));
+    }
+
+    public function saveGrades(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $grades)
+    {
+        $em = $this->container->get('Doctrine')->getManager();
+        $error = array();
+
+        foreach ($grades as $grade) {
+            $s2c = $em->getRepository('uteg:Starters2Competitions')->find($grade['s2c']);
+            $realGrade = number_format($grade['grade'], 2, '.', '');
+
+            $gradeEntity = new Grade();
+            $gradeEntity->setId($competition->getId().$s2c->getId().$device->getNumber());
+            $gradeEntity->setS2c($s2c);
+            $gradeEntity->setCompetition($competition);
+            $gradeEntity->setDevice($device);
+            $gradeEntity->setGrade($realGrade);
+            $error[$grade['s2c']] = $this->saveGrade($gradeEntity);
+        }
+
+        return new Response(json_encode($error));
+    }
+
+    private function saveGrade(\uteg\Entity\Grade $grade)
+    {
+        $em = $this->container->get('Doctrine')->getManager();
+
+        $float = explode('.', $grade->getGrade());
+        if (!isset($float[1])) {
+            $float[1] = 00;
+        }
+        $float = $float[1] % 5;
+
+        if ($grade->getGrade() >= 0 && $grade->getGrade() <= 10 && $float === 0) {
+            $startDevice = $grade->getS2c()->getDivision()->getDevice()->getNumber();
+            $gender = $grade->getS2c()->getStarter()->getGender();
+            $round = $grade->getS2c()->getDivision()->getDepartment()->getRound();
+            $rotated = $this->rotate($startDevice, $round, $gender);
+
+            if($rotated === $grade->getDevice()->getNumber()) {
+                $em->merge($grade);
+                $em->flush();
+                return array('ok');
+            } else {
+                return array('wrongDevice', $this->container->get('translator')->trans('egt.judging.wrongDevice', array(), 'uteg'));
+            }
+        } else {
+            return array('invalidGrade', $this->container->get('translator')->trans('egt.judging.invalidGrade', array(), 'uteg'));
+        }
+    }
+
+    private function rotate($device, $round, $gender)
+    {
+        $device = $device + $round;
+        if ($round > 0) {
+            if ($device === 6 && $round === 3 && $gender === "female") {
+                $device = $device - 4;
+            }
+
+            if ($device > 5) {
+                $device = $device - 5;
+            } elseif ($device > 4 && $gender === "female") {
+                $device = $device - 4;
+            } elseif ($gender === "female" && $device === 4) {
+                $device = 5;
+            }
+        }
+
+        return $device;
     }
 
     private function renderPdf($path, $additional)

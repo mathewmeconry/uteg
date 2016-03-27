@@ -484,6 +484,10 @@ egt:
         header: 'Judging'
         division: 'Division'
         pause: 'Pause'
+        invalidGrade: 'Please enter a grade between 0 and 10'
+        wrongDevice: 'Are you trying hacking me? Sorry, wrong device ;)'
+        fixErrors: 'Please fix all errors'
+        saveSuccess: 'Grades successfully saved'
         table:
             firstname: 'Firstname'
             lastname: 'Lastname'
