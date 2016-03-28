@@ -3,7 +3,6 @@ FROM debian:jessie
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y
-<<<<<<< HEAD
 RUN apt-get install -y nginx php5-fpm php5-mysqlnd php5-cli mysql-server supervisor
 
 RUN sed -e 's/;daemonize = yes/daemonize = no/' -i /etc/php5/fpm/php-fpm.conf
@@ -18,7 +17,7 @@ ADD init.sh /init.sh
 RUN chmod u+x /init.sh
 
 EXPOSE 80
-=======
+
 RUN apt-get install -y nginx php5-fpm php5-mysqlnd php5-cli mysql-server supervisor php5-intl php5-dev php5-gd php5-curl
 
 RUN sed -e 's/;daemonize = yes/daemonize = no/' -i /etc/php5/fpm/php-fpm.conf
@@ -42,7 +41,6 @@ RUN chmod u+x /init.sh
 
 EXPOSE 80:80
 EXPOSE 3306:3306
->>>>>>> refs/heads/EGT
 
 VOLUME ["/srv"]
 WORKDIR /srv
