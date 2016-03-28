@@ -1,0 +1,21 @@
+{{ ws_client() }}
+
+<script>
+    var _WS_URI = "ws://{{ gos_web_socket_server_host }}:{{ gos_web_socket_server_port }}";
+    var webSocket;
+
+    $(document).ready(function () {
+        webSocket = WS.connect(_WS_URI);
+
+        webSocket.on("socket/connect", function (session) {
+            session = session;
+            console.log("Successfully Connected!");
+        });
+
+        webSocket.on("socket/disconnect", function(error){
+            console.log("Disconnected for " + error.reason + " with code " + error.code);
+        });
+    });
+</script>
+
+{##}

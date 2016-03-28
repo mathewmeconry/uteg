@@ -9,6 +9,13 @@
 
 {% block jsplugins %}
     <script type="text/javascript" src="{{ asset('js/plugins/maskedinput/jquery.maskedinput.min.js') }}"></script>
+    {% embed "websocket.html.twig" %}
+        {% block session %}
+            session.subscribe('uteg/judging/{{ compid }}', function(uri, payload) {
+                console.log(payload);
+             });
+            {% endblock %}
+        {% endembed %}
 {% endblock %}
 
 {% block css %}
@@ -35,34 +42,36 @@
             $('.grade').tooltip();
         });
 
-        $('.save').click(function() {
-           var device = $(this).data('device');
+        $('.save').click(function () {
+            var device = $(this).data('device');
             var round = $(this).data('round');
             var grades = new Array();
 
             var gradeobjs = $('#' + device + '_table input.grade');
-            $.each(gradeobjs, function(key, value) {
+            $.each(gradeobjs, function (key, value) {
                 grades.push({'s2c': $(value).data('starter'), 'grade': $(value).val()});
             });
 
             $.ajax({
-               'url': "{{ path('saveGrades', { 'compid': app.request.get('compid'), 'deviceid': round}) }}",
+                'url': "{{ path('saveGrades', { 'compid': app.request.get('compid'), 'deviceid': round}) }}",
                 'method': "POST",
                 'data': {round: round, grades: grades},
-                'success': function(data) {
+                'success': function (data) {
                     var decode = JSON.parse(data);
                     var error = false;
-                    $.each(decode, function(key, data) {
-                        if(data[0] === "ok") {
+                    $.each(decode, function (key, data) {
+                        if (data[0] === "ok") {
                             $('input[data-starter="' + key + '"]').removeClass('error');
                             $('input[data-starter="' + key + '"]').addClass('valid');
                             $('input[data-starter="' + key + '"]').attr('title', 'ok');
-                        }else if(data[0] === "invalidGrade") {
+                            var payload = {state: "finished", deviceid: {{ device.id }}, round: round};
+                            session.publish('uteg/judging/{{ compid }}', {msg: JSON.stringify(payload)});
+                        } else if (data[0] === "invalidGrade") {
                             $('input[data-starter="' + key + '"]').removeClass('valid');
                             $('input[data-starter="' + key + '"]').addClass('error');
                             $('input[data-starter="' + key + '"]').attr('title', data[1]);
                             error = true;
-                        } else if(data[0] === "wrongDevice") {
+                        } else if (data[0] === "wrongDevice") {
                             $('input[data-starter="' + key + '"]').removeClass('valid');
                             $('input[data-starter="' + key + '"]').addClass('error');
                             $('input[data-starter="' + key + '"]').attr('title', data[1]);
@@ -77,10 +86,20 @@
                     });
                     $('.grade').tooltip();
 
-                    if(error) {
-                        noty({text: "{{ 'egt.judging.fixErrors' | trans }}", layout: 'topCenter', type: 'error',  timeout: 5000});
+                    if (error) {
+                        noty({
+                            text: "{{ 'egt.judging.fixErrors' | trans }}",
+                            layout: 'topCenter',
+                            type: 'error',
+                            timeout: 5000
+                        });
                     } else {
-                        noty({text: "{{ 'egt.judging.saveSuccess' | trans }}", layout: 'topCenter', type: 'success',  timeout: 5000});
+                        noty({
+                            text: "{{ 'egt.judging.saveSuccess' | trans }}",
+                            layout: 'topCenter',
+                            type: 'success',
+                            timeout: 5000
+                        });
                         $('#message-box-wait').toggleClass('open');
                     }
                 }
@@ -94,7 +113,7 @@
         <div class="col-md-12">
             <div id="panel_judging" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
                 <div class="panel-heading">
-                    <h3 class="panel-title">{{ 'egt.judging.header'|trans }} {{ device |trans }}</h3>
+                    <h3 class="panel-title">{{ 'egt.judging.header'|trans }} {{ device.name |trans }}</h3>
                     <ul class="panel-controls">
                         <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                     </ul>
@@ -128,8 +147,9 @@
                                 </tbody>
                             </table>
                             {% if loop.index == round %}
-                                <button class="btn pull-right btn-success save" data-device="{{ device }}" data-round="{{ round }}"><i
-                                    class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
+                                <button class="btn pull-right btn-success save" data-device="{{ device }}"
+                                        data-round="{{ round }}"><i
+                                            class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
                             {% endif %}
                         </div>
                     {% endfor %}
@@ -143,7 +163,8 @@
     <div class="message-box message-box-info animated fadeIn" id="message-box-wait">
         <div class="mb-container">
             <div class="mb-middle">
-                <div class="mb-title"><img src="{{ asset('img/wait.gif') }}" width="200px"> {{ 'egt.judging.waitJudges' | trans }}</div>
+                <div class="mb-title"><img src="{{ asset('img/wait.gif') }}"
+                                           width="200px"> {{ 'egt.judging.waitJudges' | trans }}</div>
                 <div class="mb-content">
                 </div>
                 <div class="mb-footer">

@@ -510,7 +510,8 @@ class egt
         $devices = array_merge($devices, $splice);
 
         return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
-            "device" => $j2c->getDevice()->getName(),
+            "compid" => $competition->getId(),
+            "device" => $j2c->getDevice(),
             "starters" => $return,
             "devices" => $devices,
             "round" => $round + 1

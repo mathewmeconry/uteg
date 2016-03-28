@@ -54,4 +54,9 @@ services:
         class: uteg\Service\egt
         arguments: ["@service_container", "@event_dispatcher"]
 
+    uteg.topic.judging:
+        class: uteg\Topic\judgingTopic
+        tags:
+            - { name: gos_web_socket.topic }
+
 
