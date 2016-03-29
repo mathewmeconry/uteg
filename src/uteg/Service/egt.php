@@ -523,7 +523,7 @@ class egt
             ->getQuery()->getResult();
 
         foreach ($starters as $starter) {
-            $return[$starter['deviceid']][] = $starter;
+            $return[$starter['devicenumber']][] = $starter;
 
             if ($starter['gender'] === 'male') {
                 $devices[5] = 4;
@@ -537,14 +537,14 @@ class egt
 
         $round = 0;
         foreach ($devices as $key => $device) {
-            $startersDevice = $return[$key];
+            $startersDevice = $return[$device];
 
             if ($round > count($startersDevice)) {
                 $round -= count($startersDevice);
             }
 
             $splice = array_splice($startersDevice, 0, $round);
-            $return[$key] = array_merge($startersDevice, $splice);
+            $return[$device] = array_merge($startersDevice, $splice);
             $round++;
         }
 
