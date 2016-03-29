@@ -463,6 +463,40 @@ class egt
 
     public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, \uteg\Entity\Judges2Competitions $j2c)
     {
+        $judgingArr = $this->generateJudgingArray($device);
+
+        return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
+            "compid" => $competition->getId(),
+            "device" => $j2c->getDevice(),
+            "deviceid" => $j2c->getDevice()->getId(),
+            "starters" => $judgingArr['starters'],
+            "devices" => $judgingArr['devices'],
+            "round" => $judgingArr['round']
+        ));
+    }
+
+    public function saveGrades(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $grades)
+    {
+        $em = $this->container->get('Doctrine')->getManager();
+        $error = array();
+
+        foreach ($grades as $grade) {
+            $s2c = $em->getRepository('uteg:Starters2Competitions')->find($grade['s2c']);
+            $realGrade = number_format($grade['grade'], 2, '.', '');
+
+            $gradeEntity = new Grade();
+            $gradeEntity->setId($competition->getId() . $s2c->getId() . $device->getNumber());
+            $gradeEntity->setS2c($s2c);
+            $gradeEntity->setCompetition($competition);
+            $gradeEntity->setDevice($device);
+            $gradeEntity->setGrade($realGrade);
+            $error[$grade['s2c']] = $this->saveGrade($gradeEntity);
+        }
+
+        return new Response(json_encode($error));
+    }
+
+    private function generateJudgingArray(\uteg\Entity\Device $device) {
         $em = $this->container->get('Doctrine')->getManager();
         $devices = array(1 => 1, 2 => 2, 3 => 3, 4 => 5);
 
@@ -514,35 +548,7 @@ class egt
             $round++;
         }
 
-        return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
-            "compid" => $competition->getId(),
-            "device" => $j2c->getDevice(),
-            "deviceid" => $j2c->getDevice()->getId(),
-            "starters" => $return,
-            "devices" => $devices,
-            "round" => $departments[0]['round'] + 1
-        ));
-    }
-
-    public function saveGrades(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $grades)
-    {
-        $em = $this->container->get('Doctrine')->getManager();
-        $error = array();
-
-        foreach ($grades as $grade) {
-            $s2c = $em->getRepository('uteg:Starters2Competitions')->find($grade['s2c']);
-            $realGrade = number_format($grade['grade'], 2, '.', '');
-
-            $gradeEntity = new Grade();
-            $gradeEntity->setId($competition->getId() . $s2c->getId() . $device->getNumber());
-            $gradeEntity->setS2c($s2c);
-            $gradeEntity->setCompetition($competition);
-            $gradeEntity->setDevice($device);
-            $gradeEntity->setGrade($realGrade);
-            $error[$grade['s2c']] = $this->saveGrade($gradeEntity);
-        }
-
-        return new Response(json_encode($error));
+        return array("devices" => $devices, "starters" => $return, "round" => $departments[0]['round'] + 1);
     }
 
     private function saveGrade(\uteg\Entity\Grade $grade)
