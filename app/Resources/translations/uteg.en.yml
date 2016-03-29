@@ -489,6 +489,11 @@ egt:
         fixErrors: 'Please fix all errors'
         saveSuccess: 'Grades successfully saved'
         waitJudges: 'Please wait for the other judges to finish'
+        endedTitle: 'Department ended'
+        endedContent: 'Thanks for your help!'
+        logout: 'Logout'
+        refreshingTitle: 'Refresh Starters'
+        refreshingContent: 'This page reloads automatically to get the newest starterlist. Watchout for changes'
         table:
             firstname: 'Firstname'
             lastname: 'Lastname'

@@ -120,7 +120,7 @@ class JudgeController extends DefaultController
      */
     public function saveGradesAction(Request $request, $compid, $deviceid) {
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
-        $device = $this->getDoctrine()->getEntityManager()->getRepository('uteg:Device')->findOneBy(array("number" => $deviceid));;
+        $device = $this->getDoctrine()->getEntityManager()->getRepository('uteg:Device')->findOneBy(array("id" => $deviceid));;
         $module = $this->get($comp->getModule()->getServiceName());
         $grades = $request->request->get('grades');
 

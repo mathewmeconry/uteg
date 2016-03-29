@@ -65,6 +65,15 @@ class judgingTopic implements TopicInterface
             switch ($event['method']) {
                 case 'changeState':
                     $this->changeState($comp, $event['device'], $event['state']);
+                    $connection->event($topic->getId(), ['method' => 'changeState', 'msg' => 'ok']);
+                    break;
+                case 'amIfinished':
+                    $connection->event($topic->getId(), ['method' => 'amIfinished', 'msg' => $this->getState($comp, $event['device'])]);
+                    break;
+                case 'reloadStarters':
+                    $topic->broadcast([
+                        'method' => 'reloadStarters'
+                    ]);
                     break;
             }
 
@@ -72,7 +81,7 @@ class judgingTopic implements TopicInterface
                 $this->turn($comp, $topic);
             }
 
-            $connection->event($topic->getId(), ['msg' => 'ok']);
+
         } else {
             $connection->event($topic->getId(), ['msg' => 'noneStarted']);
         }
@@ -90,6 +99,7 @@ class judgingTopic implements TopicInterface
     private function turn($comp, $topic)
     {
         $this->initializeStates($comp);
+        $ended = true;
 
         $departments = $this->em
             ->getRepository('uteg:Department')
@@ -101,16 +111,27 @@ class judgingTopic implements TopicInterface
 
         foreach ($departments as $department) {
             $dep = $this->em->getRepository('uteg:Department')->findOneBy(array("id" => $department['id']));
-            $dep->setRound($dep->getRound() + 1);
+            $dep->increaseRound();
+
+            if($this->isEnded($dep->getRound(), $dep->getGender())) {
+                $dep->setEnded(1);
+            } else {
+                $ended = false;
+            }
+
             $this->em->persist($dep);
         }
 
         $this->em->flush();
 
-        $topic->broadcast([
-            'msg' => 'turn',
-            'round' => $this->getRound()
-        ]);
+        if($ended) {
+            $this->ended($comp, $topic);
+        } else {
+            $topic->broadcast([
+                'msg' => 'turn',
+                'round' => $this->getRound()
+            ]);
+        }
     }
 
     private function allFinished($comp)
@@ -129,6 +150,10 @@ class judgingTopic implements TopicInterface
     private function changeState($comp, $device, $state)
     {
         $this->states[$comp][$device] = $state;
+    }
+
+    private function getState($comp, $device) {
+        return $this->states[$comp][$device];
     }
 
     private function initializeIfNot($comp)
@@ -201,5 +226,26 @@ class judgingTopic implements TopicInterface
         }
 
         return $round + 1;
+    }
+
+    private function isEnded($round, $gender)
+    {
+        $finished = false;
+
+        if ($round === 4 && $gender === "female") {
+            $finished = true;
+        } elseif ($round === 5 && $gender === "male") {
+            $finished = true;
+        }
+
+        return $finished;
+    }
+
+    private function ended($comp, $topic) {
+        $topic->broadcast([
+            'msg' => 'ended'
+        ]);
+
+        unset($this->states[$comp]);
     }
 }

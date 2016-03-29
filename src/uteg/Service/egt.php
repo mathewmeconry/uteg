@@ -464,7 +464,7 @@ class egt
     public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, \uteg\Entity\Judges2Competitions $j2c)
     {
         $em = $this->container->get('Doctrine')->getManager();
-        $devices = array(1 => 1, 2 => 2, 3 => 3, 5 => 5);
+        $devices = array(1 => 1, 2 => 2, 3 => 3, 4 => 5);
 
         $departments = $em
             ->getRepository('uteg:Department')
@@ -474,12 +474,10 @@ class egt
             ->andWhere('d.ended = 0')
             ->getQuery()->getResult();
 
-        $round = $departments[0]['round'];
-
         $starters = $em
             ->getRepository('uteg:Starters2CompetitionsEGT')
             ->createQueryBuilder('s')
-            ->select('s.id as id, st.firstname as firstname, st.lastname as lastname, st.gender as gender, c.name as club, d.number as devicenumber, ca.name as category')
+            ->select('s.id as id, st.firstname as firstname, st.lastname as lastname, st.gender as gender, c.name as club, d.number as devicenumber, d.id as deviceid, ca.name as category')
             ->join('s.division', 'di')
             ->join('di.department', 'de')
             ->join('s.starter', 'st')
@@ -491,23 +489,30 @@ class egt
             ->getQuery()->getResult();
 
         foreach ($starters as $starter) {
-            $did = $this->rotate($starter['devicenumber'], $round, $starter['gender']);
-
-            $chunks[$did][] = $starter;
+            $return[$starter['deviceid']][] = $starter;
 
             if ($starter['gender'] === 'male') {
-                $devices[4] = 4;
+                $devices[5] = 4;
             }
         }
 
-        foreach ($chunks as $key => $chunk) {
-            $arrchunk = array_splice($chunk, 0, $round);
-            $return[$key] = array_merge($chunk, $arrchunk);
-        }
+        $key = array_search($device->getId(), $devices);
+        $slice = array_reverse(array_slice($devices, 0, $key, true), true);
+        $devices = array_reverse($devices, true);
+        $devices = array_replace($slice, $devices);
 
-        $key = array_search($device->getNumber(), array_keys($devices));
-        $splice = array_splice($devices, 0, $key);
-        $devices = array_merge($devices, $splice);
+        $round = 0;
+        foreach ($devices as $key => $device) {
+            $startersDevice = $return[$key];
+
+            if ($round > count($startersDevice)) {
+                $round -= count($startersDevice);
+            }
+
+            $splice = array_splice($startersDevice, 0, $round);
+            $return[$key] = array_merge($startersDevice, $splice);
+            $round++;
+        }
 
         return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
             "compid" => $competition->getId(),
@@ -515,7 +520,7 @@ class egt
             "deviceid" => $j2c->getDevice()->getId(),
             "starters" => $return,
             "devices" => $devices,
-            "round" => $round + 1
+            "round" => $departments[0]['round'] + 1
         ));
     }
 
@@ -529,7 +534,7 @@ class egt
             $realGrade = number_format($grade['grade'], 2, '.', '');
 
             $gradeEntity = new Grade();
-            $gradeEntity->setId($competition->getId().$s2c->getId().$device->getNumber());
+            $gradeEntity->setId($competition->getId() . $s2c->getId() . $device->getNumber());
             $gradeEntity->setS2c($s2c);
             $gradeEntity->setCompetition($competition);
             $gradeEntity->setDevice($device);
@@ -551,17 +556,17 @@ class egt
         $float = $float[1] % 5;
 
         if ($grade->getGrade() >= 0 && $grade->getGrade() <= 10 && $float === 0) {
-            $startDevice = $grade->getS2c()->getDivision()->getDevice()->getNumber();
+            $startDevice = $grade->getS2c()->getDivision()->getDevice()->getId();
             $gender = $grade->getS2c()->getStarter()->getGender();
             $round = $grade->getS2c()->getDivision()->getDepartment()->getRound();
             $rotated = $this->rotate($startDevice, $round, $gender);
 
-            if($rotated === $grade->getDevice()->getNumber()) {
+            if ($rotated === $grade->getDevice()->getId()) {
                 $em->merge($grade);
                 $em->flush();
                 return array('ok');
             } else {
-                return array('wrongDevice', $this->container->get('translator')->trans('egt.judging.wrongDevice', array(), 'uteg'), $round."/".$rotated."/".$grade->getDevice()->getNumber()."/".$startDevice);
+                return array('wrongDevice', $this->container->get('translator')->trans('egt.judging.wrongDevice', array(), 'uteg'), $round . "/" . $rotated . "/" . $grade->getDevice()->getId() . "/" . $startDevice);
             }
         } else {
             return array('invalidGrade', $this->container->get('translator')->trans('egt.judging.invalidGrade', array(), 'uteg'));
@@ -571,18 +576,10 @@ class egt
     private function rotate($device, $round, $gender)
     {
         $device = $device + $round;
-        if ($round > 0) {
-            if ($device === 6 && $round === 3 && $gender === "female") {
-                $device = $device - 4;
-            }
-
-            if ($device > 5) {
-                $device = $device - 5;
-            } elseif ($device > 4 && $gender === "female") {
-                $device = $device - 4;
-            } elseif ($gender === "female" && $device === 4) {
-                $device = 5;
-            }
+        if ($device > 4 && $gender === "female") {
+            $device -= 4;
+        } elseif ($device > 5 && $gender === "male") {
+            $device -= 5;
         }
 
         return $device;

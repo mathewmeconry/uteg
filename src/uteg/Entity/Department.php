@@ -206,7 +206,9 @@ class Department
 
     public function increaseRound()
     {
-        return $this->round + 1;
+        $this->round = $this->round + 1;
+
+        return $this;
     }
 
     /**
