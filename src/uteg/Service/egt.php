@@ -465,6 +465,17 @@ class egt
     {
         $judgingArr = $this->generateJudgingArray($device, $competition);
 
+        if(isset($judgingArr['error'])) {
+            return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
+                "compid" => $competition->getId(),
+                "device" => $j2c->getDevice(),
+                "deviceid" => $j2c->getDevice()->getId(),
+                "starters" => array(),
+                "devices" => array(),
+                "round" => array(),
+                "error" => $judgingArr['error']
+            ));
+        }
         return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
             "compid" => $competition->getId(),
             "device" => $j2c->getDevice(),
@@ -526,33 +537,37 @@ class egt
             ->setParameters(array('competition' => $competition->getId()))
             ->getQuery()->getResult();
 
-        foreach ($starters as $starter) {
-            $return[$starter['devicenumber']][] = $starter;
+        if($starters) {
+            foreach ($starters as $starter) {
+                $return[$starter['devicenumber']][] = $starter;
 
-            if ($starter['gender'] === 'male') {
-                $devices[5] = 4;
-            }
-        }
-
-        $key = array_search($device->getId(), $devices);
-        $slice = array_reverse(array_slice($devices, 0, $key, true), true);
-        $devices = array_reverse($devices, true);
-        $devices = array_replace($slice, $devices);
-
-        $round = 0;
-        foreach ($devices as $key => $device) {
-            $startersDevice = $return[$device];
-
-            if ($round > count($startersDevice)) {
-                $round -= count($startersDevice);
+                if ($starter['gender'] === 'male') {
+                    $devices[5] = 4;
+                }
             }
 
-            $splice = array_splice($startersDevice, 0, $round);
-            $return[$device] = array_merge($startersDevice, $splice);
-            $round++;
-        }
+            $key = array_search($device->getId(), $devices);
+            $slice = array_reverse(array_slice($devices, 0, $key, true), true);
+            $devices = array_reverse($devices, true);
+            $devices = array_replace($slice, $devices);
 
-        return array("devices" => $devices, "starters" => $return, "round" => $departments[0]['round'] + 1);
+            $round = 0;
+            foreach ($devices as $key => $device) {
+                $startersDevice = $return[$device];
+
+                if ($round > count($startersDevice)) {
+                    $round -= count($startersDevice);
+                }
+
+                $splice = array_splice($startersDevice, 0, $round);
+                $return[$device] = array_merge($startersDevice, $splice);
+                $round++;
+            }
+
+            return array("devices" => $devices, "starters" => $return, "round" => $departments[0]['round'] + 1);
+        } else {
+            return array("error" => "notStarted");
+        }
     }
 
     private function saveGrade(\uteg\Entity\Grade $grade)

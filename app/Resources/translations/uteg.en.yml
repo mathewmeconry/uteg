@@ -495,6 +495,8 @@ egt:
         refreshingTitle: 'Refresh Starters'
         refreshingContent: 'This page reloads automatically to get the newest starterlist. Watchout for changes'
         startTitle: 'Starting Department...'
+        notstartedTitle: 'No Department started'
+        notstartedContent: 'Please wait...'
         table:
             firstname: 'Firstname'
             lastname: 'Lastname'

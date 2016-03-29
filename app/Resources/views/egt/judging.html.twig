@@ -20,6 +20,61 @@
 
 {% block script %}
     <script>
+        function socket(session) {
+            session.subscribe('judging/topic/{{ compid }}', function (uri, payload) {
+                switch (payload.method) {
+                    case "amIfinished":
+                        if (payload.msg == 1) {
+                            $('#message-box-wait').addClass('open');
+                        } else {
+                            $('#message-box-wait').removeClass('open');
+                        }
+                        break;
+                    case 'reloadStarters':
+                        $('.message-box').removeClass('open');
+                        $('#message-box-refresh').addClass('open');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 10000);
+                        break;
+                    case 'startDepartment':
+                        $('.message-box').removeClass('open');
+                        $('#message-box-start').addClass('open');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 5000);
+                        break;
+                    case 'turn':
+                        turn(payload.round);
+                        break;
+                    case "ended":
+                        finished();
+                        break;
+
+                }
+            });
+
+            $('.save').on('finished', function (e) {
+                session.publish('judging/topic/{{ compid }}', {
+                    method: "changeState",
+                    device: {{ deviceid }},
+                    state: 1
+                });
+            });
+
+            $(document).on('amIfinished', function (e) {
+                session.publish('judging/topic/{{ compid }}', {
+                    method: "amIfinished",
+                    device: {{ deviceid }}
+                });
+            });
+
+            $(document).trigger('amIfinished');
+        }
+
+
+
+        {% if error is not defined %}
         function saveClick() {
 
             $('.save').click(function () {
@@ -89,63 +144,6 @@
             });
         }
 
-        function socket(session) {
-            session.subscribe('judging/topic/{{ compid }}', function (uri, payload) {
-                switch (payload.msg) {
-                    case "ok":
-                        break;
-                }
-
-                switch (payload.method) {
-                    case "amIfinished":
-                        if (payload.msg == 1) {
-                            $('#message-box-wait').addClass('open');
-                        } else {
-                            $('#message-box-wait').removeClass('open');
-                        }
-                        break;
-                    case 'reloadStarters':
-                        $('.message-box').removeClass('open');
-                        $('#message-box-refresh').addClass('open');
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 10000);
-                        break;
-                    case 'startDepartment':
-                        $('.message-box').removeClass('open');
-                        $('#message-box-start').addClass('open');
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 5000);
-                        break;
-                    case 'turn':
-                        turn(payload.round);
-                        break;
-                    case "ended":
-                        finished();
-                        break;
-
-                }
-            });
-
-            $('.save').on('finished', function (e) {
-                session.publish('judging/topic/{{ compid }}', {
-                    method: "changeState",
-                    device: {{ deviceid }},
-                    state: 1
-                });
-            });
-
-            $(document).on('amIfinished', function (e) {
-                session.publish('judging/topic/{{ compid }}', {
-                    method: "amIfinished",
-                    device: {{ deviceid }}
-                });
-            });
-
-            $(document).trigger('amIfinished');
-        }
-
         function turn(round) {
             $('input').attr('disabled', 'disabled');
             $('.save').attr('disabled', 'disabled');
@@ -159,7 +157,7 @@
         }
 
         function finished() {
-            $('#message-box-wait').removeClass('open');
+            $('.message-box').removeClass('open');
             $('#message-box-ended').addClass('open');
         }
 
@@ -180,56 +178,66 @@
 
             saveClick();
         });
+        {% else %}
+        $(document).ready(function () {
+            {% if error == "notStarted" %}
+            $('.message-box').removeClass('open');
+            $('#message-box-notstarted').addClass('open');
+            {% endif %}
+        });
+        {% endif %}
     </script>
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <div id="panel_judging" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{ 'egt.judging.header'|trans }} {{ device.name |trans }}</h3>
-                    <ul class="panel-controls">
-                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
-                    </ul>
-                </div>
-                <div class="tabs">
-                    <ul class="nav nav-tabs">
-                        {% for device in devices %}
-                            <li id="{{ loop.index }}_li">
-                                <a href="#{{ loop.index }}_div" data-toggle="tab"
-                                   aria-expanded="true">{{ 'egt.judging.division'|trans }} {{ loop.index }}</a>
-                            </li>
+    {% if error is not defined %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="panel_judging" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ 'egt.judging.header'|trans }} {{ device.name |trans }}</h3>
+                        <ul class="panel-controls">
+                            <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                        </ul>
+                    </div>
+                    <div class="tabs">
+                        <ul class="nav nav-tabs">
+                            {% for device in devices %}
+                                <li id="{{ loop.index }}_li">
+                                    <a href="#{{ loop.index }}_div" data-toggle="tab"
+                                       aria-expanded="true">{{ 'egt.judging.division'|trans }} {{ loop.index }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="panel-body tab-content" style="width: 90%">
+                        {% for key, device in devices %}
+                            <div id="{{ loop.index }}_div" class="tab-pane" style="width: 100%">
+                                <table id="{{ device }}_table" data-device="{{ deviceid }}"
+                                       class="table table-striped table-hover"
+                                       width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th class="all">{{ 'egt.judging.table.firstname'|trans }}</th>
+                                        <th class="all">{{ 'egt.judging.table.lastname'|trans }}</th>
+                                        <th class="all">{{ 'egt.judging.table.club'|trans }}</th>
+                                        <th class="all">{{ 'egt.judging.table.category'|trans }}</th>
+                                        <th class="all">{{ 'egt.judging.table.grade'|trans }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <button id="{{ loop.index }}_button" class="btn pull-right btn-success save"
+                                        data-round="{{ loop.index }}" {% if loop.index != round %}disabled{% endif %}><i
+                                            class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
+                            </div>
                         {% endfor %}
-                    </ul>
-                </div>
-                <div class="panel-body tab-content" style="width: 90%">
-                    {% for key, device in devices %}
-                        <div id="{{ loop.index }}_div" class="tab-pane" style="width: 100%">
-                            <table id="{{ device }}_table" data-device="{{ deviceid }}"
-                                   class="table table-striped table-hover"
-                                   width="100%">
-                                <thead>
-                                <tr>
-                                    <th class="all">{{ 'egt.judging.table.firstname'|trans }}</th>
-                                    <th class="all">{{ 'egt.judging.table.lastname'|trans }}</th>
-                                    <th class="all">{{ 'egt.judging.table.club'|trans }}</th>
-                                    <th class="all">{{ 'egt.judging.table.category'|trans }}</th>
-                                    <th class="all">{{ 'egt.judging.table.grade'|trans }}</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                            <button id="{{ loop.index }}_button" class="btn pull-right btn-success save"
-                                    data-round="{{ loop.index }}" {% if loop.index != round %}disabled{% endif %}><i
-                                        class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
-                        </div>
-                    {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}
 
 {% block dialog %}
@@ -262,6 +270,17 @@
             <div class="mb-middle">
                 <div class="mb-title">{{ 'egt.judging.startTitle' | trans }}</div>
                 <div class="mb-content">
+                </div>
+                <div class="mb-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="message-box message-box-info animated fadeIn" id="message-box-notstarted">
+        <div class="mb-container">
+            <div class="mb-middle">
+                <div class="mb-title">{{ 'egt.judging.notstartedTitle' | trans }}</div>
+                <div class="mb-content">{{ 'egt.judging.notstartedContent' | trans }}
                 </div>
                 <div class="mb-footer">
                 </div>
