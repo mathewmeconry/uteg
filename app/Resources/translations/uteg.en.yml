@@ -494,6 +494,7 @@ egt:
         logout: 'Logout'
         refreshingTitle: 'Refresh Starters'
         refreshingContent: 'This page reloads automatically to get the newest starterlist. Watchout for changes'
+        startTitle: 'Starting Department...'
         table:
             firstname: 'Firstname'
             lastname: 'Lastname'

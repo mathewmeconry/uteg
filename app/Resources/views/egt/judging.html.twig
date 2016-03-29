@@ -94,12 +94,6 @@
                 switch (payload.msg) {
                     case "ok":
                         break;
-                    case "turn":
-                        turn(payload.round);
-                        break;
-                    case "ended":
-                        finished();
-                        break;
                 }
 
                 switch (payload.method) {
@@ -111,11 +105,24 @@
                         }
                         break;
                     case 'reloadStarters':
-                        $('#message-box-wait').removeClass('open');
+                        $('.message-box').removeClass('open');
                         $('#message-box-refresh').addClass('open');
                         setTimeout(function () {
                             window.location.reload();
                         }, 10000);
+                        break;
+                    case 'startDepartment':
+                        $('.message-box').removeClass('open');
+                        $('#message-box-start').addClass('open');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 5000);
+                        break;
+                    case 'turn':
+                        turn(payload.round);
+                        break;
+                    case "ended":
+                        finished();
                         break;
 
                 }
@@ -244,6 +251,17 @@
                 <div class="mb-title">{{ 'egt.judging.refreshingTitle' | trans }}</div>
                 <div class="mb-content">
                     {{ 'egt.judging.refreshingContent' | trans }}
+                </div>
+                <div class="mb-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="message-box message-box-info animated fadeIn" id="message-box-start">
+        <div class="mb-container">
+            <div class="mb-middle">
+                <div class="mb-title">{{ 'egt.judging.startTitle' | trans }}</div>
+                <div class="mb-content">
                 </div>
                 <div class="mb-footer">
                 </div>
