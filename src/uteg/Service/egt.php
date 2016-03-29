@@ -592,6 +592,14 @@ class egt
             $device -= 5;
         }
 
+        if($gender === "male") {
+            if($device === 5) {
+                $device = 4;
+            } elseif ($device === 4) {
+                $device = 5;
+            }
+        }
+
         return $device;
     }
 
