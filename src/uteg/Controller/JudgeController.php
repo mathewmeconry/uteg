@@ -111,6 +111,10 @@ class JudgeController extends DefaultController
             throw new AccessDeniedException();
         }
 
+        if($j2c->getDevice()->getId() !== $device->getId()) {
+            throw new AccessDeniedException();
+        }
+
         return $module->judging($request, $comp, $device, $j2c);
     }
 
