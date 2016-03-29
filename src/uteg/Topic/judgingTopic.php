@@ -124,6 +124,7 @@ class judgingTopic implements TopicInterface
         if ($ended) {
             $this->ended($comp, $topic);
         } else {
+            var_dump($this->states);
             $topic->broadcast([
                 'method' => 'turn',
                 'round' => $this->getRound($comp)
@@ -187,7 +188,7 @@ class judgingTopic implements TopicInterface
         $departments = $this->getDepartments($comp);
 
         foreach ($departments as $department) {
-            if ($gender === "male") {
+            if ($department['gender'] === "male") {
                 $gender = "male";
             }
         }
