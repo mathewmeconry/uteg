@@ -56,10 +56,8 @@ class judgingTopic implements TopicInterface
      */
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
-        if ($this->isAnyStarted()) {
-
-
-            $comp = $request->getAttributes()->get('compid');
+        $comp = $request->getAttributes()->get('compid');
+        if ($this->isAnyStarted($comp)) {
             $this->initializeIfNot($comp);
 
             switch ($event['method']) {
@@ -73,6 +71,11 @@ class judgingTopic implements TopicInterface
                 case 'reloadStarters':
                     $topic->broadcast([
                         'method' => 'reloadStarters'
+                    ]);
+                    break;
+                case 'startDepartment':
+                    $topic->broadcast([
+                        'method' => 'startDepartment'
                     ]);
                     break;
             }
@@ -101,19 +104,13 @@ class judgingTopic implements TopicInterface
         $this->initializeStates($comp);
         $ended = true;
 
-        $departments = $this->em
-            ->getRepository('uteg:Department')
-            ->createQueryBuilder('d')
-            ->select('d.id as id')
-            ->where('d.started = 1')
-            ->andWhere('d.ended = 0')
-            ->getQuery()->getResult();
+        $departments = $this->getDepartments($comp);
 
         foreach ($departments as $department) {
             $dep = $this->em->getRepository('uteg:Department')->findOneBy(array("id" => $department['id']));
             $dep->increaseRound();
 
-            if($this->isEnded($dep->getRound(), $dep->getGender())) {
+            if ($this->isEnded($dep->getRound($comp), $dep->getGender($comp))) {
                 $dep->setEnded(1);
             } else {
                 $ended = false;
@@ -124,12 +121,12 @@ class judgingTopic implements TopicInterface
 
         $this->em->flush();
 
-        if($ended) {
+        if ($ended) {
             $this->ended($comp, $topic);
         } else {
             $topic->broadcast([
-                'msg' => 'turn',
-                'round' => $this->getRound()
+                'method' => 'turn',
+                'round' => $this->getRound($comp)
             ]);
         }
     }
@@ -152,7 +149,8 @@ class judgingTopic implements TopicInterface
         $this->states[$comp][$device] = $state;
     }
 
-    private function getState($comp, $device) {
+    private function getState($comp, $device)
+    {
         return $this->states[$comp][$device];
     }
 
@@ -166,20 +164,14 @@ class judgingTopic implements TopicInterface
     private function initializeStates($comp)
     {
         $this->states[$comp] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
-        if ($this->getGender() === "male") {
+        if ($this->getGender($comp) === "male") {
             $this->states[$comp][5] = 0;
         }
     }
 
-    private function isAnyStarted()
+    private function isAnyStarted($comp)
     {
-        $departments = $this->em
-            ->getRepository('uteg:Department')
-            ->createQueryBuilder('d')
-            ->select('d.gender as gender')
-            ->where('d.started = 1')
-            ->andWhere('d.ended = 0')
-            ->getQuery()->getResult();
+        $departments = $this->getDepartments($comp);
 
         if (count($departments) > 0) {
             return true;
@@ -188,17 +180,11 @@ class judgingTopic implements TopicInterface
         }
     }
 
-    private function getGender()
+    private function getGender($comp)
     {
         $gender = "female";
 
-        $departments = $this->em
-            ->getRepository('uteg:Department')
-            ->createQueryBuilder('d')
-            ->select('d.gender as gender')
-            ->where('d.started = 1')
-            ->andWhere('d.ended = 0')
-            ->getQuery()->getResult();
+        $departments = $this->getDepartments($comp);
 
         foreach ($departments as $department) {
             if ($gender === "male") {
@@ -209,17 +195,11 @@ class judgingTopic implements TopicInterface
         return $gender;
     }
 
-    private function getRound()
+    private function getRound($comp)
     {
         $round = 0;
 
-        $departments = $this->em
-            ->getRepository('uteg:Department')
-            ->createQueryBuilder('d')
-            ->select('d.round as round')
-            ->where('d.started = 1')
-            ->andWhere('d.ended = 0')
-            ->getQuery()->getResult();
+        $departments = $this->getDepartments($comp);
 
         foreach ($departments as $department) {
             $round = $department['round'];
@@ -241,11 +221,24 @@ class judgingTopic implements TopicInterface
         return $finished;
     }
 
-    private function ended($comp, $topic) {
+    private function ended($comp, $topic)
+    {
         $topic->broadcast([
-            'msg' => 'ended'
+            'method' => 'ended'
         ]);
 
         unset($this->states[$comp]);
+    }
+
+    private function getDepartments($comp) {
+        return $this->em
+            ->getRepository('uteg:Department')
+            ->createQueryBuilder('d')
+            ->select('d.id as id, d.round as round, d.gender as gender')
+            ->where('d.started = 1')
+            ->andWhere('d.ended = 0')
+            ->andWhere('d.competition = :competition')
+            ->setParameters(array('competition' => $comp))
+            ->getQuery()->getResult();
     }
 }
