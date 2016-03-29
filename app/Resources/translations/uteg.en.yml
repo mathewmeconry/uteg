@@ -485,7 +485,7 @@ egt:
         division: 'Division'
         pause: 'Pause'
         invalidGrade: 'Please enter a grade between 0 and 10'
-        wrongDevice: 'Are you trying hacking me? Sorry, wrong device ;)'
+        wrongDevice: "Are you trying to hack me? This doesn't gonna work ;)"
         fixErrors: 'Please fix all errors'
         saveSuccess: 'Grades successfully saved'
         waitJudges: 'Please wait for the other judges to finish'
