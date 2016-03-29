@@ -111,6 +111,7 @@
                         }
                         break;
                     case 'reloadStarters':
+                        $('#message-box-wait').removeClass('open');
                         $('#message-box-refresh').addClass('open');
                         setTimeout(function () {
                             window.location.reload();
