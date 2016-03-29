@@ -463,7 +463,7 @@ class egt
 
     public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, \uteg\Entity\Judges2Competitions $j2c)
     {
-        $judgingArr = $this->generateJudgingArray($device);
+        $judgingArr = $this->generateJudgingArray($device, $competition);
 
         return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
             "compid" => $competition->getId(),
@@ -496,7 +496,7 @@ class egt
         return new Response(json_encode($error));
     }
 
-    private function generateJudgingArray(\uteg\Entity\Device $device) {
+    private function generateJudgingArray(\uteg\Entity\Device $device, \uteg\Entity\Competition $competition) {
         $em = $this->container->get('Doctrine')->getManager();
         $devices = array(1 => 1, 2 => 2, 3 => 3, 4 => 5);
 
@@ -506,6 +506,8 @@ class egt
             ->select('d.round as round')
             ->where('d.started = 1')
             ->andWhere('d.ended = 0')
+            ->andWhere('d.competition = :competition')
+            ->setParameters(array('competition' => $competition->getId()))
             ->getQuery()->getResult();
 
         $starters = $em
@@ -520,6 +522,8 @@ class egt
             ->join('s.category', 'ca')
             ->where('de.started = 1')
             ->andWhere('de.ended = 0')
+            ->andWhere('de.competition = :competition')
+            ->setParameters(array('competition' => $competition->getId()))
             ->getQuery()->getResult();
 
         foreach ($starters as $starter) {
