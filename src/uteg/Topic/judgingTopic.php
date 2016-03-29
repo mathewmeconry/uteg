@@ -152,7 +152,11 @@ class judgingTopic implements TopicInterface
 
     private function getState($comp, $device)
     {
-        return $this->states[$comp][$device];
+        if(isset($this->states[$comp][$device])) {
+            return $this->states[$comp][$device];
+        } else {
+            return 0;
+        }
     }
 
     private function initializeIfNot($comp)
@@ -164,9 +168,11 @@ class judgingTopic implements TopicInterface
 
     private function initializeStates($comp)
     {
-        $this->states[$comp] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
-        if ($this->getGender($comp) === "male") {
-            $this->states[$comp][5] = 0;
+        if($this->getDepartments($comp)) {
+            $this->states[$comp] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
+            if ($this->getGender($comp) === "male") {
+                $this->states[$comp][5] = 0;
+            }
         }
     }
 

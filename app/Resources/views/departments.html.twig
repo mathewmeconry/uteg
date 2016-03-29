@@ -12,10 +12,24 @@
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
     <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+    {% include "websocket.html.twig" %}
 {% endblock %}
 
 {% block script %}
     <script>
+        function socket(session) {
+            session.subscribe('judging/topic/{{ app.request.get('compid') }}', function (uri, payload) {
+
+            });
+
+            $(document).on('startDepartment', function () {
+                console.log('start');
+                session.publish('judging/topic/{{ app.request.get('compid') }}', {
+                    method: "startDepartment"
+                });
+            });
+        }
+
         function dataTable(table) {
 
             $(table).DataTable({
@@ -145,6 +159,7 @@
                 }).success(function (data) {
                     showFlashbag();
                     $('.panel-refresh').click();
+                    $(document).trigger('startDepartment');
                 });
             });
 
