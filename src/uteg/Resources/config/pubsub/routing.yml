@@ -1,7 +1,7 @@
-uteg_judging_topic:
-    channel: uteg/judging/{comp_id}
+uteg_topic:
+    channel: judging/topic/{compid}
     handler:
-        callback: 'uteg.judgingTopic' #related to the getName() of your topic
+        callback: 'uteg.topic.judging'
     requirements:
-        comp_id:
-            pattern: "\d+" #accept all valid regex, don't put delimiters !
+        compid:
+            pattern: "\d+"

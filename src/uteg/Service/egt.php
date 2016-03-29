@@ -512,6 +512,7 @@ class egt
         return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
             "compid" => $competition->getId(),
             "device" => $j2c->getDevice(),
+            "deviceid" => $j2c->getDevice()->getId(),
             "starters" => $return,
             "devices" => $devices,
             "round" => $round + 1
@@ -560,7 +561,7 @@ class egt
                 $em->flush();
                 return array('ok');
             } else {
-                return array('wrongDevice', $this->container->get('translator')->trans('egt.judging.wrongDevice', array(), 'uteg'));
+                return array('wrongDevice', $this->container->get('translator')->trans('egt.judging.wrongDevice', array(), 'uteg'), $round."/".$rotated."/".$grade->getDevice()->getNumber()."/".$startDevice);
             }
         } else {
             return array('invalidGrade', $this->container->get('translator')->trans('egt.judging.invalidGrade', array(), 'uteg'));

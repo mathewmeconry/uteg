@@ -115,12 +115,12 @@ class JudgeController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/{deviceid}/grades/save", name="saveGrades", requirements={"compid": "\d+", "deviceid": "\d+"})
+     * @Route("/{compid}/grades/save/{deviceid}", name="saveGrades", defaults={"deviceid": ""}, requirements={"compid": "\d+"})
      * @Method("POST")
      */
     public function saveGradesAction(Request $request, $compid, $deviceid) {
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
-        $device = $this->getDoctrine()->getEntityManager()->find('uteg:Device', $deviceid);
+        $device = $this->getDoctrine()->getEntityManager()->getRepository('uteg:Device')->findOneBy(array("number" => $deviceid));;
         $module = $this->get($comp->getModule()->getServiceName());
         $grades = $request->request->get('grades');
 

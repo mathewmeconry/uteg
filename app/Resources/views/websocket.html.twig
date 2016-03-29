@@ -3,13 +3,14 @@
 <script>
     var _WS_URI = "ws://{{ gos_web_socket_server_host }}:{{ gos_web_socket_server_port }}";
     var webSocket;
+    var session;
 
     $(document).ready(function () {
         webSocket = WS.connect(_WS_URI);
 
         webSocket.on("socket/connect", function (session) {
-            session = session;
             console.log("Successfully Connected!");
+            socket(session);
         });
 
         webSocket.on("socket/disconnect", function(error){
@@ -17,5 +18,3 @@
         });
     });
 </script>
-
-{##}

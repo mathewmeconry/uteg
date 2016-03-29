@@ -9,6 +9,14 @@ use Gos\Bundle\WebSocketBundle\Router\WampRequest;
 
 class judgingTopic implements TopicInterface
 {
+    protected $states = array();
+    protected $em;
+
+    public function __construct($em)
+    {
+        $this->em = $em;
+    }
+
     /**
      * This will receive any Subscription requests for this topic.
      *
@@ -19,8 +27,7 @@ class judgingTopic implements TopicInterface
      */
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
-        //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has joined " . $topic->getId()]);
+
     }
 
     /**
@@ -29,32 +36,46 @@ class judgingTopic implements TopicInterface
      * @param ConnectionInterface $connection
      * @param Topic $topic
      * @param WampRequest $request
-     * @return void
+     * @return voids
      */
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
-        //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has left " . $topic->getId()]);
-    }
 
+    }
 
     /**
      * This will receive any Publish requests for this topic.
      *
      * @param ConnectionInterface $connection
-     * @param Topic $topic
+     * @param $Topic topic
      * @param WampRequest $request
      * @param $event
      * @param array $exclude
-     * @param array $eligible
+     * @param array $eligibles
      * @return mixed|void
      */
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
+        if ($this->isAnyStarted()) {
 
-        $topic->broadcast([
-            'msg' => $event,
-        ]);
+
+            $comp = $request->getAttributes()->get('compid');
+            $this->initializeIfNot($comp);
+
+            switch ($event['method']) {
+                case 'changeState':
+                    $this->changeState($comp, $event['device'], $event['state']);
+                    break;
+            }
+
+            if ($this->allFinished($comp)) {
+                $this->turn($comp, $topic);
+            }
+
+            $connection->event($topic->getId(), ['msg' => 'ok']);
+        } else {
+            $connection->event($topic->getId(), ['msg' => 'noneStarted']);
+        }
     }
 
     /**
@@ -63,6 +84,122 @@ class judgingTopic implements TopicInterface
      */
     public function getName()
     {
-        return 'uteg.judgingTopic';
+        return 'uteg.topic.judging';
+    }
+
+    private function turn($comp, $topic)
+    {
+        $this->initializeStates($comp);
+
+        $departments = $this->em
+            ->getRepository('uteg:Department')
+            ->createQueryBuilder('d')
+            ->select('d.id as id')
+            ->where('d.started = 1')
+            ->andWhere('d.ended = 0')
+            ->getQuery()->getResult();
+
+        foreach ($departments as $department) {
+            $dep = $this->em->getRepository('uteg:Department')->findOneBy(array("id" => $department['id']));
+            $dep->setRound($dep->getRound() + 1);
+            $this->em->persist($dep);
+        }
+
+        $this->em->flush();
+
+        $topic->broadcast([
+            'msg' => 'turn',
+            'round' => $this->getRound()
+        ]);
+    }
+
+    private function allFinished($comp)
+    {
+        $finished = true;
+
+        foreach ($this->states[$comp] as $device) {
+            if ($device === 0) {
+                $finished = false;
+            }
+        }
+
+        return $finished;
+    }
+
+    private function changeState($comp, $device, $state)
+    {
+        $this->states[$comp][$device] = $state;
+    }
+
+    private function initializeIfNot($comp)
+    {
+        if (!isset($this->states[$comp])) {
+            $this->initializeStates($comp);
+        }
+    }
+
+    private function initializeStates($comp)
+    {
+        $this->states[$comp] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
+        if ($this->getGender() === "male") {
+            $this->states[$comp][5] = 0;
+        }
+    }
+
+    private function isAnyStarted()
+    {
+        $departments = $this->em
+            ->getRepository('uteg:Department')
+            ->createQueryBuilder('d')
+            ->select('d.gender as gender')
+            ->where('d.started = 1')
+            ->andWhere('d.ended = 0')
+            ->getQuery()->getResult();
+
+        if (count($departments) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function getGender()
+    {
+        $gender = "female";
+
+        $departments = $this->em
+            ->getRepository('uteg:Department')
+            ->createQueryBuilder('d')
+            ->select('d.gender as gender')
+            ->where('d.started = 1')
+            ->andWhere('d.ended = 0')
+            ->getQuery()->getResult();
+
+        foreach ($departments as $department) {
+            if ($gender === "male") {
+                $gender = "male";
+            }
+        }
+
+        return $gender;
+    }
+
+    private function getRound()
+    {
+        $round = 0;
+
+        $departments = $this->em
+            ->getRepository('uteg:Department')
+            ->createQueryBuilder('d')
+            ->select('d.round as round')
+            ->where('d.started = 1')
+            ->andWhere('d.ended = 0')
+            ->getQuery()->getResult();
+
+        foreach ($departments as $department) {
+            $round = $department['round'];
+        }
+
+        return $round + 1;
     }
 }
