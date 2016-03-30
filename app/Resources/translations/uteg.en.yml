@@ -428,6 +428,9 @@ egt:
         departments: 'Departments'
         divisions: 'Divisions'
         grouping: 'Starter Grouping'
+        ranking: 'Ranking'
+        ranking.male: 'Male'
+        ranking.female: 'Female'
     judges:
         title: 'Judges'
         header: 'Judges'
@@ -479,6 +482,14 @@ egt:
             device: 'Device'
             columncount: 'Number of columns'
             save: 'Save'
+        ranking:
+            title: 'Ranking'
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            birthyear: 'Birthyear'
+            club: 'Club'
+            
+
     judging:
         title: 'Judging'
         header: 'Judging'

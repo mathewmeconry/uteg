@@ -55,6 +55,10 @@ class egt
     {
         $menu = $event->getMenu();
         $menu['nav.reporting']->addChild('egt.nav.grouping', array('route' => 'reportingDivisions', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
+        $menu['nav.reporting']->addChild('egt.nav.ranking', array('uri' => '#', 'icon' => 'trophy', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.male', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'male', 'catid' => 1), 'icon' => 'male'));
+        $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.female', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'female', 'catid' => 1), 'icon' => 'female'));
+
     }
 
     public function getS2c()
@@ -450,6 +454,42 @@ class egt
         ));
     }
 
+    public function reportingRanking(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Category $category, $gender, $format)
+    {
+        $starters = $this->getRankingArray($competition, $category, $gender);
+        $starters = $this->sortRanking($starters, $gender);
+
+        $headers = array('egt.reporting.ranking.firstname',
+            'egt.reporting.ranking.lastname',
+            'egt.reporting.ranking.birthyear',
+            'egt.reporting.ranking.club',
+            'device.floor',
+            'device.rings',
+            'device.vault');
+
+        if($gender === "male") {
+            $headers[] = 'device.parallel-bars';
+        }
+
+        $headers[] = 'device.horizontal-bar';
+
+        if ($format === "pdf") {
+            return $this->renderPdf('egt/reporting/divisionsReport.html.twig', array(
+                "comp" => $competition,
+                "category" => $category,
+                "starters" => $starters,
+                "headers" => $headers
+            ));
+        }
+
+        return $this->container->get('templating')->renderResponse('egt/reporting/ranking.html.twig', array(
+            "comp" => $competition,
+            "category" => $category,
+            "starters" => $starters,
+            "headers" => $headers
+        ));
+    }
+
     public function reportingDivisionsPost(Request $request, \uteg\Entity\Competition $competition)
     {
         $groupedStarters = $this->generateDivisionsReport($request, $competition);
@@ -465,7 +505,7 @@ class egt
     {
         $judgingArr = $this->generateJudgingArray($device, $competition);
 
-        if(isset($judgingArr['error'])) {
+        if (isset($judgingArr['error'])) {
             return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
                 "compid" => $competition->getId(),
                 "device" => $j2c->getDevice(),
@@ -507,7 +547,8 @@ class egt
         return new Response(json_encode($error));
     }
 
-    private function generateJudgingArray(\uteg\Entity\Device $device, \uteg\Entity\Competition $competition) {
+    private function generateJudgingArray(\uteg\Entity\Device $device, \uteg\Entity\Competition $competition)
+    {
         $em = $this->container->get('Doctrine')->getManager();
         $devices = array(1 => 1, 2 => 2, 3 => 3, 4 => 5);
 
@@ -537,7 +578,7 @@ class egt
             ->setParameters(array('competition' => $competition->getId()))
             ->getQuery()->getResult();
 
-        if($starters) {
+        if ($starters) {
             foreach ($starters as $starter) {
                 $return[$starter['devicenumber']][] = $starter;
 
@@ -607,8 +648,8 @@ class egt
             $device -= 5;
         }
 
-        if($gender === "male") {
-            if($device === 5) {
+        if ($gender === "male") {
+            if ($device === 5) {
                 $device = 4;
             } elseif ($device === 4) {
                 $device = 5;
@@ -651,6 +692,88 @@ class egt
         }
 
         return $this->reportingSort($cookieVal[0], $this->getCompleteStarters($competition));
+    }
+
+    private function getRankingArray(\uteg\Entity\Competition $competition, \uteg\Entity\Category $category, $gender)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+
+        $starters = $em
+            ->getRepository('uteg:Starters2CompetitionsEGT')
+            ->createQueryBuilder('s2c')
+            ->select('s2c.id as s2cid, s.firstname as firstname, s.lastname as lastname, s.birthyear as birthyear, s.gender as gender, c.name as club')
+            ->join('s2c.starter', 's')
+            ->join('s2c.club', 'c')
+            ->where('s2c.competition = :competition')
+            ->andWhere('s2c.category = :category')
+            ->andWhere('s.gender = :gender')
+            ->setParameters(array('competition' => $competition->getid(), 'category' => $category->getId(), 'gender' => $gender))
+            ->getQuery()->getResult();
+
+        foreach ($starters as $key => $starter) {
+            $grades = $em
+                ->getRepository('uteg:Grade')
+                ->createQueryBuilder('g')
+                ->select('g.grade as grade, d.number as dnumber, d.name as device')
+                ->join('g.device', 'd')
+                ->where('g.s2c = :s2c')
+                ->setParameter('s2c', $starter['s2cid'])
+                ->getQuery()->getResult();
+
+            $sum = 0;
+
+            foreach ($grades as $grade) {
+                $starter[$grade['dnumber']] = floatval($grade['grade']);
+                $sum += floatval($grade['grade']);
+            }
+
+            $starter['total'] = $sum;
+            $starters[$key] = $starter;
+        }
+
+        return $starters;
+    }
+
+    private function sortRanking($starters, $gender)
+    {
+        foreach ($starters as $key => $starter) {
+            $floor[$key] = $starter[1];
+            $swiningrings[$key] = $starter[2];
+            $vault[$key] = $starter[3];
+            $horizontalbar[$key] = $starter[5];
+            $total[$key] = $starter['total'];
+
+            if ($gender === "male") {
+                $parallelbars[$key] = $starters[4];
+            }
+        }
+
+        usort($starters, array($this, "sortRankingFunction"));
+
+        return $starters;
+    }
+
+    private function sortRankingFunction($a, $b)
+    {
+        $first = $a['total'];
+        $second = $b['total'];
+        $c = 1;
+
+        while (bccomp($second, $first, 2) === 0) {
+            $first = $a[$c];
+            $second = $b[$c];
+
+            $c++;
+            if ($c === 4 && $a['gender'] === "female") {
+                $c = 5;
+            }
+
+            if ($c === 6) {
+                return 0;
+            }
+        }
+
+        return bccomp($second, $first, 2);
     }
 
     private function getCompleteStarters($competition)

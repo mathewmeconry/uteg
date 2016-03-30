@@ -1,0 +1,29 @@
+{% trans_default_domain 'uteg' %}
+
+{% set url = app.request.uri | split('/') %}
+
+{% if url|last == "pdf" %}
+    <head>
+        <meta charset="UTF-8"/>
+        <title>{{ 'egt.reporting.ranking.title'|trans }}</title>
+    </head>
+{% endif %}
+
+<style>
+    #report-table {
+        width: 100%;
+        text-align: left;
+        font-family: 'Quicksand', sans-serif;
+        color: #656d78;
+        border-collapse: collapse;
+    }
+
+    tbody>tr:nth-child(even) {
+        background-color: #c7c7c7;
+    }
+</style>
+<div id="columns">
+<table id="report-table">
+
+</table>
+</div>
