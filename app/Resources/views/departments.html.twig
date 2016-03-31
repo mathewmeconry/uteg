@@ -12,10 +12,24 @@
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
     <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
     <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+    {% include "websocket.html.twig" %}
 {% endblock %}
 
 {% block script %}
     <script>
+        function socket(session) {
+            session.subscribe('judging/topic/{{ app.request.get('compid') }}', function (uri, payload) {
+
+            });
+
+            $(document).on('startDepartment', function () {
+                console.log('start');
+                session.publish('judging/topic/{{ app.request.get('compid') }}', {
+                    method: "startDepartment"
+                });
+            });
+        }
+
         function dataTable(table) {
 
             $(table).DataTable({
@@ -23,11 +37,11 @@
                     "url": "{{ path('departmentPost', { 'compid': app.request.get('compid')}) }}",
                     "method": "POST"
                 },
-                "lengthMenu": [[-1], ["{{ "departments.table.all"|trans }}"]],
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "departments.table.all"|trans }}"]],
                 "search": {
                     "regex": true
                 },
-                "order": [[3, "asc"]],
+                "order": [[2, "asc"], [1, "asc"], [4, "asc"], [3, "asc"]],
                 responsive: {
                     details: {
                         type: 'column'
@@ -39,6 +53,7 @@
                     {"data": "date", "type": "string"},
                     {"data": "category", "type": "string"},
                     {"data": "gender", "type": "string"},
+                    {"data": "state", "type":"string"},
                     {
                         "data": null,
                         "defaultContent": '{% if is_granted('SETTINGS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-warning btn-rounded btn-condensed btn-sm btn-icon departments-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon departments-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}'
@@ -135,6 +150,19 @@
                 $('#department-remove-cancel').show();
             });
 
+            $('tbody').on('click', 'td button.start', function() {
+                var table = $(this).parent().parent().parent().parent().DataTable();
+                var dep_id = table.cell($(this).parent().parent(), 0).data();
+                $.ajax({
+                    url: "{{ path('departmentStart', { 'compid': app.request.get('compid')})}}/" + dep_id,
+                    method: "POST"
+                }).success(function (data) {
+                    showFlashbag();
+                    $('.panel-refresh').click();
+                    $(document).trigger('startDepartment');
+                });
+            });
+
 
             $('#department-save-save').click(function () {
                 var values = {};
@@ -159,7 +187,6 @@
                     }
                 });
             });
-
 
             $('.control-add').click(function () {
                 $.ajax({
@@ -205,6 +232,7 @@
                             <th class="all">{{ 'departments.table.date'|trans }}</th>
                             <th class="all">{{ 'departments.table.category'|trans }}</th>
                             <th class="all">{{ 'departments.table.gender'|trans }}</th>
+                            <th class="min-tablet-p"></th>
                             <th style="width: 160px;" class="min-tablet-p">{{ 'departments.table.actions'|trans }}</th>
                         </tr>
                         </thead>

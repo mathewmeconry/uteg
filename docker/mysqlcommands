@@ -1,6 +1,6 @@
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '';
 use uteg;
-INSERT INTO ute_user (username, username_canonical, email, email_canonical, enabled, salt, password, last_login, locked, expired, expires_at, confirmation_token, password_requested_at, roles, credentials_expired, credentials_expire_at, firstname, lastname, profilepicture) VALUES ("admin", "admin", "admin@getu.ch", "admin@getu.ch", 1, "fmqne4g93v48koggosksk4ssw88g84w", "xfm6sQdBtS1sGpoAHL3wo+Zff7H4QX3M8kJHmY0ieRmObx8h+7NQfMVCIW0a8XX+iEIEqoaWIbSpPW7QLU3j+Q==", null, 0, 0, null, null, null, "a:0:{}", 0, null, "admin", "admin", null);
+INSERT INTO ute_user (username, username_canonical, email, email_canonical, enabled, salt, password, last_login, locked, expired, expires_at, confirmation_token, password_requested_at, roles, credentials_expired, credentials_expire_at, firstname, lastname, profilepicture) VALUES ("admin", "admin@getu.ch", "admin@getu.ch", "admin@getu.ch", 1, "fmqne4g93v48koggosksk4ssw88g84w", "xfm6sQdBtS1sGpoAHL3wo+Zff7H4QX3M8kJHmY0ieRmObx8h+7NQfMVCIW0a8XX+iEIEqoaWIbSpPW7QLU3j+Q==", null, 0, 0, null, null, null, "a:0:{}", 0, null, "admin", "admin", null);
 INSERT INTO ute_module (`displayName`, `serviceName`) VALUES ('service.egt', 'uteg.egt');
 INSERT INTO ute_category (`number`, `name`) VALUES ('1', 'K1');
 INSERT INTO ute_category (`number`, `name`) VALUES ('2', 'K2');

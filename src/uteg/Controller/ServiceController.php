@@ -66,6 +66,21 @@ class ServiceController extends DefaultController
     }
 
     /**
+     * @Route("{compid}/reporting/ranking/{gender}/{catid}/{format}", name="reportingRanking", defaults={"format": "html", "catid": 1}, requirements={"catid": "\d+", "format": "html|pdf|ajax"})
+     * @Method("GET")
+     */
+    public function reportingRankingAction(Request $request, $compid, $catid, $gender, $format)
+    {
+//        $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $category = $this->getDoctrine()->getEntityManager()->find('uteg:Category', $catid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
+        return $module->reportingRanking($request, $comp, $category, $gender, $format);
+    }
+
+    /**
      * @Route("{compid}/reporting/divisions", name="reportingDivisionsPost")
      * @Method("POST")
      */

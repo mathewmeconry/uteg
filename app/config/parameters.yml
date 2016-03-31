@@ -5,14 +5,18 @@ parameters:
     database_port: null
     database_name: uteg
     database_user: root
-    database_password:
+    database_password: null
     mailer_transport: smtp
     mailer_host: smtp.zoho.com
-    mailer_port: 465
-    mailer_encryption: ssl
     mailer_user: admin@getu.ch
     mailer_password: bvjQb5BNKTzF
-    mailer_authmode: login
     locale: en
     secret: 1058ba6f5f302fc7263351f52c9e8d52e4a8bb67
 
+gos_web_socket:
+    server:
+        port: 8080        #The port the socket server will listen on
+        host: 127.0.0.1   #The host ip to bind to
+        router:
+            resources:
+                - @uteg/Resources/config/pubsub/routing.yml

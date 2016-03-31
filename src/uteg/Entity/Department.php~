@@ -33,11 +33,11 @@ class Department
     protected $category;
 
     /**
-     * @ORM\Column(type="string", name="sex")
+     * @ORM\Column(type="string", name="gender")
      * @Assert\NotBlank()
      * @Assert\Choice(choices = {"male", "female"})
      */
-    protected $sex;
+    protected $gender;
 
     /**
      * @ORM\Column(type="integer", name="number")
@@ -65,13 +65,13 @@ class Department
     protected $round;
 
     /**
-     * @ORM\OneToMany(targetEntity="Division", mappedBy="department")
+     * @ORM\OneToMany(targetEntity="Division", mappedBy="department", cascade={"persist", "remove"})
      */
     protected $divisions;
 
     public function __construct()
     {
-        $this->starters = new ArrayCollection();
+        $this->divisions = new ArrayCollection();
     }
 
     public function __toString()
@@ -82,7 +82,7 @@ class Department
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -105,7 +105,7 @@ class Department
     /**
      * Get number
      *
-     * @return integer 
+     * @return integer
      */
     public function getNumber()
     {
@@ -128,7 +128,7 @@ class Department
     /**
      * Get date
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -151,7 +151,7 @@ class Department
     /**
      * Get started
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getStarted()
     {
@@ -174,7 +174,7 @@ class Department
     /**
      * Get ended
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEnded()
     {
@@ -197,53 +197,25 @@ class Department
     /**
      * Get round
      *
-     * @return integer 
+     * @return integer
      */
     public function getRound()
     {
         return $this->round;
     }
 
-    /**
-     * Add starters
-     *
-     * @param \uteg\Entity\Starters2Competitions $starters
-     * @return Department
-     */
-    public function addStarter(\uteg\Entity\Starters2Competitions $starters)
+    public function increaseRound()
     {
-        $this->starters[] = $starters;
-
-        return $this;
-    }
-
-    /**
-     * Remove starters
-     *
-     * @param \uteg\Entity\Starters2Competitions $starters
-     */
-    public function removeStarter(\uteg\Entity\Starters2Competitions $starters)
-    {
-        $this->starters->removeElement($starters);
-    }
-
-    /**
-     * Get starters
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getStarters()
-    {
-        return $this->starters;
+        return $this->round + 1;
     }
 
     /**
      * Add divisions
      *
-     * @param \uteg\Entity\Divisions $divisions
+     * @param \uteg\Entity\Division $division
      * @return Department
      */
-    public function addDivision(\uteg\Entity\Divisions $divisions)
+    public function addDivision(\uteg\Entity\Division $divisions)
     {
         $this->divisions[] = $divisions;
 
@@ -253,9 +225,9 @@ class Department
     /**
      * Remove divisions
      *
-     * @param \uteg\Entity\Divisions $divisions
+     * @param \uteg\Entity\Division $division
      */
-    public function removeDivision(\uteg\Entity\Divisions $divisions)
+    public function removeDivision(\uteg\Entity\Division $divisions)
     {
         $this->divisions->removeElement($divisions);
     }
@@ -263,7 +235,7 @@ class Department
     /**
      * Get divisions
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getDivisions()
     {
@@ -286,10 +258,56 @@ class Department
     /**
      * Get competition
      *
-     * @return \uteg\Entity\Competition 
+     * @return \uteg\Entity\Competition
      */
     public function getCompetition()
     {
         return $this->competition;
+    }
+
+    /**
+     * Set gender
+     *
+     * @param string $gender
+     * @return Department
+     */
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    /**
+     * Get gender
+     *
+     * @return string
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * Set category
+     *
+     * @param \uteg\Entity\Category $category
+     * @return Department
+     */
+    public function setCategory(\uteg\Entity\Category $category = null)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category
+     *
+     * @return \uteg\Entity\Category
+     */
+    public function getCategory()
+    {
+        return $this->category;
     }
 }

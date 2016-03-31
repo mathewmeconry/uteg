@@ -54,4 +54,10 @@ services:
         class: uteg\Service\egt
         arguments: ["@service_container", "@event_dispatcher"]
 
+    uteg.topic.judging:
+            class: uteg\Topic\judgingTopic
+            arguments: ["@doctrine.orm.entity_manager"]
+            tags:
+                - { name: gos_web_socket.topic }
+
 

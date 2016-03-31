@@ -30,8 +30,8 @@ class Division
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Department", inversedBy="divisions")
-     * @ORM\JoinColumn(name="dep_id", referencedColumnName="dep_id")
+     * @ORM\ManyToOne(targetEntity="Department", inversedBy="divisions", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="dep_id", referencedColumnName="dep_id", onDelete="cascade")
      */
     protected $department;
 
@@ -52,32 +52,9 @@ class Division
     }
 
     /**
-     * Add device
-     *
-     * @param \uteg\Entity\Device $device
-     * @return Divisions
-     */
-    public function addDevice(\uteg\Entity\Device $device)
-    {
-        $this->device[] = $device;
-
-        return $this;
-    }
-
-    /**
-     * Remove device
-     *
-     * @param \uteg\Entity\Device $device
-     */
-    public function removeDevice(\uteg\Entity\Device $device)
-    {
-        $this->device->removeElement($device);
-    }
-
-    /**
      * Get device
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \uteg\Entity\Device
      */
     public function getDevice()
     {
@@ -91,4 +68,40 @@ class Division
         $this->device = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
+
+    /**
+     * Set department
+     *
+     * @param \uteg\Entity\Department $department
+     * @return Division
+     */
+    public function setDepartment(\uteg\Entity\Department $department = null)
+    {
+        $this->department = $department;
+
+        return $this;
+    }
+
+    /**
+     * Get department
+     *
+     * @return \uteg\Entity\Department 
+     */
+    public function getDepartment()
+    {
+        return $this->department;
+    }
+
+    /**
+     * Set device
+     *
+     * @param \uteg\Entity\Device $device
+     * @return Division
+     */
+    public function setDevice(\uteg\Entity\Device $device = null)
+    {
+        $this->device = $device;
+
+        return $this;
+    }
 }

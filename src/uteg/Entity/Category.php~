@@ -139,4 +139,37 @@ class Category
 
         return $this;
     }
+
+    /**
+     * Add departments
+     *
+     * @param \uteg\Entity\Department $departments
+     * @return Category
+     */
+    public function addDepartment(\uteg\Entity\Department $departments)
+    {
+        $this->departments[] = $departments;
+
+        return $this;
+    }
+
+    /**
+     * Remove departments
+     *
+     * @param \uteg\Entity\Department $departments
+     */
+    public function removeDepartment(\uteg\Entity\Department $departments)
+    {
+        $this->departments->removeElement($departments);
+    }
+
+    /**
+     * Get departments
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDepartments()
+    {
+        return $this->departments;
+    }
 }

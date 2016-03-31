@@ -1,0 +1,91 @@
+{% trans_default_domain 'uteg' %}
+
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'egt.ranking.title'|trans }}{% endblock %}
+
+{% block cssplugins %}
+{% endblock %}
+
+{% block jsplugins %}
+{% endblock %}
+
+{% block css %}
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block script %}
+    <script>
+        {% for category in categories %}
+        var {{ category.name }} = "{{ path('reportingRanking', {'compid': app.request.get('compid'), 'format': 'ajax', 'catid': category.id, "gender": gender}) }}";
+        var {{ category.name ~ "pdf"}} = "{{ path('reportingRanking', {'compid': app.request.get('compid'), 'format': 'pdf', 'catid': category.id, "gender": gender}) }}";
+        {% endfor %}
+
+        $(document).ready(function () {
+
+            $('#report-file-button').click(function () {
+                window.open(eval($('li.active a').data('id') + "pdf"));
+            });
+
+            $('.tab').click(function () {
+                $('#message-box-loading').addClass('open');
+                var url = eval($(this).data('id'));
+
+                $.ajax({
+                    'method': 'GET',
+                    'url': url,
+                    'success': function (data) {
+                        $('div.active').html(data);
+                        $('#message-box-loading').removeClass('open');
+                    }
+                });
+
+            });
+
+            $('li.active a').click();
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% if error is not defined %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="panel_ranking" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ 'egt.ranking.header'|trans }}</h3>
+                        <ul class="panel-controls">
+                            <li><a target="_blank" class="control-primary" id="report-file-button"><span
+                                            class="fa fa-file-pdf-o"></span></a></li>
+                            <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tabs">
+                        <ul class="nav nav-tabs">
+                            {% for category in categories %}
+                                <li id="{{ loop.index }}_li" {% if loop.first %}class="active"{% endif %}>
+                                    <a class="tab" href="#{{ loop.index }}_div" data-toggle="tab"
+                                       aria-expanded="true" data-id="{{ category.name }}">{{ category.name }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="panel-body tab-content" style="width: 90%">
+                        {% for category in categories %}
+                            <div id="{{ loop.index }}_div" class="tab-pane {% if loop.first %}active{% endif %}"
+                                 style="width: 100%">
+
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block dialog %}
+{% endblock %}

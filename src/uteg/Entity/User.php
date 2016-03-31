@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\File;
+use uteg\Entity\UserInvitation;
 use Symfony\Component\Security\Core\Util\SecureRandom;
 
 /**
@@ -26,12 +27,12 @@ class User extends BaseUser
     protected $id;
 
     /**
-     * @ORM\Column(type="string", name="firstname")
+     * @ORM\Column(type="string", name="firstname", nullable=true)
      */
     protected $firstname;
 
     /**
-     * @ORM\Column(type="string", name="lastname")
+     * @ORM\Column(type="string", name="lastname", nullable=true)
      */
     protected $lastname;
 
@@ -43,6 +44,12 @@ class User extends BaseUser
      *      )
      */
     protected $competitions;
+
+    /**
+     * @ORM\OneToOne(targetEntity="UserInvitation")
+     * @ORM\JoinColumn(referencedColumnName="code")
+     */
+    protected $invitation;
 
     /**
      * @ORM\Column(type="string", name="profilepicture", nullable=true)
@@ -59,13 +66,17 @@ class User extends BaseUser
      */
     protected $profilePictureFile;
 
-    private $tenoProfilePicturePath;
+    /**
+     * @ORM\OneToMany(targetEntity="Judges2Competitions", mappedBy="user", cascade={"persist"}, orphanRemoval=TRUE)
+     */
+    protected $j2cs;
 
     public function __construct()
     {
         parent::__construct();
 
         $this->competitions = new ArrayCollection();
+        $this->j2cs = new ArrayCollection();
     }
 
     /**
@@ -76,6 +87,32 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Sets the email.
+     *
+     * @param string $email
+     * @return User
+     */
+    public function setEmail($email)
+    {
+        $this->setUsername($email);
+
+        return parent::setEmail($email);
+    }
+
+    /**
+     * Set the canonical email.
+     *
+     * @param string $emailCanonical
+     * @return User
+     */
+    public function setEmailCanonical($emailCanonical)
+    {
+        $this->setUsernameCanonical($emailCanonical);
+
+        return parent::setEmailCanonical($emailCanonical);
     }
 
     /**
@@ -155,6 +192,17 @@ class User extends BaseUser
     public function getCompetitions()
     {
         return $this->competitions;
+    }
+
+
+    public function setInvitation(UserInvitation $invitation)
+    {
+        $this->invitation = $invitation;
+    }
+
+    public function getInvitation()
+    {
+        return $this->invitation;
     }
 
 
@@ -329,5 +377,49 @@ class User extends BaseUser
         if ($file = $this->getProfilePictureAbsolutePath() && file_exists($this->getProfilePictureAbsolutePath())) {
             unlink($file);
         }
+    }
+
+    /**
+     * Add j2cs
+     *
+     * @param \uteg\Entity\Judges2Competitions $j2cs
+     * @return User
+     */
+    public function addJ2c(\uteg\Entity\Judges2Competitions $j2cs)
+    {
+        $this->j2cs[] = $j2cs;
+
+        return $this;
+    }
+
+    /**
+     * Remove j2cs
+     *
+     * @param \uteg\Entity\Judges2Competitions $j2cs
+     */
+    public function removeJ2c(\uteg\Entity\Judges2Competitions $j2cs)
+    {
+        $this->j2cs->removeElement($j2cs);
+    }
+
+    /**
+     * Get j2cs
+     *
+     * @return \Doctrine\Common\Collections\Collection | \uteg\Entity\Judges2Competitions[]
+     */
+    public function getJ2cs()
+    {
+        return $this->j2cs;
+    }
+
+    public function getJ2cByComp($check)
+    {
+        foreach ($this->j2cs as $j2c) {
+            if ($j2c->getCompetition() === $check) {
+                return $j2c;
+            }
+        }
+
+        return false;
     }
 }

@@ -21,6 +21,11 @@ class Device
     protected $id;
 
     /**
+     * @ORM\Column(type="integer", name="number")
+     */
+    protected $number;
+
+    /**
      * @ORM\Column(type="string", name="name")
      */
     protected $name;
@@ -46,6 +51,29 @@ class Device
      * @param string $name
      * @return Device
      */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return Device
+     */
     public function setName($name)
     {
         $this->name = $name;
@@ -61,5 +89,45 @@ class Device
     public function getName()
     {
         return $this->name;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->divisions = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add divisions
+     *
+     * @param \uteg\Entity\Division $divisions
+     * @return Device
+     */
+    public function addDivision(\uteg\Entity\Division $divisions)
+    {
+        $this->divisions[] = $divisions;
+
+        return $this;
+    }
+
+    /**
+     * Remove divisions
+     *
+     * @param \uteg\Entity\Division $divisions
+     */
+    public function removeDivision(\uteg\Entity\Division $divisions)
+    {
+        $this->divisions->removeElement($divisions);
+    }
+
+    /**
+     * Get divisions
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDivisions()
+    {
+        return $this->divisions;
     }
 }

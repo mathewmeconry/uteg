@@ -44,7 +44,7 @@ class MenuBuilder extends ContainerAware
 
         $eventDispatcher->dispatch(MenuEvent::SERVICE_MENU, new MenuEvent($this->factory, $menu, $request));
 
-        $menu->addChild('egt.nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        $menu->addChild('nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
 
         $eventDispatcher->dispatch(MenuEvent::REPORTING_MENU, new MenuEvent($this->factory, $menu, $request));
 
@@ -109,21 +109,33 @@ class MenuBuilder extends ContainerAware
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
+            case 'judges':
+                $menu
+                    ->addChild('judges.path')
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
+                ;
+                break;
             case 'department':
-                $menu->addChild('egt.grouping.path');
+                $menu->addChild('grouping.path');
                 $menu
                     ->addChild('departments.path')
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
                 break;
             case 'division':
-                $menu->addChild('egt.grouping.path');
+                $menu->addChild('grouping.path');
+                $menu
+                    ->addChild('divisions.path')
+                    ->setCurrent(true)// setCurrent is use to add a "current" css class
+                ;
+                break;
+            case 'reportingDivisions':
+                $menu
+                    ->addChild('reporting.path');
                 $menu
                     ->addChild('egt.divisions.path')
                     ->setCurrent(true)// setCurrent is use to add a "current" css class
                 ;
-                break;
-            case 'reporting':
                 break;
             case 'competition':
                 $menu

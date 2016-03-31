@@ -314,10 +314,6 @@ class StartersController extends DefaultController
                         }
 
                         $category = $sheetData->getCellByColumnAndRow(5, $row)->getValue();
-                        if (strpos($category, "D") === false || strpos($category, "H") === false) {
-                            $category = "KD/H";
-                        }
-
                         if (strpos($category, "K") === false) {
                             $category = "K" . $category;
                         }
