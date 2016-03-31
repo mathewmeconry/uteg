@@ -1,11 +1,13 @@
 male: 'Male'
 female: 'Female'
+loading:
+    header: 'Loading...'
 
 login:
     title: 'Log in'
     nav_button: 'Log in'
     header: 'Log in'
-    username: 'Username'
+    email: 'E-Mail'
     password: 'Password'
     remember_me: 'Remember me'
     button: 'Log in'
@@ -14,7 +16,6 @@ register:
     title: 'Register'
     nav_button: 'Register'
     header: 'Register'
-    username: 'Username'
     firstname: 'Firstname'
     lastname: 'lastname'
     email: 'E-Mail'
@@ -62,13 +63,27 @@ competitionlist:
         delete: 'Delete'
         view: 'View'
 
+judging:
+    nav_button: 'Judging'
+    title: 'Judging'
+    header: 'Judging'
+    form:
+        name: 'Competition name'
+        gym: 'Gym'
+        location: 'Location'
+        zip_code: 'Zip code'
+        device: 'Device'
+        start_date: 'Start date'
+        end_date: 'End date'
+        actions: 'Actions'
+        judge: 'Judge'
+
 profile:
     edit:
         title: 'Profile Edit'
         nav_button: 'Profile'
         header: 'Profile Edit'
         profilepicture: 'Profile picuture'
-        username: 'Username'
         firstname: 'Firstname'
         lastname: 'lastname'
         email: 'E-Mail'
@@ -87,6 +102,7 @@ nav:
     invites: 'Invites'
     invites.invite: 'Invite'
     invites.list: 'Current Invites'
+    reporting: 'Reporting'
     competition: 'Competition'
     competitions: 'Competitions'
     permissions: 'Permissions'
@@ -126,6 +142,9 @@ starters:
         search: 'Search'
         searchPlaceholder: 'Search...'
         zeroRecords: 'No matching starters found'
+    add:
+        modal:
+            header: 'Add new Starter'
     edit:
         modal:
             save: 'Save'
@@ -326,7 +345,6 @@ permissions:
     header: 'Permissions'
     path: 'Permissions'
     table:
-        username: 'Username'
         email: 'E-Mail'
         dashboard: 'Dashboard'
         starters: 'Starters'
@@ -334,6 +352,7 @@ permissions:
         settings: 'Settings'
         permissions: 'Permissions'
         actions: 'Actions'
+        judge: 'Judge'
         owner: 'Owner'
         next: 'Next'
         previous: 'Previous'
@@ -366,11 +385,16 @@ department:
         ok: 'OK'
         success: 'Department successfully deleted'
         access_denied: 'You have no permissions to delete this Department'
+    start:
+        success: 'Department started successfully'
 
 departments:
     title: 'Departments'
     header: 'Departments'
     path: 'Departments'
+    start: 'Start'
+    running: 'Running'
+    finished: 'Finished'
     table:
             all: 'All'
             next: 'Next'
@@ -390,16 +414,52 @@ device:
     parallel-bars: 'Parallel Bars'
     horizontal-bar: 'Horizontal Bar'
 
+judges:
+    path: 'Judges'
+grouping:
+    path: 'Grouping'
+divisions:
+    path: 'Divisions'
+reporting:
+    path: 'Reports'
 
 egt:
     nav:
+        judges: 'Judges'
         grouping: 'Starter Grouping'
         departments: 'Departments'
         divisions: 'Divisions'
-        reporting: 'Reporting'
         grouping: 'Starter Grouping'
-    grouping:
-        path: 'Grouping'
+        ranking: 'Ranking'
+        ranking.male: 'Male'
+        ranking.female: 'Female'
+    judges:
+        title: 'Judges'
+        header: 'Judges'
+        add:
+            success: 'Judge successfully added'
+        edit:
+            email: 'E-Mail'
+            device: 'Device'
+        table:
+            all: 'All'
+            next: 'Next'
+            previous: 'Previous'
+            search: 'Search'
+            searchPlaceholder: 'Search...'
+            zeroRecords: 'No judges found...'
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            email: 'E-Mail'
+            device: 'Device'
+            actions: 'Actions'
+        modal:
+            add:
+                header: 'Add new judge'
+            edit:
+                header: 'Edit judge'
+                save: 'Save'
+                cancel: 'Cancel'
     divisions:
         title: 'Divisions'
         header: 'Divisions'
@@ -409,8 +469,8 @@ egt:
         all: 'All'
         department: 'Department'
         header-unassigned: 'Unassigned Starters'
+        hint: 'Use CTRL and Shift for more efficiency'
     reporting:
-        path: 'Reports'
         divisions:
             title: 'Report Divisions'
             header: 'Report Divisions'
@@ -424,3 +484,42 @@ egt:
             device: 'Device'
             columncount: 'Number of columns'
             save: 'Save'
+        ranking:
+            title: 'Ranking'
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            birthyear: 'Birthyear'
+            club: 'Club'
+            total: 'Total'
+            rank: ''
+            award: ''
+
+    judging:
+        title: 'Judging'
+        header: 'Judging'
+        division: 'Division'
+        pause: 'Pause'
+        invalidGrade: 'Please enter a grade between 0 and 10'
+        wrongDevice: "Are you trying to hack me? This doesn't gonna work ;)"
+        fixErrors: 'Please fix all errors'
+        saveSuccess: 'Grades successfully saved'
+        waitJudges: 'Please wait for the other judges to finish'
+        endedTitle: 'Department ended'
+        endedContent: 'Thanks for your help!'
+        logout: 'Logout'
+        refreshingTitle: 'Refresh Starters'
+        refreshingContent: 'This page reloads automatically to get the newest starterlist. Watchout for changes'
+        startTitle: 'Starting Department...'
+        notstartedTitle: 'No Department started'
+        notstartedContent: 'Please wait...'
+        table:
+            firstname: 'Firstname'
+            lastname: 'Lastname'
+            club: 'Club'
+            category: 'Category'
+            grade: 'Grade'
+            save: 'Save'
+
+    ranking:
+        title: 'Ranking'
+        header: 'Ranking'

@@ -59,13 +59,17 @@ class User extends BaseUser
      */
     protected $profilePictureFile;
 
-    private $tenoProfilePicturePath;
+    /**
+     * @ORM\OneToMany(targetEntity="Judges2Competitions", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     */
+    protected $j2cs;
 
     public function __construct()
     {
         parent::__construct();
 
         $this->competitions = new ArrayCollection();
+        $this->j2cs = new ArrayCollection();
     }
 
     /**
@@ -329,5 +333,38 @@ class User extends BaseUser
         if ($file = $this->getProfilePictureAbsolutePath() && file_exists($this->getProfilePictureAbsolutePath())) {
             unlink($file);
         }
+    }
+
+    /**
+     * Add j2cs
+     *
+     * @param \uteg\Entity\Judges2Competitions $j2cs
+     * @return User
+     */
+    public function addJ2c(\uteg\Entity\Judges2Competitions $j2cs)
+    {
+        $this->j2cs[] = $j2cs;
+
+        return $this;
+    }
+
+    /**
+     * Remove j2cs
+     *
+     * @param \uteg\Entity\Judges2Competitions $j2cs
+     */
+    public function removeJ2c(\uteg\Entity\Judges2Competitions $j2cs)
+    {
+        $this->j2cs->removeElement($j2cs);
+    }
+
+    /**
+     * Get j2cs
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getJ2cs()
+    {
+        return $this->j2cs;
     }
 }

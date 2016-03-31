@@ -84,6 +84,11 @@ class Competition
     protected $c2is;
 
     /**
+     * @ORM\OneToMany(targetEntity="Judges2Competitions", mappedBy="competition", cascade={"persist", "remove"}, orphanRemoval=TRUE)
+     */
+    protected $j2cs;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Module", inversedBy="competitions", cascade={"persist"})
      * @ORM\JoinColumn(name="module_id", referencedColumnName="module_id")
      */
@@ -95,6 +100,11 @@ class Competition
     protected $departments;
 
     /**
+     * @ORM\OneToMany(targetEntity="Grade", mappedBy="competition")
+     */
+    protected $grades;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -102,6 +112,7 @@ class Competition
         $this->users = new ArrayCollection();
         $this->s2cs = new ArrayCollection();
         $this->c2is = new ArrayCollection();
+        $this->j2cs = new ArrayCollection();
         $this->departments = new ArrayCollection();
     }
 
@@ -566,13 +577,91 @@ class Competition
         return false;
     }
 
-    public function isS2cOf(\uteg\Entity\Starters2Competitions $starters2Competitions) {
+    public function isS2cOf(\uteg\Entity\Starters2Competitions $starters2Competitions)
+    {
         foreach ($this->s2cs as $s2c) {
-            if($s2c === $starters2Competitions) {
+            if ($s2c === $starters2Competitions) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Add j2cs
+     *
+     * @param \uteg\Entity\Judges2Competitions $j2cs
+     * @return Competition
+     */
+    public function addJ2c(\uteg\Entity\Judges2Competitions $j2cs)
+    {
+        $this->j2cs[] = $j2cs;
+
+        return $this;
+    }
+
+    /**
+     * Remove j2cs
+     *
+     * @param \uteg\Entity\Judges2Competitions $j2cs
+     */
+    public function removeJ2c(\uteg\Entity\Judges2Competitions $j2cs)
+    {
+        $this->j2cs->removeElement($j2cs);
+    }
+
+    /**
+     * Get j2cs
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getJ2cs()
+    {
+        return $this->j2cs;
+    }
+
+    public function isJ2cOf(\uteg\Entity\Judges2Competitions $check)
+    {
+        foreach ($this->j2cs as $j2c) {
+            if ($j2c === $check) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add grades
+     *
+     * @param \uteg\Entity\Grade $grades
+     * @return Competition
+     */
+    public function addGrade(\uteg\Entity\Grade $grades)
+    {
+        $this->grades[] = $grades;
+
+        return $this;
+    }
+
+    /**
+     * Remove grades
+     *
+     * @param \uteg\Entity\Grade $grades
+     */
+    public function removeGrade(\uteg\Entity\Grade $grades)
+    {
+        $this->grades->removeElement($grades);
+    }
+
+    /**
+     * Get grades
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGrades()
+    {
+        return $this->grades;
     }
 }

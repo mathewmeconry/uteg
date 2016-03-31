@@ -5,7 +5,7 @@
 {% block title %}{{ 'egt.divisions.title'|trans }}{% endblock %}
 
 {% block jsplugins %}
-    <script type="text/javascript" src='{{ asset("js/plugins/nestable/jquery.nestable.js") }}'></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/multisortable/jquery.multisortable.js") }}'></script>
 {% endblock %}
 
 {% block css %}
@@ -33,6 +33,25 @@
         .display-none {
             display: none;
         }
+
+        ul.sortable-list > li.selected > * {
+            background: rgba(0, 130, 242, 0.54);
+            color: white;
+        }
+
+        ul.sortable-list > li.selected * {
+            color: white;
+        }
+
+        ul.sortable-list > li.selected:hover > * {
+            background: rgba(123, 180, 242, 0.4);
+        }
+
+        ul.sortable-list > li.selected:hover * {
+            color: #656d78;
+        }
+
+
     </style>
 {% endblock %}
 
@@ -46,14 +65,18 @@
                 selectChange($(this).data('filter'));
             });
 
-            $(".sortable-list").sortable({
-                connectWith: ".sortable-list",
-                items: "> li",
-                revert: true,
+            $('.sortable-list').multisortable({
+                items: "li.dd-item",
                 receive: function (event, ui) {
-                    assignStarter(ui);
+                    $.each(ui.items, function (index, item) {
+                        console.log(item);
+                        assignStarter(item);
+                    });
                     numberSortable();
                 }
+            });
+            $(".sortable-list").sortable({
+                connectWith: ".sortable-list",
             });
 
             selectChange('gender');
@@ -213,10 +236,10 @@
             $('#device-5 h3 span').html($('#device-5 ul li').length);
         }
 
-        function assignStarter(ui) {
-            var starterId = ui.item.data('id');
-            var divisionId = $(ui.item).parent().data('id');
-            console.log($(ui.item).parent());
+        function assignStarter(item) {
+            var starterId = $(item).data('id');
+            var divisionId = $(item).parent().data('id');
+            console.log($(item).parent());
             return $.ajax({
                 url: "{{ path('divisionAssign', { 'compid': app.request.get('compid')}) }}",
                 method: "POST",
@@ -273,6 +296,9 @@
                         </form>
                     </div>
                     <div class="row">
+                        <blockquote>
+                            {{ 'egt.divisions.hint' | trans }}
+                        </blockquote>
                         <div class="col-md-3 sortable" id="divisions-unassigned-starters">
                             <h3>{{ 'egt.divisions.header-unassigned' | trans }} <span class="small-text"></span></h3>
                             <ul class="sortable-list"></ul>

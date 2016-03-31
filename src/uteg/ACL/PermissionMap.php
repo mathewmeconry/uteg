@@ -5,6 +5,7 @@ use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 
 class PermissionMap extends BasicPermissionMap
 {
+    const PERMISSIONS_JUDGE = 'JUDGE';
     const PERMISSION_VIEW = 'VIEW';
     const PERMISSION_EDIT = 'EDIT';
     const PERMISSION_CREATE = 'CREATE';
@@ -43,6 +44,12 @@ class PermissionMap extends BasicPermissionMap
                 MaskBuilder::MASK_SETTINGS_EDIT,
                 MaskBuilder::MASK_PERMISSIONS_VIEW,
                 MaskBuilder::MASK_PERMISSIONS_EDIT,
+            ),
+
+            self::PERMISSIONS_JUDGE => array(
+                MaskBuilder::MASK_OWNER,
+                MaskBuilder::MASK_MASTER,
+                MaskBuilder::MASK_JUDGE
             ),
 
             self::PERMISSION_EDIT => array(

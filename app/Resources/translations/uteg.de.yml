@@ -1,0 +1,26 @@
+female: 'Weiblich'
+male: 'Männlich'
+
+device:
+    floor: 'Boden'
+    rings: 'Schaukelringe'
+    vault: 'Sprung'
+    parallel-bars: 'Barren'
+    horizontal-bar: 'Reck'
+
+egt:
+    reporting:
+        path: 'Berichte'
+        divisions:
+            title: 'Riegeneinteilung'
+            header: 'Riegeneinteilung'
+            path: 'Riegen'
+            groupby: 'Gruppieren nach'
+            category: 'Kategorie'
+            none: 'Nichts'
+            gender: 'Geschlecht'
+            club: 'Verein'
+            department: 'Abteilung'
+            device: 'Gerät'
+            columncount: 'Anzahl Spalten'
+            save: 'Speichern'

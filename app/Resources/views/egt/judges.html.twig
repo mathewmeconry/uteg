@@ -1,0 +1,226 @@
+{% trans_default_domain 'uteg' %}
+
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'egt.judges.title'|trans }}{% endblock %}
+
+{% block cssplugins %}
+    <link rel="stylesheet" type="text/css" href="{{ asset("/js/plugins/datatables/dataTables.responsive.css") }}"/>
+{% endblock %}
+
+{% block jsplugins %}
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("/js/plugins/datatables/dataTables.responsive.js") }}"></script>
+    <script type="text/javascript" src='{{ asset("js/plugins/bootstrap/bootstrap-select.js") }}'></script>
+{% endblock %}
+
+{% block css %}
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function dataTable(table) {
+            $(table).DataTable({
+                "ajax": {
+                    "url": "{{ path('judgesPost', { 'compid': app.request.get('compid')}) }}",
+                    "method": "POST"
+                },
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "egt.clubs.table.all"|trans }}"]],
+                "search": {
+                    "regex": true
+                },
+                "order": [[1, "asc"]],
+                responsive: {
+                    details: {
+                        type: 'column'
+                    }
+                },
+                "columns": [
+                    {"data": "id", "type": "integer"},
+                    {"data": "device", 'type': 'string'},
+                    {"data": "firstname", 'type': 'string'},
+                    {"data": "lastname", 'type': 'string'},
+                    {"data": "email", 'type': 'string'},
+                    {
+                        "data": null,
+                        "defaultContent": '{% if is_granted('SETTINGS_EDIT', comp) %}<div class="btn-group"><button class="btn btn-warning btn-rounded btn-condensed btn-sm btn-icon judges-edit"><i class="fa fa-edit"></i><span>Edit</span></button><button class="btn btn-danger btn-rounded btn-condensed btn-sm btn-icon judges-remove"><i class="fa fa-times"></i><span>Remove</span></button></div>{% endif %}'
+                    }
+                ],
+                "paginate": {
+                    "next": "{{ "egt.judges.table.next"|trans }}",
+                    "previous": "{{ "egt.judges.table.previous"|trans }}"
+                },
+                "language": {
+                    "search": "{{ "egt.judges.table.search"|trans }}",
+                    "searchPlaceholder": "{{ "egt.judges.table.searchPlaceholder"|trans }}",
+                    "thousands": "'",
+                    "zeroRecords": "{{ "egt.judges.table.zeroRecords"|trans }}"
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            dataTable($('#judges'));
+
+            $('.table').on('init.dt', function () {
+                onload();
+            });
+
+            $('select[name*="m_length"]').change(function () {
+                onload();
+            });
+
+            $('.panel-refresh').click(function () {
+                panel_refresh(
+                        $('#panel_judges'),
+                        $('#judges').DataTable().ajax.reload(function () {
+                            setTimeout(function () {
+                                panel_refresh($('#panel_judges'));
+                            }, 500);
+                        }, false)
+                );
+            });
+
+            {% if is_granted('SETTINGS_EDIT', comp) %}
+
+            $('tbody').on('click', 'td div button.judges-edit', function (event) {
+                var table = $(this).parent().parent().parent().parent().parent().DataTable();
+                var j2c_id = table.cell($(this).parent().parent().parent(), 0).data();
+
+                $.ajax({
+                    url: "{{ path('judgeEdit', { 'compid': app.request.get('compid')}) }}/" + j2c_id,
+                    method: "POST"
+                }).success(function (data) {
+                    $('#dialog-edit-body').html(data);
+                    selectPicker('.select', false);
+                });
+
+                $('#dialog-edit-modal-title').html(table.cell($(this).parent().parent().parent(), 1).data() + " " + table.cell($(this).parent().parent().parent(), 2).data());
+                $("#dialog-edit").data('j2c_id', j2c_id).modal('show');
+            });
+
+            $('tbody').on('click', 'td div button.judges-remove', function (event) {
+//                var table = $(this).parent().parent().parent().parent().parent().DataTable();
+//                var j2c_id = table.cell($(this).parent().parent().parent(), 1).data();
+//
+//                $('#dialog-remove-modal-title').html("Remove " + table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
+//                $('#dialog-remove-body-name').html(table.cell($(this).parent().parent().parent(), 2).data() + " " + table.cell($(this).parent().parent().parent(), 3).data());
+//                $("#dialog-remove").data('s2c_id', s2c_id).modal('show');
+            });
+
+            $('#judge-save').click(function () {
+                var values = {};
+                $.each($('#judgeEditForm').serializeArray(), function (i, field) {
+                    values[field.name] = field.value;
+                });
+
+                var url = ($('#dialog-edit-body form').attr('action').indexOf('edit') > -1) ? $('#dialog-edit-body form').attr('action') + "/" + $("#dialog-edit").data('j2c_id') : $('#dialog-edit-body form').attr('action');
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: values
+                }).success(function (data) {
+                    if (data == 'true') {
+                        $('#dialog-edit').modal('hide');
+                        showFlashbag();
+                        $('.panel-refresh').click();
+                    } else {
+                        $('#dialog-edit-body').html(data);
+                    }
+                });
+            });
+
+            $('#judge-remove').click(function () {
+                {#$.ajax({#}
+                    {#type: "POST",#}
+                    {#url: "{{ path('starterRemove', { 'compid': app.request.get('compid')}) }}" + "/" + $("#dialog-remove").data('s2c_id')#}
+                {#}).success(function (data) {#}
+                    {#if (data == 'true') {#}
+                        {#$('#dialog-remove').modal('hide');#}
+                        {#showFlashbag();#}
+                        {#$('.panel-refresh').click();#}
+                    {#}#}
+                {#});#}
+            });
+
+            $('.control-add').click(function () {
+                $.ajax({
+                    url: "{{ path('judgeAdd', { 'compid': app.request.get('compid')}) }}",
+                    method: "POST"
+                }).success(function (data) {
+                    $('#dialog-edit-body').html(data);
+                    selectPicker('.selectSearch', true);
+                    selectPicker('.select', false);
+                });
+
+                $('#dialog-edit-modal-title').html('{{ 'egt.judges.modal.add.header' | trans }}');
+                $('#dialog-edit').modal('show');
+            });
+            {% endif %}
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div id="panel_judges" class="panel panel-default" style="min-height: 400px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ 'egt.judges.header'|trans }}</h3>
+                    <ul class="panel-controls">
+                        {% if is_granted("SETTINGS_EDIT", comp) %}
+                            <li><a href="#" class="control-primary control-add"><span class="fa fa-plus"></span></a>
+                            </li>
+                        {% endif %}
+                        <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
+                        </li>
+                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table id="judges" class="table responsive table-striped" data-cat="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th class="never">id</th>
+                            <th class="all">{{ 'egt.judges.table.device'|trans }}</th>
+                            <th class="all">{{ 'egt.judges.table.firstname'|trans }}</th>
+                            <th class="all">{{ 'egt.judges.table.lastname'|trans }}</th>
+                            <th class="all">{{ 'egt.judges.table.email'|trans }}</th>
+                            <th style="width: 160px;" class="min-tablet-p">{{ 'egt.judges.table.actions'|trans }}</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block dialog %}
+    {% if is_granted('SETTINGS_EDIT', comp) %}
+        <div class="modal fade" id="dialog-edit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="dialog-edit-modal-title"></h4>
+                    </div>
+                    <div id="dialog-edit-body" class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="judge-save"
+                                class="btn btn-success">{{ 'egt.judges.modal.edit.save'|trans }}</button>
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">{{ 'egt.judges.modal.edit.cancel'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

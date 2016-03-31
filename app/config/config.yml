@@ -93,11 +93,8 @@ doctrine:
 swiftmailer:
     transport: %mailer_transport%
     host:      %mailer_host%
-    port:      %mailer_port%
-    encryption: %mailer_encryption%
     username:  %mailer_user%
     password:  %mailer_password%
-    auth_mode: %mailer_authmode%
     spool:     { type: memory }
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
@@ -136,6 +133,7 @@ liip_imagine:
           web_path: ~
     
     filter_sets:
+        cache: ~
         profilepic:
             quality: 75
             filters:

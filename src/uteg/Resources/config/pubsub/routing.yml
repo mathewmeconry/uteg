@@ -1,0 +1,7 @@
+uteg_topic:
+    channel: judging/topic/{compid}
+    handler:
+        callback: 'uteg.topic.judging'
+    requirements:
+        compid:
+            pattern: "\d+"

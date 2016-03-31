@@ -71,12 +71,14 @@
                 window.location.href = "{{ path('starterImport', { 'compid': app.request.get('compid')}) }}";
             });
 
+            autoComplete('input[name*="stvid"]', 'stvid');
             autoComplete('input[name*="firstname"]', 'firstname');
             autoComplete('input[name*="lastname"]', 'lastname');
             autoComplete('input[name*="birthyear"]', 'birthyear');
 
             $('.typeahead').bind('typeahead:select', function (ev, starter) {
                 var row = $(this).closest('tr');
+                row.find('[name*="stvid"]').typeahead('val', starter.stvid);
                 row.find('[name*="firstname"]').typeahead('val', starter.firstname);
                 row.find('[name*="lastname"]').typeahead('val', starter.lastname);
                 row.find('[name*="birthyear"]').typeahead('val', starter.birthyear);
@@ -98,6 +100,7 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
+                                <th>{{ 'starters.import.table.stvid'|trans }}</th>
                                 <th>{{ 'starters.import.table.firstname'|trans }}</th>
                                 <th>{{ 'starters.import.table.lastname'|trans }}</th>
                                 <th>{{ 'starters.import.table.birthyear'|trans }}</th>
@@ -109,6 +112,12 @@
                             <tbody>
                             {% for starter in starters %}
                                 <tr>
+                                    <td>
+                                        <input name="data[{{ loop.index0 }}][stvid]" type="text"
+                                               class="form-control typeahead" value="{{ starter.stvid }}">
+                                        {% if errors[loop.index0].stvid is defined %}<label
+                                                class="error">{{ errors[loop.index0].stvid|trans }}</label>{% endif %}
+                                    </td>
                                     <td>
                                         <input name="data[{{ loop.index0 }}][firstname]" type="text"
                                                class="form-control typeahead" value="{{ starter.firstname }}">

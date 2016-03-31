@@ -28,7 +28,7 @@ class ACLCompetition
 
     public function addPermission($permission, $userSearchArray, $compid = false)
     {
-        $this->isadmin = ($userSearchArray['username'] == "admin") ? true : false;
+        $this->isadmin = ($userSearchArray['username'] == "admin@getu.ch") ? true : false;
 
         if (!$compid) {
             $this->updateAcl();
@@ -99,6 +99,14 @@ class ACLCompetition
         }
     }
 
+    public function isGrantedRaw($permission, $competition) {
+        if ($this->authorizationChecker->isGranted($permission, $competition)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function getPossibleRoute()
     {
         $this->updateAcl();
@@ -130,25 +138,25 @@ class ACLCompetition
         return $users;
     }
 
-    private function grantAdmin()
+    private function grantAdmin($compid)
     {
-        $admin = $this->em->getRepository('uteg:User')->findOneBy(array('username' => 'admin'));
+        $admin = $this->em->getRepository('uteg:User')->findOneBy(array('username' => 'admin@getu.ch'));
         $admin->addCompetition($this->comp);
         $this->em->persist($admin);
         $this->em->flush();
 
-        $this->addPermission(MaskBuilder::MASK_MASTER, array('username' => 'admin'));
+        $this->addPermission(MaskBuilder::MASK_MASTER, array('username' => 'admin@getu.ch'), $compid);
 
         $this->isadmin = false;
     }
 
-    private function updateAcl($compid = false)
+    public function updateAcl($compid = false)
     {
         if (!$compid) {
-            $this->comp = $this->em->find('uteg:Competition', $this->requestStack->getCurrentRequest()->get('compid'));
-        } else {
-            $this->comp = $this->em->find('uteg:Competition', $compid);
+            $compid = $this->requestStack->getCurrentRequest()->get('compid');
         }
+
+        $this->comp = $this->em->find('uteg:Competition', $compid);
 
         $objectIdentity = ObjectIdentity::fromDomainObject($this->comp);
 
@@ -156,7 +164,7 @@ class ACLCompetition
             $this->acl = $this->aclProvider->findAcl($objectIdentity);
         } catch (AclNotFoundException $e) {
             $this->acl = $this->aclProvider->createAcl($objectIdentity);
-            (!$this->isadmin) ? $this->grantAdmin() : "";
+            (!$this->isadmin) ? $this->grantAdmin($compid) : "";
         }
     }
 
@@ -183,37 +191,40 @@ class ACLCompetition
 
         switch ($mask) {
             case 256:
-                $permissions['dashboard'] = 1;
+                $permissions['judge'] = 1;
                 break;
             case 512:
-                $permissions['starters_view'] = 1;
+                $permissions['dashboard'] = 1;
                 break;
             case 1024:
                 $permissions['starters_view'] = 1;
-                $permissions['starters_edit'] = 1;
                 break;
             case 2048:
-                $permissions['clubs_view'] = 1;
+                $permissions['starters_view'] = 1;
+                $permissions['starters_edit'] = 1;
                 break;
             case 4096:
                 $permissions['clubs_view'] = 1;
-                $permissions['clubs_edit'] = 1;
                 break;
             case 8192:
-                $permissions['settings_view'] = 1;
+                $permissions['clubs_view'] = 1;
+                $permissions['clubs_edit'] = 1;
                 break;
             case 16384:
                 $permissions['settings_view'] = 1;
-                $permissions['settings_edit'] = 1;
                 break;
             case 32768:
-                $permissions['permissions_view'] = 1;
+                $permissions['settings_view'] = 1;
+                $permissions['settings_edit'] = 1;
                 break;
             case 65536:
                 $permissions['permissions_view'] = 1;
-                $permissions['permissions_edit'] = 1;
                 break;
             case 131072:
+                $permissions['permissions_view'] = 1;
+                $permissions['permissions_edit'] = 1;
+                break;
+            case 524288:
                 $permissions['owner'] = 1;
                 break;
         }
