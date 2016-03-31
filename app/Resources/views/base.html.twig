@@ -18,7 +18,7 @@
     {% block cssplugins %}{% endblock %}
     <!-- EOF CSS INCLUDE -->
 
-        {% block css %}{% endblock %}
+    {% block css %}{% endblock %}
 </head>
 <body>
 <!-- START PAGE CONTAINER -->
@@ -228,6 +228,18 @@
                        class="btn btn-success btn-lg">{{ 'nav.log_out.yes'|trans }}</a>
                     <button class="btn btn-default btn-lg mb-control-close">{{ 'nav.log_out.no'|trans }}</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="message-box message-box-info animated fadeIn" id="message-box-loading">
+    <div class="mb-container">
+        <div class="mb-middle">
+            <div class="mb-title"><img src="{{ asset('img/wait.gif') }}"
+                                       width="200px"> {{ 'loading.header' | trans }}</div>
+            <div class="mb-content">
+            </div>
+            <div class="mb-footer">
             </div>
         </div>
     </div>
