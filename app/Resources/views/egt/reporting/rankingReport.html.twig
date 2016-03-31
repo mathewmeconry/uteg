@@ -1,34 +1,53 @@
 {% trans_default_domain 'uteg' %}
 
-{% macro buildReport(headers, starters) %}
+{% macro buildReport(headers, starters, category, competition, highGrades) %}
     <thead style="display: table-header-group">
-        {% for header in headers %}
-            <th style="border-bottom: 2px solid #5d5b5b; font-size: 10pt; vertical-align: middle; width: 30px; text-align: center; position: relative; vertical-align: bottom; padding-top: 20px; padding-bottom: 40px;" class="{{ header.class }}">{{ header.name | trans }}</th>
-        {% endfor %}
+    <tr>
+        <td colspan="{{ headers|length }}">
+            <h2 style=" margin: 0; color: #434a54;"
+                class="bold">{{ 'egt.reporting.ranking.title'|trans }} {{ category.name }}</h2>
+            <h4 style=" margin: 0; color: #434a54;">{{ competition.name }}</h4></td>
+    </tr>
+    {% for header in headers %}
+        <th style="color: #434a54; border-bottom: 2px solid #5d5b5b; vertical-align: middle;padding-top: 20px; {{ header.style }}">{{ header.name | trans }}</th>
+    {% endfor %}
     </thead>
     <tbody>
     {% for starter in starters %}
-        <tr>
-            <td class="small center">{{ starter.rank }}</td>
-            <td>{{ starter.firstname }}</td>
-            <td>{{ starter.lastname }}</td>
-            <td>{{ starter.birthyear }}</td>
-            <td>{{ starter.club }}</td>
-            <td class="grade center">{{ starter.1 }}</td>
-            <td class="grade center">{{ starter.2 }}</td>
-            <td class="grade center">{{ starter.3 }}</td>
+        <tr style="page-break-inside: avoid; color: #656d78;">
+            <td style="padding-top: 5px; width: 5px; padding-right: 5px; text-align: center;"
+                class="small center">{{ starter.rank }}</td>
+            <td style="padding-top: 5px;">{{ starter.firstname }}</td>
+            <td style="padding-top: 5px;">{{ starter.lastname }}</td>
+            <td style="padding-top: 5px;">{{ starter.birthyear }}</td>
+            <td style="padding-top: 5px;">{{ starter.club }}</td>
+            <td style="padding-top: 5px; width: 40px; text-align: center; {% if highGrades.1 == starter.1 %}font-weight: bold;{% endif %}">{{ starter.1 }}</td>
+            <td style="padding-top: 5px; width: 40px; text-align: center; {% if highGrades.2 == starter.2 %}font-weight: bold;{% endif %}">{{ starter.2 }}</td>
+            <td style="padding-top: 5px; width: 40px; text-align: center; {% if highGrades.3 == starter.3 %}font-weight: bold;{% endif %}">{{ starter.3 }}</td>
             {% if starter.gender == "male" %}
-                <td class="grade center">{{ starter.4 }}</td>
+                <td style="padding-top: 5px; width: 40px; text-align: center; {% if highGrades.4 == starter.4 %}font-weight: bold;{% endif %}">{{ starter.4 }}</td>
             {% endif %}
-            <td class="grade center">{{ starter.5 }}</td>
-            <td class="grade bold center">{{ starter.total }}</td>
-            <td class="small center">{{ starter.award }}</td>
+            <td style="padding-top: 5px; width: 40px; text-align: center; {% if highGrades.5 == starter.5 %}font-weight: bold;{% endif %}">{{ starter.5 }}</td>
+            <td style="padding-top: 5px; width: 40px; font-weight: bold; text-align: center;">{{ starter.total }}</td>
+            <td style="padding-top: 5px; width: 5px; padding-right: 5px; font-weight: bold; text-align: center;">{{ starter.award }}</td>
         </tr>
     {% endfor %}
     </tbody>
 {% endmacro %}
 
 {% set url = app.request.uri | split('/') %}
+
+<style>
+    tbody > tr:nth-child(even) {
+        background-color: #c7c7c7;
+    }
+
+    table > thead > tr > th, table > tbody > tr {
+    {% if url|last == "pdf" %} font-size: 6pt;
+    {% else %} font-size: 10pt;
+    {% endif %}
+    }
+</style>
 
 {% if url|last == "pdf" %}
     <head>
@@ -37,65 +56,6 @@
     </head>
 {% endif %}
 
-<style>
-    @media print {
-        thead {
-            display: table-header-group;
-        }
-    }
-
-    body {
-        font-family: 'Quicksand', sans-serif;
-        color: #656d78;
-    }
-
-
-    #report-table {
-        width: 100%;
-        text-align: left;
-        border-collapse: collapse;
-    }
-
-    thead {
-        display: table-header-group;
-    }
-
-    tbody > tr > td {
-        padding-top: 5px;
-        font-size: 8pt;
-    }
-
-    tbody > tr:nth-child(even) {
-        background-color: #c7c7c7;
-    }
-
-    h2, h4 {
-        margin: 0;
-    }
-
-    h4 {
-        margin-bottom: 10px;
-    }
-
-    .grade {
-        width: 40px;
-    }
-
-    .bold {
-        font-weight: bold;
-    }
-
-    .small {
-        width: 5px;
-        padding-right: 5px;
-    }
-
-    .center {
-        text-align: center;
-    }
-</style>
-<h2 class="bold">{{ 'egt.reporting.ranking.title'|trans }} {{ category.name }}</h2>
-<h4>{{ competition.name }}</h4>
-<table id="report-table">
-    {{ _self.buildReport(headers, starters) }}
+<table style="width: 100%; text-align: left; border-collapse: collapse;font-family: 'Quicksand', sans-serif;">
+    {{ _self.buildReport(headers, starters, category, competition, highGrades) }}
 </table>

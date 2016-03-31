@@ -56,8 +56,8 @@ class egt
         $menu = $event->getMenu();
         $menu['nav.reporting']->addChild('egt.nav.grouping', array('route' => 'reportingDivisions', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'object-group'));
         $menu['nav.reporting']->addChild('egt.nav.ranking', array('uri' => '#', 'icon' => 'trophy', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
-        $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.male', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'male', 'catid' => 1), 'icon' => 'male'));
-        $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.female', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'female', 'catid' => 1), 'icon' => 'female'));
+        $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.male', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'male'), 'icon' => 'male'));
+        $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.female', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'female'), 'icon' => 'female'));
 
     }
 
@@ -429,7 +429,7 @@ class egt
         $groupedStarters = $this->generateDivisionsReport($request, $competition);
 
         if ($format === "pdf") {
-            return $this->renderPdf('egt/reporting/divisionsReport.html.twig', array(
+            return $this->renderPdf('DivisionReport', 'egt/reporting/divisionsReport.html.twig', array(
                 "comp" => $competition,
                 "starters" => $groupedStarters,
                 "colspan" => count($this->getLastDim($groupedStarters)),
@@ -458,35 +458,49 @@ class egt
     {
         $starters = $this->getRankingArray($competition, $category, $gender);
         $starters = $this->sortRanking($starters, $gender);
+        $starters = $this->genRanking($starters, 33);
+        $highGrades = $this->getHighestGrades($starters, $gender);
 
-        $headers = array('egt.reporting.ranking.firstname',
-            'egt.reporting.ranking.lastname',
-            'egt.reporting.ranking.birthyear',
-            'egt.reporting.ranking.club',
-            'device.floor',
-            'device.rings',
-            'device.vault');
+        $headers = array(array('name' => 'egt.reporting.ranking.rank', 'style' => 'width: 5px;'),
+            array('name' => 'egt.reporting.ranking.firstname', 'style' => ''),
+            array('name' => 'egt.reporting.ranking.lastname', 'style' => ''),
+            array('name' => 'egt.reporting.ranking.birthyear', 'style' => ''),
+            array('name' => 'egt.reporting.ranking.club', 'style' => ''),
+            array('name' => 'device.floor', 'style' => 'width: 40px;text-align: center;'),
+            array('name' => 'device.rings', 'style' => 'width: 40px;text-align: center;'),
+            array('name' => 'device.vault', 'style' => 'width: 40px;text-align: center;'));
 
-        if($gender === "male") {
-            $headers[] = 'device.parallel-bars';
+        if ($gender === "male") {
+            $headers[] = array('name' => 'device.parallel-bars', 'style' => 'width: 40px;text-align: center;');
         }
 
-        $headers[] = 'device.horizontal-bar';
+        $headers[] = array('name' => 'device.horizontal-bar', 'style' => 'width: 40px;text-align: center;');
+        $headers[] = array('name' => 'egt.reporting.ranking.total', 'style' => 'width: 40px;text-align: center;');
+        $headers[] = array('name' => 'egt.reporting.ranking.award', 'style' => 'width: 5px;');
 
         if ($format === "pdf") {
-            return $this->renderPdf('egt/reporting/divisionsReport.html.twig', array(
-                "comp" => $competition,
+            return $this->renderPdf('Ranking', 'egt/reporting/rankingReport.html.twig', array(
+                "competition" => $competition,
                 "category" => $category,
                 "starters" => $starters,
-                "headers" => $headers
+                "headers" => $headers,
+                "highGrades" => $highGrades
+            ));
+        } elseif ($format === "ajax") {
+            return $this->container->get('templating')->renderResponse('egt/reporting/rankingReport.html.twig', array(
+                "competition" => $competition,
+                "category" => $category,
+                "starters" => $starters,
+                "headers" => $headers,
+                "highGrades" => $highGrades
             ));
         }
 
+        $categories = $this->getUsedCategories($competition);
+
         return $this->container->get('templating')->renderResponse('egt/reporting/ranking.html.twig', array(
-            "comp" => $competition,
-            "category" => $category,
-            "starters" => $starters,
-            "headers" => $headers
+            "categories" => $categories,
+            "gender" => $gender
         ));
     }
 
@@ -659,21 +673,26 @@ class egt
         return $device;
     }
 
-    private function renderPdf($path, $additional)
+    private function renderPdf($filename, $path, $additional)
     {
         $html = $this->container->get('templating')->render($path, $additional);
         $pdf = $this->container->get('knp_snappy.pdf');
         $pdf->setOption('orientation', 'portrait');
         $pdf->setOption('footer-center', '[page] / [topage]');
+        $pdf->setoption('footer-right', 'Generated by uteg');
         $pdf->setOption('footer-font-name', 'Quicksand');
         $pdf->setOption('footer-font-size', 8);
+        $pdf->setOption('margin-top', 10);
+        $pdf->setOption('margin-right', 10);
+        $pdf->setOption('margin-bottom', 10);
+        $pdf->setOption('margin-left', 10);
 
         return new Response(
             $pdf->getOutputFromHtml($html),
             200,
             array(
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="DivisionsReport.pdf"'
+                'Content-Disposition' => 'inline; filename="' . $filename . '.pdf"'
             )
         );
     }
@@ -694,9 +713,29 @@ class egt
         return $this->reportingSort($cookieVal[0], $this->getCompleteStarters($competition));
     }
 
+    private function getUsedCategories(\uteg\Entity\Competition $competition)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+
+        return $em
+            ->getRepository('uteg:Starters2Competitions')
+            ->createQueryBuilder('s2c')
+            ->select('c.name as name, c.number as number, c.id as id')
+            ->join('s2c.category', 'c')
+            ->andWhere('s2c.competition = :competition')
+            ->groupBy('c.name')
+            ->setParameters(array('competition' => $competition->getId()))
+            ->getQuery()->getResult();
+    }
+
     private function getRankingArray(\uteg\Entity\Competition $competition, \uteg\Entity\Category $category, $gender)
     {
         $em = $this->container->get('doctrine')->getManager();
+        $default = array(1 => number_format((float)"0.00", 2, '.', ''), 2 => number_format((float)"0.00", 2, '.', ''), 3 => number_format((float)"0.00", 2, '.', ''), 5 => number_format((float)"0.00", 2, '.', ''));
+
+        if ($gender === "male") {
+            $default[4] = number_format((float)"0.00", 2, '.', '');
+        }
 
         $starters = $em
             ->getRepository('uteg:Starters2CompetitionsEGT')
@@ -723,11 +762,13 @@ class egt
             $sum = 0;
 
             foreach ($grades as $grade) {
-                $starter[$grade['dnumber']] = floatval($grade['grade']);
-                $sum += floatval($grade['grade']);
+                $grade['grade'] = number_format((float)$grade['grade'], 2, '.', '');
+                $starter[$grade['dnumber']] = $grade['grade'];
+                $sum += $grade['grade'];
             }
 
-            $starter['total'] = $sum;
+            $starter = array_replace($default, $starter);
+            $starter['total'] = number_format((float)$sum, 2, '.', '');;
             $starters[$key] = $starter;
         }
 
@@ -751,6 +792,69 @@ class egt
         usort($starters, array($this, "sortRankingFunction"));
 
         return $starters;
+    }
+
+    private function genRanking($starters, $percent)
+    {
+        $awards = round(count($starters) / 100 * $percent);
+        $before = 0;
+        $add = 1;
+        $rank = 0;
+
+        foreach ($starters as $key => $starter) {
+            if (bccomp($before, $starter['total'], 2) === 0) {
+                $starters[$key]['rank'] = $rank;
+                $add++;
+            } else {
+                $rank += $add;
+                $add = 1;
+                $starters[$key]['rank'] = $rank;
+            }
+
+            if ($rank <= $awards) {
+                switch ($rank) {
+                    case 1:
+                        $starters[$key]['award'] = 'G';
+                        break;
+                    case 2:
+                        $starters[$key]['award'] = 'S';
+                        break;
+                    case 3:
+                        $starters[$key]['award'] = 'B';
+                        break;
+                    default:
+                        $starters[$key]['award'] = '*';
+                        break;
+                }
+            } else {
+                $starters[$key]['award'] = '';
+            }
+
+            $before = $starter['total'];
+        }
+
+        return $starters;
+    }
+
+    private function getHighestGrades($starters, $gender)
+    {
+        $highGrades = array(1 => number_format((float)"0.00", 2, '.', ''), 2 => number_format((float)"0.00", 2, '.', ''), 3 => number_format((float)"0.00", 2, '.', ''), 5 => number_format((float)"0.00", 2, '.', ''));
+
+        if ($gender === "male") {
+            $highGrades[4] = number_format((float)"0.00", 2, '.', '');
+        }
+
+        foreach ($starters as $starter) {
+            (bccomp($highGrades[1], $starter[1], 2) === -1) ? $highGrades[1] = number_format((float)$starter[1], 2, '.', '') : number_format((float)$highGrades[1], 2, '.', '');
+            (bccomp($highGrades[2], $starter[2], 2) === -1) ? $highGrades[2] = number_format((float)$starter[2], 2, '.', '') : number_format((float)$highGrades[2], 2, '.', '');
+            (bccomp($highGrades[3], $starter[3], 2) === -1) ? $highGrades[3] = number_format((float)$starter[3], 2, '.', '') : number_format((float)$highGrades[3], 2, '.', '');
+            if ($gender === "male") {
+                (bccomp($highGrades[4], $starter[4], 2) === -1) ? $highGrades[4] = number_format((float)$starter[4], 2, '.', '') : number_format((float)$highGrades[4], 2, '.', '');
+            }
+            (bccomp($highGrades[5], $starter[5], 2) === -1) ? $highGrades[5] = number_format((float)$starter[5], 2, '.', '') : number_format((float)$highGrades[5], 2, '.', '');
+        }
+
+        return $highGrades;
     }
 
     private function sortRankingFunction($a, $b)
