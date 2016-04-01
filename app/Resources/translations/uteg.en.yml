@@ -436,6 +436,7 @@ egt:
         ranking: 'Ranking'
         ranking.male: 'Male'
         ranking.female: 'Female'
+        judging: 'Judging'
     judges:
         title: 'Judges'
         header: 'Judges'

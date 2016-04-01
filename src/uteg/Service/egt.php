@@ -58,7 +58,7 @@ class egt
         $menu['nav.reporting']->addChild('egt.nav.ranking', array('uri' => '#', 'icon' => 'trophy', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
         $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.male', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'male'), 'icon' => 'male'));
         $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.female', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'female'), 'icon' => 'female'));
-
+        $menu['nav.reporting']->addChild('egt.nav.judging', array('route' => 'judgingReport', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'format' => 'pdf'), 'icon' => 'gavel'));
     }
 
     public function getS2c()
