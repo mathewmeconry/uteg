@@ -9,13 +9,58 @@ device:
     horizontal-bar: 'Reck'
 
 egt:
+    nav:
+        judges: 'Wertungsrichter'
+        grouping: 'Riegeneinteilung'
+        departments: 'Abteilungen'
+        divisions: 'Riegen'
+        ranking: 'Rangliste'
+        ranking.male: 'Männlich'
+        ranking.female: 'Weiblich'
+        judging: 'Wertungsblätter'
+    judges:
+        title: 'Wertungsrichter'
+        header: 'Wertungsrichter'
+        add:
+            success: 'Wertungsrichter erfolgreich hinzugefügt'
+        edit:
+            email: 'E-Mail'
+            device: 'Gerät'
+        table:
+            all: 'Alle'
+            next: 'Vor'
+            previous: 'Zurück'
+            search: 'Suchen'
+            searchPlaceholder: 'Suchen...'
+            zeroRecords: 'Keine Wertungsrichter gefunden...'
+            firstname: 'Vorname'
+            lastname: 'Nachname'
+            email: 'E-Mail'
+            device: 'Gerät'
+            actions: 'Aktionen'
+        modal:
+            add:
+                header: 'Neuen Wertungrichter hinzufügen'
+            edit:
+                header: 'Wertungsrichter bearbeiten'
+                save: 'Speichern'
+                cancel: 'Abbrechen'
+    divisions:
+        title: 'Reigen'
+        header: 'Riegen'
+        path: 'Riegen'
+        female: 'Weiblich'
+        male: 'Männlich'
+        all: 'Alle'
+        department: 'Abteilung'
+        header-unassigned: 'Nicht zugewiesene Turner/innen'
+        hint: 'Brauche CTRL oder Shift um mehrere auszuwählen'
     reporting:
-        path: 'Berichte'
         divisions:
             title: 'Riegeneinteilung'
             header: 'Riegeneinteilung'
             path: 'Riegen'
-            groupby: 'Gruppieren nach'
+            groupby: 'Gruppieren'
             category: 'Kategorie'
             none: 'Nichts'
             gender: 'Geschlecht'
@@ -24,3 +69,46 @@ egt:
             device: 'Gerät'
             columncount: 'Anzahl Spalten'
             save: 'Speichern'
+        ranking:
+            title: 'Rangliste'
+            firstname: 'Vorname'
+            lastname: 'Nachname'
+            birthyear: 'Jahrgang'
+            club: 'Verein'
+            total: 'Total'
+            rank: ''
+            award: ''
+        judging:
+            title: 'Wertungsrichterblätter'
+
+    judging:
+        title: 'Werten'
+        header: 'Werten'
+        division: 'Riege'
+        pause: 'Pause'
+        invalidGrade: 'Bitte eine Note zwischen 0 und 10 eingeben'
+        wrongDevice: "Are you trying to hack me? This doesn't gonna work ;)"
+        fixErrors: 'Bitte alle Fehler beheben'
+        saveSuccess: 'Noten erfolgreich gespeichert'
+        waitJudges: 'Bitte warten bis die anderen Wertungsrichter fertig sind'
+        endedTitle: 'Abteilung beendet'
+        endedContent: 'Vielen Dank für deine Hilfe!'
+        logout: 'Logout'
+        refreshingTitle: 'Turner/innen neu laden'
+        refreshingContent: 'Diese Seite ladet sich automatisch neu um die neusten Turner/innen zu laden. Bitte schaue nach änderungen'
+        startTitle: 'Abteilung startet...'
+        notstartedTitle: 'Keine Abteilung gestartet'
+        notstartedContent: 'Bitte warten...'
+        table:
+            firstname: 'Vorname'
+            lastname: 'Nachname'
+            club: 'Verein'
+            category: 'Kategorie'
+            grade: 'Note'
+            save: 'Speichern'
+
+    ranking:
+        title: 'Rangliste'
+        header: 'Rangliste'
+        present: 'Als anwesend markieren'
+        notPresent: 'Als nicht anwesend markieren'
