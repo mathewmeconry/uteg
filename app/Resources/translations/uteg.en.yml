@@ -496,6 +496,8 @@ egt:
             total: 'Total'
             rank: ''
             award: ''
+        judging:
+            title: 'Judging Report'
 
     judging:
         title: 'Judging'

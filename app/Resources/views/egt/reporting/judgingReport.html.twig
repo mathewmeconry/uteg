@@ -1,5 +1,13 @@
 {% trans_default_domain 'uteg' %}
 
+{% set url = app.request.uri | split('/') %}
+{% if url|last == "pdf" %}
+    <head>
+        <meta charset="UTF-8"/>
+        <title>{{ 'egt.reporting.judging.title'|trans }}</title>
+    </head>
+{% endif %}
+
 <style>
     tbody > tr:nth-child(even) {
         background-color: #c7c7c7;
