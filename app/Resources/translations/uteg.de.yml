@@ -3,10 +3,15 @@ male: 'Männlich'
 
 device:
     floor: 'Boden'
+    floorShort: 'BO'
     rings: 'Schaukelringe'
+    ringsShort: 'SR'
     vault: 'Sprung'
+    vaultShort: 'SP'
     parallel-bars: 'Barren'
+    parallel-barsShort: 'BA'
     horizontal-bar: 'Reck'
+    horizontal-barShort: 'RE'
 
 egt:
     nav:

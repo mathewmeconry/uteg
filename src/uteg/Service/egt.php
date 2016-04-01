@@ -466,15 +466,15 @@ class egt
             array('name' => 'egt.reporting.ranking.lastname', 'style' => ''),
             array('name' => 'egt.reporting.ranking.birthyear', 'style' => ''),
             array('name' => 'egt.reporting.ranking.club', 'style' => ''),
-            array('name' => 'device.floor', 'style' => 'width: 40px;text-align: center;'),
-            array('name' => 'device.rings', 'style' => 'width: 40px;text-align: center;'),
-            array('name' => 'device.vault', 'style' => 'width: 40px;text-align: center;'));
+            array('name' => 'device.floorShort', 'style' => 'width: 40px;text-align: center;'),
+            array('name' => 'device.ringsShort', 'style' => 'width: 40px;text-align: center;'),
+            array('name' => 'device.vaultShort', 'style' => 'width: 40px;text-align: center;'));
 
         if ($gender === "male") {
-            $headers[] = array('name' => 'device.parallel-bars', 'style' => 'width: 40px;text-align: center;');
+            $headers[] = array('name' => 'device.parallel-barsShort', 'style' => 'width: 40px;text-align: center;');
         }
 
-        $headers[] = array('name' => 'device.horizontal-bar', 'style' => 'width: 40px;text-align: center;');
+        $headers[] = array('name' => 'device.horizontal-barShort', 'style' => 'width: 40px;text-align: center;');
         $headers[] = array('name' => 'egt.reporting.ranking.total', 'style' => 'width: 40px;text-align: center;');
         $headers[] = array('name' => 'egt.reporting.ranking.award', 'style' => 'width: 5px;');
 

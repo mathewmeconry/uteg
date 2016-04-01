@@ -412,10 +412,15 @@ departments:
             actions: 'Actions'
 device:
     floor: 'Floor'
+    floorShort: 'FL'
     rings: 'Swinging Rings'
+    ringsShort: 'SR'
     vault: 'Vault'
+    vaultShor: 'VA'
     parallel-bars: 'Parallel Bars'
+    parallel-barsShort: 'PB'
     horizontal-bar: 'Horizontal Bar'
+    horizontal-barShort: 'HB'
 
 judges:
     path: 'Judges'

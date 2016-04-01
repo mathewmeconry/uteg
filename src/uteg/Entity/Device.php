@@ -31,6 +31,11 @@ class Device
     protected $name;
 
     /**
+     * @ORM\Column(type="string", name="nameShort")
+     */
+    protected $nameShort;
+
+    /**
      * @ORM\OneToMany(targetEntity="Division", mappedBy="device")
      */
     protected $divisions;
@@ -100,6 +105,30 @@ class Device
     {
         return $this->name;
     }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return Device
+     */
+    public function setNameShort($name)
+    {
+        $this->nameShort = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getNameShort()
+    {
+        return $this->nameShort;
+    }
+
     /**
      * Constructor
      */
