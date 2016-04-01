@@ -524,6 +524,7 @@ egt:
         notstartedTitle: 'No Department started'
         notstartedContent: 'Please wait...'
         table:
+            id: 'ID'
             firstname: 'Firstname'
             lastname: 'Lastname'
             club: 'Club'

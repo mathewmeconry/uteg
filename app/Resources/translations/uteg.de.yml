@@ -105,6 +105,7 @@ egt:
         notstartedTitle: 'Keine Abteilung gestartet'
         notstartedContent: 'Bitte warten...'
         table:
+            id: 'ID'
             firstname: 'Vorname'
             lastname: 'Nachname'
             club: 'Verein'

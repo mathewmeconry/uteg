@@ -24,6 +24,7 @@
         <table style="width: 100%; text-align: left; border-collapse: collapse;font-family: 'Quicksand', sans-serif;">
             <thead>
             <tr>
+                <th>{{ 'egt.judging.table.id'|trans }}</th>
                 <th>{{ 'egt.judging.table.firstname'|trans }}</th>
                 <th>{{ 'egt.judging.table.lastname'|trans }}</th>
                 <th>{{ 'egt.judging.table.club'|trans }}</th>
@@ -34,6 +35,7 @@
             <tbody>
             {% for starter in device.starters.starters[device2] %}
                 <tr style="page-break-inside: avoid; color: #656d78;">
+                    <td style="padding-top: 10px; width: 20%;">{{ starter.id }}</td>
                     <td style="padding-top: 10px; width: 20%;">{{ starter.firstname }}</td>
                     <td style="padding-top: 10px; width: 20%;">{{ starter.lastname }}</td>
                     <td style="padding-top: 10px; width: 20%;">{{ starter.club }}</td>
