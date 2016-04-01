@@ -16,7 +16,7 @@ parameters:
 gos_web_socket:
     server:
         port: 8080        #The port the socket server will listen on
-        host: 0.0.0.0   #The host ip to bind to
+        host: 192.168.1.10  #The host ip to bind to
         router:
             resources:
                 - @uteg/Resources/config/pubsub/routing.yml
