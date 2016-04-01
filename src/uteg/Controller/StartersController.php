@@ -81,27 +81,6 @@ class StartersController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/starter/{id}/{name}", name="starter", defaults={"name": ""}, requirements={"id": "\d+"})
-     */
-    public function starterAction($id, $name, Request $request, $compid)
-    {
-        $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
-
-        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
-        $module = $this->get($comp->getModule()->getServiceName());
-        $module->init();
-
-        if ($name === "") {
-            return $this->redirect($request->getRequestUri() . "/" . $this->getName($id), 301);
-        } else {
-            return $this->render('starter.html.twig', array(
-                "title" => $name,
-                "path" => array($request->getSession()->get('comp')->getName(), 'starter.path', $name)
-            ));
-        }
-    }
-
-    /**
      * @Route("/{compid}/starter/add", name="starterAdd")
      */
     public function starterAddAction(Request $request, $compid)
@@ -414,6 +393,7 @@ class StartersController extends DefaultController
         $form = $this->createForm(new S2cType(), $s2c);
 
         $form->handleRequest($request);
+
         if ($form->isValid()) {
             $s2c = $form->getData();
             $em = $this->getDoctrine()->getEntityManager();
@@ -453,8 +433,36 @@ class StartersController extends DefaultController
         return new Response('true');
     }
 
-    private function getName($id)
+    /**
+     * @Route("/{compid}/starters/{present}", name="togglePresent", requirements={"id": "\d+", "present": "0|1"})
+     * @Method("POST")
+     */
+    public function togglePresentAction(Request $request, $compid, $present)
     {
-        return "Mathias Scherer";
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+        $em = $this->getDoctrine()->getEntityManager();
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
+        $starters = $request->request->get('starters');
+
+        foreach ($starters as $starter) {
+            $s2c = $module->findS2c(array("id" => $starter));
+
+            if ($present == 1) {
+                $s2c->setPresent(1);
+            } else {
+                $s2c->setPresent(0);
+            }
+
+            $em->persist($s2c);
+        }
+
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('success', 'starters.edit.success');
+
+        return new Response('true');
     }
 }

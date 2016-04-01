@@ -588,6 +588,7 @@ class egt
             ->join('s.category', 'ca')
             ->where('de.started = 1')
             ->andWhere('de.ended = 0')
+            ->andWhere('s.present = 1')
             ->andWhere('de.competition = :competition')
             ->setParameters(array('competition' => $competition->getId()))
             ->getQuery()->getResult();
@@ -723,6 +724,7 @@ class egt
             ->select('c.name as name, c.number as number, c.id as id')
             ->join('s2c.category', 'c')
             ->andWhere('s2c.competition = :competition')
+            ->andWhere('s2c.present = 1')
             ->groupBy('c.name')
             ->setParameters(array('competition' => $competition->getId()))
             ->getQuery()->getResult();
@@ -746,6 +748,7 @@ class egt
             ->where('s2c.competition = :competition')
             ->andWhere('s2c.category = :category')
             ->andWhere('s.gender = :gender')
+            ->andWhere('s2c.present = 1')
             ->setParameters(array('competition' => $competition->getid(), 'category' => $category->getId(), 'gender' => $gender))
             ->getQuery()->getResult();
 

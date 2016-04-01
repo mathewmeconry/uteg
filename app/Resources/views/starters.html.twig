@@ -27,15 +27,7 @@
                     "method": "POST"
                 },
                 "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "{{ "starters.table.all"|trans }}"]],
-                "dom": "lftip",
-                "buttons": [
-                    {
-                        text: 'Button 1',
-                        action: function ( e, dt, node, config ) {
-                            alert( 'Button 1 clicked on' );
-                        }
-                    }
-                ],
+                "dom": "l<'formgroup'<'#presentControl'>>ftip",
                 "processing": true,
                 "search": {
                     "regex": true
@@ -90,26 +82,79 @@
                 }
             });
 
+            {% if is_granted('STARTERS_EDIT', comp) %}
+            $(tableobj.table().container()).find('#presentControl').html('<button id="present" class="btn btn-default">{{ 'egt.ranking.present'|trans }}</button>\
+            <button id="notPresent" class="btn btn-default">{{ 'egt.ranking.notPresent'|trans }}</button>');
+
+            $(tableobj.table().container()).find('#present').click(function () {
+                var url = "{{ path('togglePresent', { 'compid': app.request.get('compid'), 'present': 1}) }}";
+                var ids = [];
+
+                var rows = tableobj.rows().nodes();
+                $.each($('input[type="checkbox"]:checked', rows), function (key, row) {
+                    var table = $(this).parent().parent().parent().parent().parent().DataTable();
+                    var s2c_id = table.cell($(this).parent().parent().parent(), 2).data();
+                    ids.push(s2c_id);
+                });
+
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    data: {starters: ids},
+                    success: function (data) {
+                        if (data == "true") {
+                            showFlashbag();
+                            $('.panel-refresh').click();
+                        }
+                    }
+                });
+            });
+
+            $(tableobj.table().container()).find('#notPresent').click(function () {
+                var url = "{{ path('togglePresent', { 'compid': app.request.get('compid'), 'present': 0}) }}";
+                var ids = [];
+
+                var rows = tableobj.rows().nodes();
+                $.each($('input[type="checkbox"]:checked', rows), function (key, row) {
+                    var table = $(this).parent().parent().parent().parent().parent().DataTable();
+                    var s2c_id = table.cell($(this).parent().parent().parent(), 2).data();
+                    ids.push(s2c_id);
+                });
+
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    data: {starters: ids},
+                    success: function (data) {
+                        if (data == "true") {
+                            showFlashbag();
+                            $('.panel-refresh').click();
+                        }
+                    }
+                });
+            });
+
             // Handle click on "Select all" control
-            $(table).on('click', 'thead input[type="checkbox"]',function(){
+            $(table).on('click', 'thead input[type="checkbox"]', function () {
                 // Check/uncheck all checkboxes in the table
-                var rows = tableobj.rows({ 'search': 'applied' }).nodes();
+                var rows = tableobj.rows({'search': 'applied'}).nodes();
                 $('input[type="checkbox"]', rows).prop('checked', this.checked);
             });
 
             // Handle click on checkbox to set state of "Select all" control
-            $(table).on('change', 'tbody input[type="checkbox"]', function(){
+            $(table).on('change', 'tbody input[type="checkbox"]', function () {
                 // If checkbox is not checked
-                if(!this.checked){
+                if (!this.checked) {
                     var el = $(table).find('input:checkbox')[0];
                     // If "Select all" control is checked and has 'indeterminate' property
-                    if(el && el.checked){
+                    if (el && el.checked) {
                         // Set visual state of "Select all" control
                         // as 'indeterminate'
                         $(el).prop('checked', false);
                     }
                 }
             });
+            {% endif %}
         }
 
         $(document).ready(function () {
@@ -128,6 +173,7 @@
             });
 
             $('.panel-refresh').click(function () {
+                $('#panel_{{ gender|raw }}').find('thead input:checkbox').prop('checked', false);
                 panel_refresh(
                         $('#panel_{{ gender|raw }}'),
                         $('div.tab-pane.active table').DataTable().ajax.reload(function () {
@@ -254,12 +300,14 @@
                 <div class="panel-body tab-content">
                     {% for i in 1..8 %}
                         <div id="{{ i }}" class="tab-pane{% if i == 1 %} active{% endif %}">
-                            <table id="{{ gender|raw }}_{{ i }}" class="table table-striped cat-table" data-cat="{{ i }}"
+                            <table id="{{ gender|raw }}_{{ i }}" class="table table-striped cat-table"
+                                   data-cat="{{ i }}"
                                    width="100%">
                                 <thead>
                                 <tr>
                                     <th class="max-tablet-p"></th>
-                                    <th class="all select"><label class="switch switch-small"><input type="checkbox"><span></span></label></th>
+                                    <th class="all select"><label class="switch switch-small"><input
+                                                    type="checkbox"><span></span></label></th>
                                     <th class="never">id</th>
                                     <th class="all">{{ 'starters.table.firstname'|trans }}</th>
                                     <th class="all">{{ 'starters.table.lastname'|trans }}</th>
@@ -275,11 +323,13 @@
                         </div>
                     {% endfor %}
                     <div id="all" class="tab-pane">
-                        <table id="{{ gender|raw }}_all" class="table responsive table-striped" data-cat="0" width="100%">
+                        <table id="{{ gender|raw }}_all" class="table responsive table-striped" data-cat="0"
+                               width="100%">
                             <thead>
                             <tr>
                                 <th class="max-tablet-p"></th>
-                                <th class="all select"><label class="switch switch-small"><input type="checkbox"><span></span></label></th>
+                                <th class="all select"><label class="switch switch-small"><input
+                                                type="checkbox"><span></span></label></th>
                                 <th class="never">id</th>
                                 <th class="all">{{ 'starters.table.firstname'|trans }}</th>
                                 <th class="all">{{ 'starters.table.lastname'|trans }}</th>
