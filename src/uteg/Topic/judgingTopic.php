@@ -6,15 +6,22 @@ use Gos\Bundle\WebSocketBundle\Topic\TopicInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
 use Gos\Bundle\WebSocketBundle\Router\WampRequest;
+use Symfony\Component\Filesystem\Filesystem;
 
 class judgingTopic implements TopicInterface
 {
     protected $states = array();
     protected $em;
+    protected $fs;
 
     public function __construct($em)
     {
         $this->em = $em;
+        $this->fs = new Filesystem();
+
+        if($this->fs->exists('/srv/web/states.json')) {
+            $this->states = json_decode(file_get_contents('/srv/web/states.json'));
+        }
     }
 
     /**
@@ -88,6 +95,8 @@ class judgingTopic implements TopicInterface
         } else {
             $connection->event($topic->getId(), ['msg' => 'noneStarted']);
         }
+
+        $this->fs->dumpFile('/srv/web/states.json', json_encode($this->states));
     }
 
     /**
