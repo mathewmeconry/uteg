@@ -195,6 +195,7 @@ starters:
 starter:
     path: 'Starter'
     error:
+        stvid: 'Please enter a STV ID (not required)'
         firstname: 'Please enter a firstname'
         lastname: 'Please enter a lastname'
         birthyear: 'Please enter a birth year'
@@ -523,3 +524,5 @@ egt:
     ranking:
         title: 'Ranking'
         header: 'Ranking'
+        present: 'Mark as present'
+        notPresent: 'Mark as not present'
