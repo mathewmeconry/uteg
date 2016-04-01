@@ -15,7 +15,6 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
    /**
     * @ORM\ManyToOne(targetEntity="DivisionEGT", inversedBy="s2cs")
     * @ORM\JoinColumn(name="div_id", referencedColumnName="div_id", onDelete="SET NULL")
-    * @Assert\Blank
     */
    protected $division;
 
