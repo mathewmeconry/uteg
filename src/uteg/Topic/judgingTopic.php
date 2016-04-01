@@ -15,7 +15,6 @@ class judgingTopic implements TopicInterface
     public function __construct($em)
     {
         $this->em = $em;
-        $this->fs = new Filesystem();
     }
 
     /**
