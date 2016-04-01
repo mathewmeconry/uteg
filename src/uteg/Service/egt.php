@@ -540,6 +540,49 @@ class egt
         ));
     }
 
+    public function judgingReport(Request $request, \uteg\Entity\Competition $competition, $format) {
+        $em = $this->container->get('Doctrine')->getManager();
+        $devices = array(1 => $em->find('uteg:Device', 1),
+            2 => $em->find('uteg:Device', 2),
+            3 => $em->find('uteg:Device', 3),
+            4 => $em->find('uteg:Device', 4));
+        $judgingArr = [];
+
+        $departments = $em
+            ->getRepository('uteg:Department')
+            ->createQueryBuilder('d')
+            ->select('d.gender as gender')
+            ->where('d.started = 1')
+            ->andWhere('d.ended = 0')
+            ->andWhere('d.competition = :competition')
+            ->setParameters(array('competition' => $competition->getId()))
+            ->getQuery()->getResult();
+
+        foreach ($departments as $department) {
+            if($department['gender'] === "male") {
+                $devices[5] = $em->find('uteg:Device', 5);
+            }
+        }
+
+        foreach ($devices as $device) {
+            $judgingArr[$device->getNumber()] = array("starters" => $this->generateJudgingArray($device, $competition), "devicename" => $device->getName());
+        }
+
+        ksort($judgingArr);
+
+        if($format === "pdf") {
+            return $this->renderPdf('Judging', 'egt/reporting/judgingReport.html.twig', array(
+                "competition" => $competition,
+                "devices" => $judgingArr
+            ));
+        }
+
+        return $this->container->get('templating')->renderResponse('egt/reporting/judgingReport.html.twig', array(
+            "competition" => $competition,
+            "devices" => $judgingArr
+        ));
+    }
+
     public function saveGrades(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $grades)
     {
         $em = $this->container->get('Doctrine')->getManager();

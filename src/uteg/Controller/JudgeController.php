@@ -131,4 +131,14 @@ class JudgeController extends DefaultController
         return $module->saveGrades($comp, $device, $grades);
     }
 
+    /**
+     * @Route("/{compid}/judging/report/{format}", name="judgingReport", defaults={"format": "html"}, requirements={"compid": "\d+", "format": "pdf|html"})
+     * @Method("GET")
+     */
+    public function judgingReportAction(Request $request, $compid, $format) {
+        $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+
+        return $module->judgingReport($request, $comp, $format);
+    }
 }

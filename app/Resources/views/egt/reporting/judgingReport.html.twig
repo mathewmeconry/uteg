@@ -1,0 +1,43 @@
+{% trans_default_domain 'uteg' %}
+
+<style>
+    tbody > tr:nth-child(even) {
+        background-color: #c7c7c7;
+    }
+
+    table > thead > tr, table > tbody > tr {
+        font-size: 10pt;
+    }
+</style>
+{% for device in devices %}
+    {% for key, device2 in device.starters.devices %}
+        <h2 style="color: #434a54; font-weight: bold; page-break-before: always;">{{ device.devicename | trans }}</h2>
+        <h3 style="color: #434a54;">{{ 'egt.judging.division'|trans }} {{ loop.index }}</h3>
+        <table style="width: 100%; text-align: left; border-collapse: collapse;font-family: 'Quicksand', sans-serif;">
+            <thead>
+            <tr>
+                <th>{{ 'egt.judging.table.firstname'|trans }}</th>
+                <th>{{ 'egt.judging.table.lastname'|trans }}</th>
+                <th>{{ 'egt.judging.table.club'|trans }}</th>
+                <th>{{ 'egt.judging.table.category'|trans }}</th>
+                <th>{{ 'egt.judging.table.grade'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for starter in device.starters.starters[device2] %}
+                <tr style="page-break-inside: avoid; color: #656d78;">
+                    <td style="padding-top: 10px; width: 20%;">{{ starter.firstname }}</td>
+                    <td style="padding-top: 10px; width: 20%;">{{ starter.lastname }}</td>
+                    <td style="padding-top: 10px; width: 20%;">{{ starter.club }}</td>
+                    <td style="padding-top: 10px; width: 20%;">{{ starter.category }}</td>
+                    <td style="padding-top: 10px; width: 20%;"></td>
+                </tr>
+
+            {% else %}
+                <h4>{{ 'egt.judging.pause'|trans }}
+                </h4>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endfor %}

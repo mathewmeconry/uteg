@@ -396,6 +396,8 @@ departments:
     start: 'Start'
     running: 'Running'
     finished: 'Finished'
+    reloadStraters: 'Reload starters'
+    reloadStartersDescription: 'Reloads the starters list on the judges computers'
     table:
             all: 'All'
             next: 'Next'
