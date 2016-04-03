@@ -540,7 +540,8 @@ class egt
         ));
     }
 
-    public function judgingReport(Request $request, \uteg\Entity\Competition $competition, $format) {
+    public function judgingReport(Request $request, \uteg\Entity\Competition $competition, $format)
+    {
         $em = $this->container->get('Doctrine')->getManager();
         $devices = array(1 => $em->find('uteg:Device', 1),
             2 => $em->find('uteg:Device', 2),
@@ -559,7 +560,7 @@ class egt
             ->getQuery()->getResult();
 
         foreach ($departments as $department) {
-            if($department['gender'] === "male") {
+            if ($department['gender'] === "male") {
                 $devices[5] = $em->find('uteg:Device', 5);
             }
         }
@@ -570,7 +571,7 @@ class egt
 
         ksort($judgingArr);
 
-        if($format === "pdf") {
+        if ($format === "pdf") {
             return $this->renderPdf('Judging', 'egt/reporting/judgingReport.html.twig', array(
                 "competition" => $competition,
                 "devices" => $judgingArr
@@ -638,7 +639,7 @@ class egt
 
         if ($starters) {
             foreach ($starters as $starter) {
-                $return[$starter['devicenumber']][] = $starter;
+                $return[$starter['deviceid']][] = $starter;
 
                 if ($starter['gender'] === 'male') {
                     $devices[5] = 4;
@@ -680,18 +681,14 @@ class egt
         $float = $float[1] % 5;
 
         if ($grade->getGrade() >= 0 && $grade->getGrade() <= 10 && $float === 0) {
-            $startDevice = $grade->getS2c()->getDivision()->getDevice()->getId();
+            $startDevice = $grade->getS2c()->getDivision()->getDevice()->getNumber();
             $gender = $grade->getS2c()->getStarter()->getGender();
             $round = $grade->getS2c()->getDivision()->getDepartment()->getRound();
             $rotated = $this->rotate($startDevice, $round, $gender);
 
-            if ($rotated === $grade->getDevice()->getId()) {
-                $em->merge($grade);
-                $em->flush();
-                return array('ok');
-            } else {
-                return array('wrongDevice', $this->container->get('translator')->trans('egt.judging.wrongDevice', array(), 'uteg'), $round . "/" . $rotated . "/" . $grade->getDevice()->getId() . "/" . $startDevice);
-            }
+            $em->merge($grade);
+            $em->flush();
+            return array('ok');
         } else {
             return array('invalidGrade', $this->container->get('translator')->trans('egt.judging.invalidGrade', array(), 'uteg'));
         }
