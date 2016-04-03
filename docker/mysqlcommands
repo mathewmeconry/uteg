@@ -11,8 +11,8 @@ INSERT INTO ute_category (`number`, `name`) VALUES ('6', 'K6');
 INSERT INTO ute_category (`number`, `name`) VALUES ('7', 'K7');
 INSERT INTO ute_category (`number`, `name`) VALUES ('8', 'KD/H');
 
-INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('1', '1', 'device.floor');
-INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('2', '2', 'device.rings');
-INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('3', '3', 'device.vault');
-INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('4', '5', 'device.horizontal-bar');
-INSERT INTO ute_device (`dev_id`, `number`, `name`) VALUES ('5', '4', 'device.parallel-bars');
+INSERT INTO ute_device (`dev_id`, `number`, `name`, `nameShort`) VALUES ('1', '1', 'device.floor', 'device.floorShort');
+INSERT INTO ute_device (`dev_id`, `number`, `name`, `nameShort`) VALUES ('2', '2', 'device.rings', 'device.ringsShort');
+INSERT INTO ute_device (`dev_id`, `number`, `name`, `nameShort`) VALUES ('3', '3', 'device.vault', 'device.vaultShort');
+INSERT INTO ute_device (`dev_id`, `number`, `name`, `nameShort`) VALUES ('4', '5', 'device.horizontal-bar', 'device.horizontal-bar.short');
+INSERT INTO ute_device (`dev_id`, `number`, `name`, `nameShort`) VALUES ('5', '4', 'device.parallel-bars', 'device.parallel-bars.short');

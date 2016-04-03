@@ -396,6 +396,8 @@ departments:
     start: 'Start'
     running: 'Running'
     finished: 'Finished'
+    reloadStraters: 'Reload starters'
+    reloadStartersDescription: 'Reloads the starters list on the judges computers'
     table:
             all: 'All'
             next: 'Next'
@@ -410,10 +412,15 @@ departments:
             actions: 'Actions'
 device:
     floor: 'Floor'
+    floorShort: 'FL'
     rings: 'Swinging Rings'
+    ringsShort: 'SR'
     vault: 'Vault'
+    vaultShor: 'VA'
     parallel-bars: 'Parallel Bars'
+    parallel-barsShort: 'PB'
     horizontal-bar: 'Horizontal Bar'
+    horizontal-barShort: 'HB'
 
 judges:
     path: 'Judges'
@@ -434,6 +441,7 @@ egt:
         ranking: 'Ranking'
         ranking.male: 'Male'
         ranking.female: 'Female'
+        judging: 'Judging'
     judges:
         title: 'Judges'
         header: 'Judges'
@@ -494,6 +502,8 @@ egt:
             total: 'Total'
             rank: ''
             award: ''
+        judging:
+            title: 'Judging Report'
 
     judging:
         title: 'Judging'
@@ -514,6 +524,7 @@ egt:
         notstartedTitle: 'No Department started'
         notstartedContent: 'Please wait...'
         table:
+            id: 'ID'
             firstname: 'Firstname'
             lastname: 'Lastname'
             club: 'Club'
