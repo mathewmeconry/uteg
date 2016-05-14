@@ -57,6 +57,7 @@ class DepartmentController extends DefaultController
             $departments["data"][] = array("id" => $dep->getId(),
                 "number" => $dep->getNumber(),
                 "date" => $dateFormatter->format($dep->getDate(), "medium", "none", $request->getPreferredLanguage()),
+                "competitionPlace" => $dep->getCompetitionPlace(),
                 "category" => $dep->getCategory()->getName(),
                 "gender" => $dep->getGender(),
                 "state" => $state
@@ -88,8 +89,13 @@ class DepartmentController extends DefaultController
             $dateList[$dateFormatter->format($date, "short", "none", "en")] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
         }
 
+        $competitionPlaceList = [];
+        for($i = 1; $i <= $competition->getCompetitionPlace(); $i++) {
+            $competitionPlaceList[] = $i;
+        }
+
         $department = new Department();
-        $form = $this->container->get('form.factory')->create(new DepartmentType($dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage())), $department);
+        $form = $this->container->get('form.factory')->create(new DepartmentType($competitionPlaceList, $dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage())), $department);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -150,10 +156,15 @@ class DepartmentController extends DefaultController
             $dateList[$dateFormatter->format($date, "short", "none", "en")] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
         }
 
+        $competitionPlaceList = [];
+        for($i = 1; $i <= $competition->getCompetitionPlace(); $i++) {
+            $competitionPlaceList[] = $i;
+        }
+
         $department = $em->find('uteg:Department', $id);
         $department->setDate($dateFormatter->format($department->getDate(), "short", "none", $request->getPreferredLanguage()));
 
-        $form = $this->container->get('form.factory')->create(new DepartmentType($dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage()), true), $department);
+        $form = $this->container->get('form.factory')->create(new DepartmentType($competitionPlaceList, $dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage()), true), $department);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -226,12 +237,12 @@ class DepartmentController extends DefaultController
         return new Response('true');
     }
 
-    private function adjustDepNumbering(\uteg\Entity\Competition $competition, $srcDepartment, $mode)
+    private function adjustDepNumbering(\uteg\Entity\Competition $competition, \uteg\Entity\Department $srcDepartment, $mode)
     {
         if (is_array($srcDepartment)) {
-            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['gender']);
+            $departments = $competition->getDepartmentsByCatDateGenderCPlace($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['gender'], $srcDepartment['competitionPlace']);
         } else {
-            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getGender());
+            $departments = $competition->getDepartmentsByCatDateGenderCPlace($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getGender(), $srcDepartment->getCompetitionPlace());
         }
         $em = $this->getDoctrine()->getManager();
 

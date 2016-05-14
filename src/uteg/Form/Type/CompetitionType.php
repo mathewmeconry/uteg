@@ -20,6 +20,7 @@ class CompetitionType extends AbstractType
             ->add('name', null, array('label' => 'competitionlist.addcomp.name', "attr" => array("placeholder" => "competitionlist.addcomp.name"), 'translation_domain' => 'uteg'))
             ->add('gym', null, array('label' => 'competitionlist.addcomp.gym', "attr" => array("placeholder" => "competitionlist.addcomp.gym"), 'translation_domain' => 'uteg'))
             ->add('location', null, array('label' => 'competitionlist.addcomp.location', "attr" => array("placeholder" => "competitionlist.addcomp.location"), 'translation_domain' => 'uteg'))
+            ->add('countCompetitionPlace', null, array('label' => 'competitionlist.addcomp.countCompetitionPlace', 'attr' => array('placeholder' => 'competitionlist.addcomp.countCompetitionPlace'), 'translation_domain' => 'uteg'))
             ->add('zipcode', 'number', array('label' => 'competitionlist.addcomp.zipcode', "attr" => array("placeholder" => "competitionlist.addcomp.zipcode"), 'translation_domain' => 'uteg'))
             ->add('module', 'entity', array('class' => 'uteg:Module', 'query_builder' => function (EntityRepository $er) {
                 return $er->createQueryBuilder('c')->orderBy('c.displayName', 'ASC');

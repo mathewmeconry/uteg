@@ -58,6 +58,11 @@ class Competition
     protected $enddate;
 
     /**
+     * @ORM\Column(type="integer", name="countCompetitionPlace")
+     */
+    protected $countCompetitionPlace;
+
+    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
@@ -262,6 +267,29 @@ class Competition
     public function getEnddate()
     {
         return $this->enddate;
+    }
+
+    /**
+     * Set countCompetitionPlace
+     *
+     * @param integer $countCompetitionPlace
+     * @return Competition
+     */
+    public function setCountCompetitionPlace($countCompetitionPlace) 
+    {
+        $this->countCompetitionPlace = $countCompetitionPlace;
+        
+        return $this;
+    }
+
+    /**
+     * get countCompetitionPlace
+     * 
+     * @return integer
+     */
+    public function getCountCompetitionPlace()
+    {
+        return $this->countCompetitionPlace;
     }
 
     /**
@@ -527,12 +555,12 @@ class Competition
         return $return;
     }
 
-    public function getDepartmentsByCatDateGender(\uteg\Entity\Category $category, \DateTime $dateTime, $gender)
+    public function getDepartmentsByCatDateGenderCPlace(\uteg\Entity\Category $category, \DateTime $dateTime, $gender, $competitionPlace)
     {
         $return = array();
 
         foreach ($this->departments as $department) {
-            if ($department->getCategory() === $category && $department->getDate() == $dateTime && $department->getGender() == $gender) {
+            if ($department->getCategory() === $category && $department->getDate() == $dateTime && $department->getGender() == $gender && $department->getCompetitionPlace() == $competitionPlace) {
                 $return[] = $department;
             }
         }
