@@ -237,6 +237,7 @@ class egt
                     foreach ($deps as $dep) {
                         if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
                             $return['value'][$dep->getCategory()->getNumber()] = array("number" => $dep->getCategory()->getNumber(),
+                                "competitionPlace" => $dep->getCompetitionPlace(),
                                 "name" => $dep->getCategory()->getName()
                             );
                         }
@@ -257,9 +258,10 @@ class egt
 
                     foreach ($deps as $dep) {
                         if (!array_key_exists($dep->getCategory()->getNumber(), $array['value'])) {
-                            $array['value'][$dep->getDate()->getTimestamp()][$dep->getId()] = array("id" => $dep->getId(),
+                            $array['value'][$dep->getDate()->getTimestamp()][$dep->getCompetitionPlace()][$dep->getId()] = array("id" => $dep->getId(),
                                 "number" => $dep->getNumber(),
                                 "date" => $dateFormatter->format($dep->getDate(), "short", "none", $request->getPreferredLanguage()),
+                                "competitionPlace" => $dep->getCompetitionPlace(),
                                 "category" => $dep->getCategory()->getName(),
                                 "gender" => $dep->getGender()
                             );
@@ -268,12 +270,15 @@ class egt
 
                     ksort($array['value']);
                     foreach ($array['value'] as $key => $day) {
-                        usort($day, function ($a, $b) {
-                            return $a['number'] - $b['number'];
-                        });
+                        foreach ($day as $key2 => $compPlace) {
+                            usort($compPlace, function ($a, $b) {
+                                return $a['number'] - $b['number'];
+                            });
 
-                        $return['value'][$key]['deps'] = $day;
-                        $return['value'][$key]['date'] = end($day)['date'];
+                            $return['value'][$key]['deps'][$key2]['deps'] = $compPlace;
+                            $return['value'][$key]['deps'][$key2]['competitionPlace'] = end($compPlace)['competitionPlace'];
+                            $return['value'][$key]['date'] = end($compPlace)['date'];
+                        }
                     }
                 } else {
                     $return = "";
@@ -515,9 +520,15 @@ class egt
         ));
     }
 
-    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, \uteg\Entity\Judges2Competitions $j2c)
+    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, \uteg\Entity\Judges2Competitions $j2c, $competitionPlace)
     {
-        $judgingArr = $this->generateJudgingArray($device, $competition);
+        if($competitionPlace > 0) {
+            $judgingArr = $this->generateJudgingArray($device, $competition, $competitionPlace);
+        } else {
+            $judgingArr['starters'] = [];
+            $judgingArr['devices'] = [];
+            $judgingArr['round'] = 0;
+        }
 
         if (isset($judgingArr['error'])) {
             return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
@@ -540,7 +551,7 @@ class egt
         ));
     }
 
-    public function judgingReport(Request $request, \uteg\Entity\Competition $competition, $format) {
+    public function judgingReport(Request $request, \uteg\Entity\Competition $competition, $competitionPlace, $format) {
         $em = $this->container->get('Doctrine')->getManager();
         $devices = array(1 => $em->find('uteg:Device', 1),
             2 => $em->find('uteg:Device', 2),
@@ -565,7 +576,7 @@ class egt
         }
 
         foreach ($devices as $device) {
-            $judgingArr[$device->getNumber()] = array("starters" => $this->generateJudgingArray($device, $competition), "devicename" => $device->getName());
+            $judgingArr[$device->getNumber()] = array("starters" => $this->generateJudgingArray($device, $competition, $competitionPlace), "devicename" => $device->getName());
         }
 
         ksort($judgingArr);
@@ -604,7 +615,7 @@ class egt
         return new Response(json_encode($error));
     }
 
-    private function generateJudgingArray(\uteg\Entity\Device $device, \uteg\Entity\Competition $competition)
+    private function generateJudgingArray(\uteg\Entity\Device $device, \uteg\Entity\Competition $competition, $competitionPlace)
     {
         $em = $this->container->get('Doctrine')->getManager();
         $devices = array(1 => 1, 2 => 2, 3 => 3, 4 => 5);
@@ -616,7 +627,8 @@ class egt
             ->where('d.started = 1')
             ->andWhere('d.ended = 0')
             ->andWhere('d.competition = :competition')
-            ->setParameters(array('competition' => $competition->getId()))
+            ->adnWhere('d.competitionPlace = :competitionPlace')
+            ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
 
         $starters = $em
@@ -633,7 +645,8 @@ class egt
             ->andWhere('de.ended = 0')
             ->andWhere('s.present = 1')
             ->andWhere('de.competition = :competition')
-            ->setParameters(array('competition' => $competition->getId()))
+            ->andWhere('de.competitionPlace = :competitionPlace')
+            ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
 
         if ($starters) {
