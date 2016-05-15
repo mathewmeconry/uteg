@@ -555,6 +555,19 @@ class Competition
         return $return;
     }
 
+    public function getDepartmentsByCatDateGender(\uteg\Entity\Category $category, \DateTime $dateTime, $gender)
+    {
+        $return = array();
+
+        foreach ($this->departments as $department) {
+            if ($department->getCategory() === $category && $department->getDate() == $dateTime && $department->getGender() == $gender) {
+                $return[] = $department;
+            }
+        }
+
+        return $return;
+    }
+    
     public function getDepartmentsByCatDateGenderCPlace(\uteg\Entity\Category $category, \DateTime $dateTime, $gender, $competitionPlace)
     {
         $return = array();

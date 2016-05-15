@@ -12,11 +12,10 @@ parameters:
     mailer_password: bvjQb5BNKTzF
     locale: en
     secret: 1058ba6f5f302fc7263351f52c9e8d52e4a8bb67
-
 gos_web_socket:
     server:
-        port: 8080        #The port the socket server will listen on
-        host: 192.168.1.10  #The host ip to bind to
+        port: 8080
+        host: 192.168.1.10
         router:
             resources:
-                - @uteg/Resources/config/pubsub/routing.yml
+                - '@uteg/Resources/config/pubsub/routing.yml'

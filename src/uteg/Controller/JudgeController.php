@@ -96,10 +96,10 @@ class JudgeController extends DefaultController
 
 
     /**
-     * @Route("/{compid}/{deviceid}/{competitionPlace}/judge", name="judge", requirements={"compid": "\d+", "deviceid": "\d+", "competitionPlace": "\d+"}, defaults={"competitionPlace" => 0)
+     * @Route("/{compid}/{deviceid}/{competitionPlace}/judge", name="judge", requirements={"compid": "\d+", "deviceid": "\d+", "competitionPlace": "\d+"}, defaults={"competitionPlace" = 0})
      * @Method("GET")
      */
-    public function judgeAction(Request $request, $compid, $deviceid, $competitionsPlace)
+    public function judgeAction(Request $request, $compid, $deviceid, $competitionPlace)
     {
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $device = $this->getDoctrine()->getEntityManager()->find('uteg:Device', $deviceid);
@@ -115,7 +115,7 @@ class JudgeController extends DefaultController
             throw new AccessDeniedException();
         }
 
-        return $module->judging($request, $comp, $device, $j2c, $competitionsPlace);
+        return $module->judging($request, $comp, $device, $j2c, $competitionPlace);
     }
 
     /**
@@ -132,7 +132,7 @@ class JudgeController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/{competitionPlace}/judging/report/{format}", name="judgingReport", defaults={"format": "html"}, requirements={"compid": "\d+", "competitionPlace": "\d+", "format": "pdf|html"})
+     * @Route("/{compid}/{competitionPlace}/judging/report/{format}", name="judgingReport", defaults={"format": "html", "competitionPlace" : 0}, requirements={"compid": "\d+", "competitionPlace": "\d+", "format": "pdf|html"})
      * @Method("GET")
      */
     public function judgingReportAction(Request $request, $compid, $competitionPlace, $format) {

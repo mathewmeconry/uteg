@@ -20,178 +20,186 @@
 
 {% block script %}
     <script>
-        function socket(session) {
-            session.subscribe('judging/topic/{{ compid }}', function (uri, payload) {
-                switch (payload.method) {
-                    case "amIfinished":
-                        if (payload.msg == 1) {
-                            $('#message-box-wait').addClass('open');
-                        } else {
-                            $('#message-box-wait').removeClass('open');
-                        }
-                        break;
-                    case 'reloadStarters':
-                        $('.message-box').removeClass('open');
-                        $('#message-box-refresh').addClass('open');
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 10000);
-                        break;
-                    case 'startDepartment':
-                        $('.message-box').removeClass('open');
-                        $('#message-box-start').addClass('open');
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 5000);
-                        break;
-                    case 'turn':
-                        turn(payload.round);
-                        break;
-                    case "ended":
-                        finished();
-                        break;
-
-                }
-            });
-
-            $('.save').on('finished', function (e) {
-                session.publish('judging/topic/{{ compid }}', {
-                    method: "changeState",
-                    device: {{ deviceid }},
-                    state: 1
-                });
-            });
-
-            $(document).on('amIfinished', function (e) {
-                session.publish('judging/topic/{{ compid }}', {
-                    method: "amIfinished",
-                    device: {{ deviceid }}
-                });
-            });
-
-            $(document).trigger('amIfinished');
-        }
-
-
-
-        {% if error is not defined %}
-        function saveClick() {
-
-            $('.save').click(function () {
-                var round = $(this).data('round');
-                var device = $('#' + round + '_div table').data('device');
-                var grades = new Array();
-                var self = this;
-
-                var gradeobjs = $('#' + round + '_div table input.grade');
-                $.each(gradeobjs, function (key, value) {
-                    grades.push({'s2c': $(value).data('starter'), 'grade': $(value).val()});
-                });
-
-                $.ajax({
-                    'url': "{{ path('saveGrades', { 'compid': app.request.get('compid')}) }}/" + device,
-                    'method': "POST",
-                    'data': {round: round - 1, grades: grades},
-                    'success': function (data) {
-                        var decode = JSON.parse(data);
-                        var error = false;
-                        $.each(decode, function (key, data) {
-                            if (data[0] === "ok") {
-                                $('input[data-starter="' + key + '"]').removeClass('error');
-                                $('input[data-starter="' + key + '"]').addClass('valid');
-                                $('input[data-starter="' + key + '"]').attr('title', 'ok');
-                                var payload = {state: "finished", deviceid: {{ device.id }}, round: round};
-                            } else if (data[0] === "invalidGrade") {
-                                $('input[data-starter="' + key + '"]').removeClass('valid');
-                                $('input[data-starter="' + key + '"]').addClass('error');
-                                $('input[data-starter="' + key + '"]').attr('title', data[1]);
-                                error = true;
-                            } else if (data[0] === "wrongDevice") {
-                                $('input[data-starter="' + key + '"]').removeClass('valid');
-                                $('input[data-starter="' + key + '"]').addClass('error');
-                                $('input[data-starter="' + key + '"]').attr('title', data[1]);
-                                error = true;
+        {% if competitionPlace > 0 %}
+            function socket(session) {
+                session.subscribe('judging/topic/{{ compid }}', function (uri, payload) {
+                    switch (payload.method) {
+                        case "amIfinished":
+                            if (payload.msg == 1) {
+                                $('#message-box-wait').addClass('open');
                             } else {
-                                $('input[data-starter="' + key + '"]').removeClass('valid');
-                                $('input[data-starter="' + key + '"]').addClass('error');
-                                $('input[data-starter="' + key + '"]').attr('title', 'Undefined error');
-                                error = true;
+                                $('#message-box-wait').removeClass('open');
                             }
+                            break;
+                        case 'reloadStarters':
+                            $('.message-box').removeClass('open');
+                            $('#message-box-refresh').addClass('open');
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 10000);
+                            break;
+                        case 'startDepartment':
+                            $('.message-box').removeClass('open');
+                            $('#message-box-start').addClass('open');
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 5000);
+                            break;
+                        case 'turn':
+                            turn(payload.round);
+                            break;
+                        case "ended":
+                            finished();
+                            break;
 
-                        });
-
-                        $('.grade').tooltip();
-
-                        if (error) {
-                            noty({
-                                text: "{{ 'egt.judging.fixErrors' | trans }}",
-                                layout: 'topCenter',
-                                type: 'error',
-                                timeout: 5000
-                            });
-                        } else {
-                            noty({
-                                text: "{{ 'egt.judging.saveSuccess' | trans }}",
-                                layout: 'topCenter',
-                                type: 'success',
-                                timeout: 5000
-                            });
-                            $('#message-box-wait').addClass('open');
-                            $(self).trigger('finished');
-                        }
                     }
                 });
+
+                $('.save').on('finished', function (e) {
+                    session.publish('judging/topic/{{ compid }}', {
+                        method: "changeState",
+                        device: {{ deviceid }},
+                        state: 1
+                    });
+                });
+
+                $(document).on('amIfinished', function (e) {
+                    session.publish('judging/topic/{{ compid }}', {
+                        method: "amIfinished",
+                        device: {{ deviceid }}
+                    });
+                });
+
+                $(document).trigger('amIfinished');
+            }
+
+
+
+            {% if error is not defined %}
+            function saveClick() {
+
+                $('.save').click(function () {
+                    var round = $(this).data('round');
+                    var device = $('#' + round + '_div table').data('device');
+                    var grades = new Array();
+                    var self = this;
+
+                    var gradeobjs = $('#' + round + '_div table input.grade');
+                    $.each(gradeobjs, function (key, value) {
+                        grades.push({'s2c': $(value).data('starter'), 'grade': $(value).val()});
+                    });
+
+                    $.ajax({
+                        'url': "{{ path('saveGrades', { 'compid': app.request.get('compid')}) }}/" + device,
+                        'method': "POST",
+                        'data': {round: round - 1, grades: grades},
+                        'success': function (data) {
+                            var decode = JSON.parse(data);
+                            var error = false;
+                            $.each(decode, function (key, data) {
+                                if (data[0] === "ok") {
+                                    $('input[data-starter="' + key + '"]').removeClass('error');
+                                    $('input[data-starter="' + key + '"]').addClass('valid');
+                                    $('input[data-starter="' + key + '"]').attr('title', 'ok');
+                                    var payload = {state: "finished", deviceid: {{ device.id }}, round: round};
+                                } else if (data[0] === "invalidGrade") {
+                                    $('input[data-starter="' + key + '"]').removeClass('valid');
+                                    $('input[data-starter="' + key + '"]').addClass('error');
+                                    $('input[data-starter="' + key + '"]').attr('title', data[1]);
+                                    error = true;
+                                } else if (data[0] === "wrongDevice") {
+                                    $('input[data-starter="' + key + '"]').removeClass('valid');
+                                    $('input[data-starter="' + key + '"]').addClass('error');
+                                    $('input[data-starter="' + key + '"]').attr('title', data[1]);
+                                    error = true;
+                                } else {
+                                    $('input[data-starter="' + key + '"]').removeClass('valid');
+                                    $('input[data-starter="' + key + '"]').addClass('error');
+                                    $('input[data-starter="' + key + '"]').attr('title', 'Undefined error');
+                                    error = true;
+                                }
+
+                            });
+
+                            $('.grade').tooltip();
+
+                            if (error) {
+                                noty({
+                                    text: "{{ 'egt.judging.fixErrors' | trans }}",
+                                    layout: 'topCenter',
+                                    type: 'error',
+                                    timeout: 5000
+                                });
+                            } else {
+                                noty({
+                                    text: "{{ 'egt.judging.saveSuccess' | trans }}",
+                                    layout: 'topCenter',
+                                    type: 'success',
+                                    timeout: 5000
+                                });
+                                $('#message-box-wait').addClass('open');
+                                $(self).trigger('finished');
+                            }
+                        }
+                    });
+                });
+            }
+
+            function turn(round) {
+                $('input').attr('disabled', 'disabled');
+                $('.save').attr('disabled', 'disabled');
+
+                $('#' + round + '_div table input').attr('disabled', false);
+                $('#' + round + '_button').attr('disabled', false);
+
+                $('li.active').removeClass('active');
+                $('#' + round + '_li a').trigger('click');
+                $('#message-box-wait').removeClass('open');
+            }
+
+            function finished() {
+                $('.message-box').removeClass('open');
+                $('#message-box-ended').addClass('open');
+            }
+
+            $(document).ready(function () {
+                {% for key, devicestarters in starters %}
+                {% for starter in devicestarters %}
+                $('#{{ loop.parent.key }}_table tbody').append('<tr><td>{{ starter.firstname }}</td><td>{{ starter.lastname }}</td><td>{{ starter.club }}</td><td>{{ starter.category }}</td><td><input name="grade" class="grade form-control" data-starter="{{ starter.id }}" data-toggle="tooltip" maxlength="5" min="1" max="5" pattern="((0)|(\d{1,2})([\.])(\d{2}))" placeholder="00.00" disabled/></tr>');
+                {% endfor %}
+                {% else %}
+                $('#{{ key }}').html('<h1>{{ 'egt.judging.pause'|trans }}<h1>');
+                $('button:not(:disabled).save').trigger('finished');
+                {% endfor %}
+
+                $('#{{ round }}_li').addClass('active');
+                $('#{{ round }}_div').addClass('active');
+                $('#{{ round }}_div table tbody tr td input').prop('disabled', false);
+                $('.grade').mask("99.99");
+                $('.grade').tooltip();
+
+                saveClick();
             });
-        }
-
-        function turn(round) {
-            $('input').attr('disabled', 'disabled');
-            $('.save').attr('disabled', 'disabled');
-
-            $('#' + round + '_div table input').attr('disabled', false);
-            $('#' + round + '_button').attr('disabled', false);
-
-            $('li.active').removeClass('active');
-            $('#' + round + '_li a').trigger('click');
-            $('#message-box-wait').removeClass('open');
-        }
-
-        function finished() {
-            $('.message-box').removeClass('open');
-            $('#message-box-ended').addClass('open');
-        }
-
-        $(document).ready(function () {
-            {% for key, devicestarters in starters %}
-            {% for starter in devicestarters %}
-            $('#{{ loop.parent.key }}_table tbody').append('<tr><td>{{ starter.firstname }}</td><td>{{ starter.lastname }}</td><td>{{ starter.club }}</td><td>{{ starter.category }}</td><td><input name="grade" class="grade form-control" data-starter="{{ starter.id }}" data-toggle="tooltip" maxlength="5" min="1" max="5" pattern="((0)|(\d{1,2})([\.])(\d{2}))" placeholder="00.00" disabled/></tr>');
-            {% endfor %}
             {% else %}
-            $('#{{ key }}').html('<h1>{{ 'egt.judging.pause'|trans }}<h1>');
-            $('button:not(:disabled).save').trigger('finished');
-            {% endfor %}
-
-            $('#{{ round }}_li').addClass('active');
-            $('#{{ round }}_div').addClass('active');
-            $('#{{ round }}_div table tbody tr td input').prop('disabled', false);
-            $('.grade').mask("99.99");
-            $('.grade').tooltip();
-
-            saveClick();
-        });
-        {% else %}
-        $(document).ready(function () {
-            {% if error == "notStarted" %}
-            $('.message-box').removeClass('open');
-            $('#message-box-notstarted').addClass('open');
+            $(document).ready(function () {
+                {% if error == "notStarted" %}
+                $('.message-box').removeClass('open');
+                $('#message-box-notstarted').addClass('open');
+                {% endif %}
+            });
             {% endif %}
+        {% else %}
+        $('.message-box').removeClass('open');
+        $('#dialog-competitionPlace').modal({
+            keyboard: false,
+            backdrop: 'static'
         });
         {% endif %}
     </script>
 {% endblock %}
 
 {% block content %}
-    {% if error is not defined %}
+    {% if error is not defined  and competitionPlace > 0%}
         <div class="row">
             <div class="col-md-12">
                 <div id="panel_judging" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
@@ -300,6 +308,22 @@
                     <a href="/logout">
                         <button class="btn btn-default btn-lg pull-right logout">{{ "egt.judging.logout" | trans }}</button>
                     </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="dialog-competitionPlace" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'egt.judging.chooseCompetitionPlace'|trans }}</h4>
+                </div>
+                <div class="modal-body">
+                    {% for cp in 1..countCompetitionPlace %}
+                        <a class="btn btn-default btn-block" href="{{ path('judge', {'compid': compid, 'deviceid': deviceid, 'competitionPlace': cp}) }}">{{ 'egt.judging.competitionPlace'|trans }} {{ cp }}</a>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
                 </div>
             </div>
         </div>

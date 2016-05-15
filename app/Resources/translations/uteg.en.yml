@@ -369,6 +369,7 @@ department:
     add:
         number: 'Number'
         date: 'Date'
+        competitionPlace: 'Competition Place'
         female: 'Female'
         male: 'Male'
         gender: 'Gender'
@@ -525,6 +526,8 @@ egt:
         startTitle: 'Starting Department...'
         notstartedTitle: 'No Department started'
         notstartedContent: 'Please wait...'
+        chooseCompetitionPlace: 'Choose a competition place'
+        competitionPlace: 'Competition place'
         table:
             id: 'ID'
             firstname: 'Firstname'

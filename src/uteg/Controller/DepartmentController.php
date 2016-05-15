@@ -2,6 +2,7 @@
 
 namespace uteg\Controller;
 
+use Doctrine\Common\Util\ClassUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -90,8 +91,8 @@ class DepartmentController extends DefaultController
         }
 
         $competitionPlaceList = [];
-        for($i = 1; $i <= $competition->getCompetitionPlace(); $i++) {
-            $competitionPlaceList[] = $i;
+        for($i = 1; $i <= $competition->getCountCompetitionPlace(); $i++) {
+            $competitionPlaceList[$i] = $i;
         }
 
         $department = new Department();
@@ -157,8 +158,8 @@ class DepartmentController extends DefaultController
         }
 
         $competitionPlaceList = [];
-        for($i = 1; $i <= $competition->getCompetitionPlace(); $i++) {
-            $competitionPlaceList[] = $i;
+        for($i = 1; $i <= $competition->getCountCompetitionPlace(); $i++) {
+            $competitionPlaceList[$i] = $i;
         }
 
         $department = $em->find('uteg:Department', $id);
@@ -237,12 +238,12 @@ class DepartmentController extends DefaultController
         return new Response('true');
     }
 
-    private function adjustDepNumbering(\uteg\Entity\Competition $competition, \uteg\Entity\Department $srcDepartment, $mode)
+    private function adjustDepNumbering(\uteg\Entity\Competition $competition, $srcDepartment, $mode)
     {
         if (is_array($srcDepartment)) {
-            $departments = $competition->getDepartmentsByCatDateGenderCPlace($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['gender'], $srcDepartment['competitionPlace']);
+            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['gender'], $srcDepartment['competitionPlace']);
         } else {
-            $departments = $competition->getDepartmentsByCatDateGenderCPlace($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getGender(), $srcDepartment->getCompetitionPlace());
+            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getGender(), $srcDepartment->getCompetitionPlace());
         }
         $em = $this->getDoctrine()->getManager();
 

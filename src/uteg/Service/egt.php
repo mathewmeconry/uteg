@@ -538,7 +538,9 @@ class egt
                 "starters" => array(),
                 "devices" => array(),
                 "round" => array(),
-                "error" => $judgingArr['error']
+                "error" => $judgingArr['error'],
+                "countCompetitionPlace" => $competition->getCountCompetitionPlace(),
+                "competitionPlace" => $competitionPlace
             ));
         }
         return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
@@ -547,7 +549,9 @@ class egt
             "deviceid" => $j2c->getDevice()->getId(),
             "starters" => $judgingArr['starters'],
             "devices" => $judgingArr['devices'],
-            "round" => $judgingArr['round']
+            "round" => $judgingArr['round'],
+            "countCompetitionPlace" => $competition->getCountCompetitionPlace(),
+            "competitionPlace" => $competitionPlace
         ));
     }
 
@@ -627,7 +631,7 @@ class egt
             ->where('d.started = 1')
             ->andWhere('d.ended = 0')
             ->andWhere('d.competition = :competition')
-            ->adnWhere('d.competitionPlace = :competitionPlace')
+            ->andWhere('d.competitionPlace = :competitionPlace')
             ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
 
