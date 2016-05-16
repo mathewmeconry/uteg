@@ -175,12 +175,12 @@ class DepartmentController extends DefaultController
             $oldDepartment = $uow->getOriginalEntityData($department);
 
             $department->setDate(new \DateTime($department->getDate()));
-
-            if ($oldDepartment['category'] !== $department->getCategory() || $oldDepartment['date'] !== $department->getDate() || $oldDepartment['gender'] !== $department->getGender()) {
+            if ($oldDepartment['category'] !== $department->getCategory() || $oldDepartment['date']->format('Y-m-d') !== $department->getDate()->format('Y-m-d') || $oldDepartment['gender'] !== $department->getGender()) {
                 $this->adjustDepNumbering($competition, $oldDepartment, 'down');
+            } else {
+                $em->persist($department);
+                $em->flush();
             }
-
-            $this->adjustDepNumbering($competition, $department, 'up');
 
             $this->container->get('session')->getFlashBag()->add('success', 'department.edit.success');
 
@@ -241,12 +241,11 @@ class DepartmentController extends DefaultController
     private function adjustDepNumbering(\uteg\Entity\Competition $competition, $srcDepartment, $mode)
     {
         if (is_array($srcDepartment)) {
-            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['gender'], $srcDepartment['competitionPlace']);
+            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment['category'], $srcDepartment['date'], $srcDepartment['gender']);
         } else {
-            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getGender(), $srcDepartment->getCompetitionPlace());
+            $departments = $competition->getDepartmentsByCatDateGender($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getGender());
         }
         $em = $this->getDoctrine()->getManager();
-
         switch ($mode) {
             case 'up':
                 if (count($departments) > 0 && $departments[count($departments) - 1]->getId() !== $srcDepartment->getId()) {
@@ -265,8 +264,10 @@ class DepartmentController extends DefaultController
                         $srcNumber = $srcDepartment->getNumber();
                     }
 
-                    if ($department->getNumber() > $srcNumber) {
+                    if ($department->getNumber() >= $srcNumber) {
                         $department->setNumber($department->getNumber() - 1);
+                    } else {
+                        $department->setNumber($department->getNumber() + 1);
                     }
 
                     $em->persist($department);
