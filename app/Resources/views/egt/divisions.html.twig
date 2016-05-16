@@ -148,13 +148,9 @@
                             var optgroup = $('<optgroup>');
                             optgroup.attr('label', day.date);
                             $.each(day.deps, function (key, competitionPlace) {
-                                var optgroupCompPlace = $('<optgroup>');
-                                optgroupCompPlace.attr('label', competitionPlace.competitionPlace);
-
                                 $.each(competitionPlace.deps, function (key, value) {
-                                    $(optgroupCompPlace).append('<option value="' + value.id + '" data-subtext="' + value.date + '">{{ 'egt.divisions.department' | trans }} ' + value.number + '</option>');
+                                    $(optgroup).append('<option value="' + value.id + '" data-subtext="' + value.date + ' / {{ 'egt.divisions.competitionPlace'|trans }} ' + competitionPlace.competitionPlace + '">{{ 'egt.divisions.department' | trans }} ' + value.number + '</option>');
                                 });
-                                $(optgroup).append(optgroupCompPlace);
                             });
                             $('#divisions-filter-department').append(optgroup);
 

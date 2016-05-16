@@ -480,6 +480,7 @@ egt:
         male: 'Male'
         all: 'All'
         department: 'Department'
+        competitionPlace: 'Competition place'
         header-unassigned: 'Unassigned Starters'
         hint: 'Use CTRL and Shift for more efficiency'
     reporting:

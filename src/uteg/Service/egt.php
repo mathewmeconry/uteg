@@ -389,10 +389,11 @@ class egt
                             "medicalcert" => $s2c->getMedicalcert()
                         );
                     }
+                    $return['value']['assigned'] = $assignedS2cs;
+                    $return['value']['unassigned'] = $unassignedS2cs;
+                } else {
+                    $return = "";
                 }
-
-                $return['value']['assigned'] = $assignedS2cs;
-                $return['value']['unassigned'] = $unassignedS2cs;
                 break;
             default:
                 echo "server error";
