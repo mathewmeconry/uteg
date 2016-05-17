@@ -33,7 +33,9 @@
             </tr>
             </thead>
             <tbody>
+            {% if device.starters.starters[device2] %}
             {% for starter in device.starters.starters[device2] %}
+                {% if starter != "pause" %}
                 <tr style="page-break-inside: avoid; color: #656d78;">
                     <td style="padding-top: 10px; width: 20%;">{{ starter.id }}</td>
                     <td style="padding-top: 10px; width: 20%;">{{ starter.firstname }}</td>
@@ -42,11 +44,19 @@
                     <td style="padding-top: 10px; width: 20%;">{{ starter.category }}</td>
                     <td style="padding-top: 10px; width: 20%;"></td>
                 </tr>
-
+                {% else %}
+                    <tr style="page-break-inside: avoid; color: #656d78;">
+                        <td style="padding-top: 10px; width: 20%;" colspan="6">{{ starter }}</td>
+                    </tr>
+                {% endif %}
             {% else %}
                 <h4>{{ 'egt.judging.pause'|trans }}
                 </h4>
             {% endfor %}
+            {% else %}
+                <h4>{{ 'egt.judging.pause'|trans }}
+                </h4>
+            {% endif %}
             </tbody>
         </table>
     {% endfor %}

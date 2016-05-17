@@ -657,7 +657,7 @@ class egt
             ->andWhere('de.competitionPlace = :competitionPlace')
             ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
-var_dump($competitionPlace);
+
         if ($starters) {
             foreach ($starters as $starter) {
                 $return[$starter['devicenumber']][] = $starter;
@@ -675,14 +675,18 @@ var_dump($competitionPlace);
             $round = 0;
 
             foreach ($devices as $key => $device) {
-                $startersDevice = $return[$device];
-
-                if ($round > count($startersDevice)) {
-                    $round -= count($startersDevice);
+                if(array_key_exists($device, $return)) {
+                    $startersDevice = $return[$device];
                 }
 
-                $splice = array_splice($startersDevice, 0, $round);
-                $return[$device] = array_merge($startersDevice, $splice);
+                if(isset($startersDevice)) {
+                    if ($round > count($startersDevice)) {
+                        $round -= count($startersDevice);
+                    }
+
+                    $splice = array_splice($startersDevice, 0, $round);
+                    $return[$device] = array_merge($startersDevice, $splice);
+                }
                 $round++;
             }
 
