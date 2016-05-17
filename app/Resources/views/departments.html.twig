@@ -24,15 +24,16 @@
                 });
             {% endfor %}
 
-            $(document).on('startDepartment', function () {
+            $(document).on('startDepartment', function (competitionPlace) {
                 console.log('start');
-                session.publish('judging/topic/{{ app.request.get('compid') }}', {
+                console.log(competitionPlace);
+                session.publish('judging/topic/{{ app.request.get('compid') }}/' + competitionPlace, {
                     method: "startDepartment"
                 });
             });
 
-            $(document).on('reloadStarters', function () {
-                session.publish('judging/topic/{{ app.request.get('compid') }}', {
+            $(document).on('reloadStarters', function (competitionPlace) {
+                session.publish('judging/topic/{{ app.request.get('compid') }}/' + competitionPlace, {
                     method: "reloadStarters"
                 });
             });
@@ -168,6 +169,7 @@
             });
 
             $('tbody').on('click', 'td button.start', function () {
+                var self = this;
                 var table = $(this).parent().parent().parent().parent().DataTable();
                 var dep_id = table.cell($(this).parent().parent(), 0).data();
                 $.ajax({
@@ -176,7 +178,8 @@
                 }).success(function (data) {
                     showFlashbag();
                     $('.panel-refresh').click();
-                    $(document).trigger('startDepartment');
+                    console.log($(self).data('competitionplace'));
+                    $(document).trigger('startDepartment', $(self).data('competitionplace'));
                 });
             });
 

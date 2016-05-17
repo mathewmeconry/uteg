@@ -67,7 +67,7 @@ class judgingTopic implements TopicInterface
                     $connection->event($topic->getId(), ['method' => 'changeState', 'msg' => 'ok']);
                     break;
                 case 'amIfinished':
-                    $connection->event($topic->getId(), ['method' => 'amIfinished', 'msg' => $this->getState($comp, $event['device'])]);
+                    $connection->event($topic->getId(), ['method' => 'amIfinished', 'msg' => $this->getState($comp, $competitionPlace, $event['device'])]);
                     break;
                 case 'reloadStarters':
                     $topic->broadcast([
@@ -140,7 +140,6 @@ class judgingTopic implements TopicInterface
     private function allFinished($comp, $competitionPlace)
     {
         $finished = true;
-
         foreach ($this->states[$comp][$competitionPlace] as $device) {
             if ($device === 0) {
                 $finished = false;
@@ -167,7 +166,9 @@ class judgingTopic implements TopicInterface
     private function initializeIfNot($comp, $competitionPlace)
     {
         if (!isset($this->states[$comp])) {
-            $this->initializeStates($comp, $competitionPlace);
+            if(!isset($this->states[$comp][$competitionPlace])) {
+                $this->initializeStates($comp, $competitionPlace);
+            }
         }
     }
 
@@ -175,7 +176,7 @@ class judgingTopic implements TopicInterface
     {
         if($this->getDepartments($comp, $competitionPlace)) {
             $this->states[$comp] = array();
-            $this->state[$comp][$competitionPlace] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
+            $this->states[$comp][$competitionPlace] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
             if ($this->getGender($comp, $competitionPlace) === "male") {
                 $this->states[$comp][5] = 0;
             }

@@ -49,7 +49,7 @@ class DepartmentController extends DefaultController
 
         foreach ($deps as $dep) {
             if($dep->getStarted() === false && $dep->getEnded() == false) {
-                $state = '<button class="btn btn-primary btn-condensed btn-icon start"><i class="fa fa-play"></i><span>'.$translator->trans('departments.start', array(), 'uteg').'</span></button>';
+                $state = '<button class="btn btn-primary btn-condensed btn-icon start" data-competitionPlace="'.$dep->getCompetitionPlace().'"><i class="fa fa-play"></i><span>'.$translator->trans('departments.start', array(), 'uteg').'</span></button>';
             } elseif($dep->getStarted() === true && $dep->getEnded() == false) {
                 $state = '<button class="btn btn-warning btn-condensed btn-icon"><i class="fa fa-hourglass-half"></i><span>'.$translator->trans('departments.running', array(), 'uteg').'</span></button>';;
             } else {
