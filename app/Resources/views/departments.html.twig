@@ -18,9 +18,11 @@
 {% block script %}
     <script>
         function socket(session) {
-            session.subscribe('judging/topic/{{ app.request.get('compid') }}', function (uri, payload) {
+            {% for i in 1..comp.countCompetitionPlace %}
+                session.subscribe('judging/topic/{{ app.request.get('compid') }}/{{ i }}', function (uri, payload) {
 
-            });
+                });
+            {% endfor %}
 
             $(document).on('startDepartment', function () {
                 console.log('start');

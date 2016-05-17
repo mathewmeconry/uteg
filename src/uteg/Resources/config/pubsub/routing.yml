@@ -1,7 +1,9 @@
 uteg_topic:
-    channel: judging/topic/{compid}
+    channel: judging/topic/{compid}/{competitionPlace}
     handler:
         callback: 'uteg.topic.judging'
     requirements:
         compid:
+            pattern: "\d+"
+        competitionPlace:
             pattern: "\d+"

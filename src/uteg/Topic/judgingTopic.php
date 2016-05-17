@@ -57,12 +57,13 @@ class judgingTopic implements TopicInterface
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
         $comp = $request->getAttributes()->get('compid');
-        if ($this->isAnyStarted($comp)) {
-            $this->initializeIfNot($comp);
+        $competitionPlace = $request->getAttributes()->get('competitionPlace');
+        if ($this->isAnyStarted($comp, $competitionPlace)) {
+            $this->initializeIfNot($comp, $competitionPlace);
 
             switch ($event['method']) {
                 case 'changeState':
-                    $this->changeState($comp, $event['device'], $event['state']);
+                    $this->changeState($comp, $competitionPlace, $event['device'], $event['state']);
                     $connection->event($topic->getId(), ['method' => 'changeState', 'msg' => 'ok']);
                     break;
                 case 'amIfinished':
@@ -70,18 +71,20 @@ class judgingTopic implements TopicInterface
                     break;
                 case 'reloadStarters':
                     $topic->broadcast([
-                        'method' => 'reloadStarters'
+                        'method' => 'reloadStarters',
+                        'competitionPlace' => $competitionPlace
                     ]);
                     break;
                 case 'startDepartment':
                     $topic->broadcast([
-                        'method' => 'startDepartment'
+                        'method' => 'startDepartment',
+                        'competitionPlace' => $competitionPlace
                     ]);
                     break;
             }
 
-            if ($this->allFinished($comp)) {
-                $this->turn($comp, $topic);
+            if ($this->allFinished($comp, $competitionPlace)) {
+                $this->turn($comp, $competitionPlace, $topic);
             }
 
 
@@ -100,18 +103,18 @@ class judgingTopic implements TopicInterface
         return 'uteg.topic.judging';
     }
 
-    private function turn($comp, $topic)
+    private function turn($comp, $competitionPlace, $topic)
     {
-        $this->initializeStates($comp);
+        $this->initializeStates($comp, $competitionPlace);
         $ended = true;
 
-        $departments = $this->getDepartments($comp);
+        $departments = $this->getDepartments($comp, $competitionPlace);
 
         foreach ($departments as $department) {
             $dep = $this->em->getRepository('uteg:Department')->findOneBy(array("id" => $department['id']));
             $dep->increaseRound();
 
-            if ($this->isEnded($dep->getRound($comp), $dep->getGender($comp))) {
+            if ($this->isEnded($dep->getRound($comp, $competitionPlace), $dep->getGender($comp, $competitionPlace))) {
                 $dep->setEnded(1);
             } else {
                 $ended = false;
@@ -123,21 +126,22 @@ class judgingTopic implements TopicInterface
         $this->em->flush();
 
         if ($ended) {
-            $this->ended($comp, $topic);
+            $this->ended($comp, $competitionPlace, $topic);
         } else {
             var_dump($this->states);
             $topic->broadcast([
                 'method' => 'turn',
-                'round' => $this->getRound($comp)
+                'round' => $this->getRound($comp),
+                'competitionPlace' => $competitionPlace
             ]);
         }
     }
 
-    private function allFinished($comp)
+    private function allFinished($comp, $competitionPlace)
     {
         $finished = true;
 
-        foreach ($this->states[$comp] as $device) {
+        foreach ($this->states[$comp][$competitionPlace] as $device) {
             if ($device === 0) {
                 $finished = false;
             }
@@ -146,40 +150,41 @@ class judgingTopic implements TopicInterface
         return $finished;
     }
 
-    private function changeState($comp, $device, $state)
+    private function changeState($comp, $competitionPlace, $device, $state)
     {
-        $this->states[$comp][$device] = $state;
+        $this->states[$comp][$competitionPlace][$device] = $state;
     }
 
-    private function getState($comp, $device)
+    private function getState($comp, $competitionPlace, $device)
     {
-        if(isset($this->states[$comp][$device])) {
-            return $this->states[$comp][$device];
+        if(isset($this->states[$comp][$competitionPlace][$device])) {
+            return $this->states[$comp][$competitionPlace][$device];
         } else {
             return 0;
         }
     }
 
-    private function initializeIfNot($comp)
+    private function initializeIfNot($comp, $competitionPlace)
     {
         if (!isset($this->states[$comp])) {
-            $this->initializeStates($comp);
+            $this->initializeStates($comp, $competitionPlace);
         }
     }
 
-    private function initializeStates($comp)
+    private function initializeStates($comp, $competitionPlace)
     {
-        if($this->getDepartments($comp)) {
-            $this->states[$comp] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
-            if ($this->getGender($comp) === "male") {
+        if($this->getDepartments($comp, $competitionPlace)) {
+            $this->states[$comp] = array();
+            $this->state[$comp][$competitionPlace] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
+            if ($this->getGender($comp, $competitionPlace) === "male") {
                 $this->states[$comp][5] = 0;
             }
         }
     }
 
-    private function isAnyStarted($comp)
+    private function isAnyStarted($comp, $competitionPlace)
     {
-        $departments = $this->getDepartments($comp);
+        $departments = $this->getDepartments($comp, $competitionPlace);
 
         if (count($departments) > 0) {
             return true;
@@ -188,11 +193,11 @@ class judgingTopic implements TopicInterface
         }
     }
 
-    private function getGender($comp)
+    private function getGender($comp, $competitionPlace)
     {
         $gender = "female";
 
-        $departments = $this->getDepartments($comp);
+        $departments = $this->getDepartments($comp, $competitionPlace);
 
         foreach ($departments as $department) {
             if ($department['gender'] === "male") {
@@ -203,11 +208,11 @@ class judgingTopic implements TopicInterface
         return $gender;
     }
 
-    private function getRound($comp)
+    private function getRound($comp, $competitionPlace)
     {
         $round = 0;
 
-        $departments = $this->getDepartments($comp);
+        $departments = $this->getDepartments($comp, $competitionPlace);
 
         foreach ($departments as $department) {
             $round = $department['round'];
@@ -229,16 +234,17 @@ class judgingTopic implements TopicInterface
         return $finished;
     }
 
-    private function ended($comp, $topic)
+    private function ended($comp, $competitionPlace, $topic)
     {
         $topic->broadcast([
-            'method' => 'ended'
+            'method' => 'ended',
+            'competitionPlace' => $competitionPlace
         ]);
 
-        unset($this->states[$comp]);
+        unset($this->states[$comp][$competitionPlace]);
     }
 
-    private function getDepartments($comp) {
+    private function getDepartments($comp, $competitionPlace) {
         return $this->em
             ->getRepository('uteg:Department')
             ->createQueryBuilder('d')
@@ -246,7 +252,8 @@ class judgingTopic implements TopicInterface
             ->where('d.started = 1')
             ->andWhere('d.ended = 0')
             ->andWhere('d.competition = :competition')
-            ->setParameters(array('competition' => $comp))
+            ->andWhere('d.competitionPlace = :competitionPlace')
+            ->setParameters(array('competition' => $comp, 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
     }
 }

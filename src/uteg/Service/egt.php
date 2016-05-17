@@ -653,7 +653,7 @@ class egt
             ->andWhere('de.competitionPlace = :competitionPlace')
             ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
-
+var_dump($competitionPlace);
         if ($starters) {
             foreach ($starters as $starter) {
                 $return[$starter['devicenumber']][] = $starter;
@@ -669,6 +669,7 @@ class egt
             $devices = array_replace($slice, $devices);
 
             $round = 0;
+
             foreach ($devices as $key => $device) {
                 $startersDevice = $return[$device];
 

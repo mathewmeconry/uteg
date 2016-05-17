@@ -22,36 +22,39 @@
     <script>
         {% if competitionPlace > 0 %}
             function socket(session) {
-                session.subscribe('judging/topic/{{ compid }}', function (uri, payload) {
-                    switch (payload.method) {
-                        case "amIfinished":
-                            if (payload.msg == 1) {
-                                $('#message-box-wait').addClass('open');
-                            } else {
-                                $('#message-box-wait').removeClass('open');
-                            }
-                            break;
-                        case 'reloadStarters':
-                            $('.message-box').removeClass('open');
-                            $('#message-box-refresh').addClass('open');
-                            setTimeout(function () {
-                                window.location.reload();
-                            }, 10000);
-                            break;
-                        case 'startDepartment':
-                            $('.message-box').removeClass('open');
-                            $('#message-box-start').addClass('open');
-                            setTimeout(function () {
-                                window.location.reload();
-                            }, 5000);
-                            break;
-                        case 'turn':
-                            turn(payload.round);
-                            break;
-                        case "ended":
-                            finished();
-                            break;
+                session.subscribe('judging/topic/{{ compid }}/{{ competitionPlace }}', function (uri, payload) {
+                    if({{ competitionPlace }} === payload.competitionPlace)
+                    {
+                        switch (payload.method) {
+                            case "amIfinished":
+                                if (payload.msg == 1) {
+                                    $('#message-box-wait').addClass('open');
+                                } else {
+                                    $('#message-box-wait').removeClass('open');
+                                }
+                                break;
+                            case 'reloadStarters':
+                                $('.message-box').removeClass('open');
+                                $('#message-box-refresh').addClass('open');
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 10000);
+                                break;
+                            case 'startDepartment':
+                                $('.message-box').removeClass('open');
+                                $('#message-box-start').addClass('open');
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 5000);
+                                break;
+                            case 'turn':
+                                turn(payload.round);
+                                break;
+                            case "ended":
+                                finished();
+                                break;
 
+                        }
                     }
                 });
 
