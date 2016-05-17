@@ -8,8 +8,10 @@
 
 namespace uteg\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
+use Symfony\Component\Translation\LoggingTranslator;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -22,12 +24,16 @@ class MenuEvent extends Event
     private $factory;
     private $menu;
     private $request;
+    private $em;
+    private $translator;
 
-    public function __construct(FactoryInterface $factory, ItemInterface $menu, Request $request)
+    public function __construct(FactoryInterface $factory, ItemInterface $menu, Request $request, EntityManager $em, LoggingTranslator $translator)
     {
         $this->factory = $factory;
         $this->menu = $menu;
         $this->request = $request;
+        $this->em = $em;
+        $this->translator = $translator;
     }
 
     public function getFactory()
@@ -43,5 +49,15 @@ class MenuEvent extends Event
     public function getRequest()
     {
         return $this->request;
+    }
+    
+    public function getEntityManager()
+    {
+        return $this->em;
+    }
+    
+    public function getTranslator()
+    {
+        return $this->translator;
     }
 }

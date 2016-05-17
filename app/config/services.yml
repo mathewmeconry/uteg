@@ -30,7 +30,7 @@ services:
 
     uteg.menu_builder:
         class: uteg\Menu\MenuBuilder
-        arguments: ["@doctrine.orm.entity_manager","@knp_menu.factory"]
+        arguments: ["@doctrine.orm.entity_manager","@knp_menu.factory", "@translator"]
 
     uteg.menu.mainmenu:
         class: uteg\Menu\MenuBuilder

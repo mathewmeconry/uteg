@@ -445,6 +445,7 @@ egt:
         ranking.male: 'Male'
         ranking.female: 'Female'
         judging: 'Judging'
+        judging.competitionPlace: 'Competition Place %number%'
     judges:
         title: 'Judges'
         header: 'Judges'

@@ -58,7 +58,10 @@ class egt
         $menu['nav.reporting']->addChild('egt.nav.ranking', array('uri' => '#', 'icon' => 'trophy', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
         $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.male', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'male'), 'icon' => 'male'));
         $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.female', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'female'), 'icon' => 'female'));
-        $menu['nav.reporting']->addChild('egt.nav.judging', array('route' => 'judgingReport', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'format' => 'pdf'), 'icon' => 'gavel'));
+        $menu['nav.reporting']->addChild('egt.nav.judging', array('uri' => '#', 'icon' => 'gavel', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        for ($i = 1; $i <= $event->getEntityManager()->getRepository('uteg:Competition')->find($event->getRequest()->get('compid'))->getCountCompetitionPlace(); $i++) {
+            $menu['nav.reporting']['egt.nav.judging']->addChild($event->getTranslator()->trans('egt.nav.judging.competitionPlace', array('%number%' => $i), 'uteg'), array('route' => 'judgingReport', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'competitionPlace' => $i, 'format' => 'pdf')));
+        }
     }
 
     public function getS2c()
@@ -571,7 +574,8 @@ class egt
             ->where('d.started = 1')
             ->andWhere('d.ended = 0')
             ->andWhere('d.competition = :competition')
-            ->setParameters(array('competition' => $competition->getId()))
+            ->andWhere('d.competitionPlace = :competitionPlace')
+            ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
 
         foreach ($departments as $department) {
