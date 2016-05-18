@@ -24,15 +24,15 @@
                 });
             {% endfor %}
 
-            $(document).on('startDepartment', function (competitionPlace) {
+            $(document).on('startDepartment', function (event, competitionPlace) {
                 console.log('start');
-                console.log(competitionPlace);
+                console.log('judging/topic/{{ app.request.get('compid') }}/' + competitionPlace);
                 session.publish('judging/topic/{{ app.request.get('compid') }}/' + competitionPlace, {
                     method: "startDepartment"
                 });
             });
 
-            $(document).on('reloadStarters', function (competitionPlace) {
+            $(document).on('reloadStarters', function (event, competitionPlace) {
                 session.publish('judging/topic/{{ app.request.get('compid') }}/' + competitionPlace, {
                     method: "reloadStarters"
                 });

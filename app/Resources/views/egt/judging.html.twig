@@ -23,7 +23,8 @@
         {% if competitionPlace > 0 %}
             function socket(session) {
                 session.subscribe('judging/topic/{{ compid }}/{{ competitionPlace }}', function (uri, payload) {
-                    if({{ competitionPlace }} === payload.competitionPlace)
+                    console.log(payload);
+                    if("{{ competitionPlace }}" === payload.competitionPlace)
                     {
                         switch (payload.method) {
                             case "amIfinished":
