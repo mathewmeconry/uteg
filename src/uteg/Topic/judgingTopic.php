@@ -60,7 +60,7 @@ class judgingTopic implements TopicInterface
         $competitionPlace = $request->getAttributes()->get('competitionPlace');
         if ($this->isAnyStarted($comp, $competitionPlace)) {
             $this->initializeIfNot($comp, $competitionPlace);
-
+            
             switch ($event['method']) {
                 case 'changeState':
                     $this->changeState($comp, $competitionPlace, $event['device'], $event['state']);
@@ -156,7 +156,7 @@ class judgingTopic implements TopicInterface
 
     private function getState($comp, $competitionPlace, $device)
     {
-        if(isset($this->states[$comp][$competitionPlace][$device])) {
+        if (isset($this->states[$comp][$competitionPlace][$device])) {
             return $this->states[$comp][$competitionPlace][$device];
         } else {
             return 0;
@@ -165,8 +165,10 @@ class judgingTopic implements TopicInterface
 
     private function initializeIfNot($comp, $competitionPlace)
     {
-        if (!isset($this->states[$comp])) {
-            if(!isset($this->states[$comp][$competitionPlace])) {
+        if (!array_key_exists($comp, $this->states)) {
+            $this->initializeStates($comp, $competitionPlace);
+        } else {
+            if (!array_key_exists($competitionPlace, $this->states[$comp])) {
                 $this->initializeStates($comp, $competitionPlace);
             }
         }
@@ -174,11 +176,17 @@ class judgingTopic implements TopicInterface
 
     private function initializeStates($comp, $competitionPlace)
     {
-        if($this->getDepartments($comp, $competitionPlace)) {
-            $this->states[$comp] = array();
-            $this->states[$comp][$competitionPlace] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
-            if ($this->getGender($comp, $competitionPlace) === "male") {
-                $this->states[$comp][5] = 0;
+        if ($this->isAnyStarted($comp, $competitionPlace)) {
+            if (!array_key_exists($comp, $this->states)) {
+                $this->states[$comp] = array();
+            }
+
+            if (!array_key_exists($competitionPlace, $this->states[$comp])) {
+                $this->states[$comp][$competitionPlace] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
+
+                if ($this->getGender($comp, $competitionPlace) === "male") {
+                    $this->states[$comp][5] = 0;
+                }
             }
         }
     }
@@ -245,7 +253,8 @@ class judgingTopic implements TopicInterface
         unset($this->states[$comp][$competitionPlace]);
     }
 
-    private function getDepartments($comp, $competitionPlace) {
+    private function getDepartments($comp, $competitionPlace)
+    {
         return $this->em
             ->getRepository('uteg:Department')
             ->createQueryBuilder('d')
