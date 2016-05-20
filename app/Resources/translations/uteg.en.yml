@@ -530,6 +530,8 @@ egt:
         notstartedContent: 'Please wait...'
         chooseCompetitionPlace: 'Choose a competition place'
         competitionPlace: 'Competition place'
+        minimize: 'Minimize'
+        pleaseWait: 'Please wait'
         table:
             id: 'ID'
             firstname: 'Firstname'

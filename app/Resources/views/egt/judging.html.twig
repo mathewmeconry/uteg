@@ -159,6 +159,7 @@
                 $('li.active').removeClass('active');
                 $('#' + round + '_li a').trigger('click');
                 $('#message-box-wait').removeClass('open');
+                $.noty.closeAll();
 
                 if($('#' + round + '_div').data('pause')) {
                     $('#' + round + '_button').trigger('finished');
@@ -190,6 +191,15 @@
                 $('#{{ round }}_div table tbody tr td input').prop('disabled', false);
                 $('.grade').mask("99.99");
                 $('.grade').tooltip();
+
+                $('#minimize').click(function() {
+                   $('#message-box-wait').removeClass('open');
+                    noty({
+                        text: "{{ 'egt.judging.pleaseWait' | trans }}",
+                        layout: 'topCenter',
+                        type: 'info'
+                    });
+                });
 
                 saveClick();
             });
@@ -271,6 +281,7 @@
                 <div class="mb-content">
                 </div>
                 <div class="mb-footer">
+                    <button id="minimize" class="btn btn-default btn-lg pull-right logout">{{ "egt.judging.minimize" | trans }}</button>
                 </div>
             </div>
         </div>

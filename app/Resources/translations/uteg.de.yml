@@ -529,6 +529,8 @@ egt:
         notstartedContent: 'Bitte warten...'
         chooseCompetitionPlace: 'Wähle einen Wettkampfplatz'
         competitionPlace: 'Wettkampfplatz'
+        minimize: 'Minimieren'
+        pleaseWait: 'Bitte warten'
         table:
             id: 'ID'
             firstname: 'Vornamen'
