@@ -4,6 +4,7 @@ namespace uteg\Menu;
 
 use Doctrine\ORM\EntityManager;
 use Knp\Menu\FactoryInterface;
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,7 @@ class MenuBuilder extends ContainerAware
     private $em;
     private $translator;
 
-    public function __construct(EntityManager $em, FactoryInterface $factory, LoggingTranslator $translator)
+    public function __construct(EntityManager $em, FactoryInterface $factory, Translator $translator)
     {
         $this->em = $em;
         $this->factory = $factory;
