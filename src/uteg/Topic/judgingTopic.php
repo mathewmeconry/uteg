@@ -65,6 +65,7 @@ class judgingTopic implements TopicInterface
                 case 'changeState':
                     $this->changeState($comp, $competitionPlace, $event['device'], $event['state']);
                     $connection->event($topic->getId(), ['method' => 'changeState', 'msg' => 'ok']);
+                    var_dump($this->states);
                     break;
                 case 'amIfinished':
                     $connection->event($topic->getId(), ['method' => 'amIfinished', 'msg' => $this->getState($comp, $competitionPlace, $event['device'])]);
@@ -105,6 +106,7 @@ class judgingTopic implements TopicInterface
 
     private function turn($comp, $competitionPlace, $topic)
     {
+        $this->resetStates($comp, $competitionPlace);
         $this->initializeStates($comp, $competitionPlace);
         $ended = true;
 
@@ -131,7 +133,7 @@ class judgingTopic implements TopicInterface
             var_dump($this->states);
             $topic->broadcast([
                 'method' => 'turn',
-                'round' => $this->getRound($comp),
+                'round' => $this->getRound($comp, $competitionPlace),
                 'competitionPlace' => $competitionPlace
             ]);
         }
@@ -191,10 +193,13 @@ class judgingTopic implements TopicInterface
         }
     }
 
+    private function resetStates($comp, $competitionPlace) {
+        unset($this->states[$comp][$competitionPlace]);
+    }
+
     private function isAnyStarted($comp, $competitionPlace)
     {
         $departments = $this->getDepartments($comp, $competitionPlace);
-
         if (count($departments) > 0) {
             return true;
         } else {
