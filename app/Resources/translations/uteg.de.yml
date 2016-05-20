@@ -419,7 +419,7 @@ device:
     rings: 'Schaukelringe'
     ringsShort: 'SR'
     vault: 'Sprung'
-    vaultShor: 'SP'
+    vaultShort: 'SP'
     parallel-bars: 'Barren'
     parallel-barsShort: 'BA'
     horizontal-bar: 'Reck'
