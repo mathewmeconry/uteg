@@ -803,6 +803,16 @@ class egt
     private function getRankingArray(\uteg\Entity\Competition $competition, \uteg\Entity\Category $category, $gender)
     {
         $em = $this->container->get('doctrine')->getManager();
+        $deps = $competition->getDepartmentsByCatGender($category, $gender);
+        $running = false;
+        $round = 0;
+
+        foreach ($deps as $dep) {
+            if($dep->getStarted() && !$dep->getEnded()) {
+                $running = true;
+                $round = $dep->getRound() - 1;
+            }
+        }
         $default = array(1 => number_format((float)"0.00", 2, '.', ''), 2 => number_format((float)"0.00", 2, '.', ''), 3 => number_format((float)"0.00", 2, '.', ''), 5 => number_format((float)"0.00", 2, '.', ''));
 
         if ($gender === "male") {
@@ -829,8 +839,13 @@ class egt
                 ->select('g.grade as grade, d.number as dnumber, d.name as device')
                 ->join('g.device', 'd')
                 ->where('g.s2c = :s2c')
-                ->setParameter('s2c', $starter['s2cid'])
-                ->getQuery()->getResult();
+                ->setParameter('s2c', $starter['s2cid']);
+
+                if($running) {
+                    $grades->setMaxResults($round);
+                }
+
+                $grades->getQuery()->getResult();
 
             $sum = 0;
 
