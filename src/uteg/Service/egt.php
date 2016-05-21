@@ -810,7 +810,7 @@ class egt
         foreach ($deps as $dep) {
             if($dep->getStarted() && !$dep->getEnded()) {
                 $running = true;
-                $round = $dep->getRound() - 1;
+                $round = $dep->getRound();
             }
         }
         $default = array(1 => number_format((float)"0.00", 2, '.', ''), 2 => number_format((float)"0.00", 2, '.', ''), 3 => number_format((float)"0.00", 2, '.', ''), 5 => number_format((float)"0.00", 2, '.', ''));
