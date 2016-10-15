@@ -19,7 +19,7 @@ class MenuBuilder extends ContainerAware
     private $em;
     private $translator;
 
-    public function __construct(EntityManager $em, FactoryInterface $factory, Translator $translator)
+    public function __construct(EntityManager $em, FactoryInterface $factory, $translator)
     {
         $this->em = $em;
         $this->factory = $factory;

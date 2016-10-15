@@ -28,7 +28,7 @@ class MenuEvent extends Event
     private $em;
     private $translator;
 
-    public function __construct(FactoryInterface $factory, ItemInterface $menu, Request $request, EntityManager $em, Translator $translator)
+    public function __construct(FactoryInterface $factory, ItemInterface $menu, Request $request, EntityManager $em, $translator)
     {
         $this->factory = $factory;
         $this->menu = $menu;
