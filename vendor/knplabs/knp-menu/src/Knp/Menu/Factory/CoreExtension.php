@@ -22,6 +22,7 @@ class CoreExtension implements ExtensionInterface
             array(
                 'uri' => null,
                 'label' => null,
+                'icon' => null,
                 'attributes' => array(),
                 'linkAttributes' => array(),
                 'childrenAttributes' => array(),
@@ -46,6 +47,7 @@ class CoreExtension implements ExtensionInterface
         $item
             ->setUri($options['uri'])
             ->setLabel($options['label'])
+            ->setIcon($options['icon'])
             ->setAttributes($options['attributes'])
             ->setLinkAttributes($options['linkAttributes'])
             ->setChildrenAttributes($options['childrenAttributes'])
