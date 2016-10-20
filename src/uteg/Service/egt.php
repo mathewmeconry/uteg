@@ -701,6 +701,7 @@ class egt
             $round = 0;
 
             foreach ($devices as $key => $device) {
+
                 if(array_key_exists($device, $return)) {
                     $startersDevice = $return[$device];
                 }
@@ -712,7 +713,11 @@ class egt
 
                     $splice = array_splice($startersDevice, 0, $round);
                     $return[$device] = array_merge($startersDevice, $splice);
+                } else {
+                    $return[$device] = Array('pause');
                 }
+
+                unset($startersDevice);
                 $round++;
             }
 

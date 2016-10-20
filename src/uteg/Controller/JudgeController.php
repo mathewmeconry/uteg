@@ -115,7 +115,7 @@ class JudgeController extends DefaultController
             throw new AccessDeniedException();
         }
 
-        return $module->judging($request, $comp, $device, $j2c, $competitionPlace);
+        return $module->judging($request, $comp, $device, $competitionPlace);
     }
 
     /**

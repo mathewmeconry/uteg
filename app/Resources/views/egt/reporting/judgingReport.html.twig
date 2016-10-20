@@ -33,26 +33,26 @@
             </tr>
             </thead>
             <tbody>
-            {% if device.starters.starters[device2] %}
-            {% for starter in device.starters.starters[device2] %}
-                {% if starter != "pause" %}
-                <tr style="page-break-inside: avoid; color: #656d78;">
-                    <td style="padding-top: 10px; width: 20%;">{{ starter.id }}</td>
-                    <td style="padding-top: 10px; width: 20%;">{{ starter.firstname }}</td>
-                    <td style="padding-top: 10px; width: 20%;">{{ starter.lastname }}</td>
-                    <td style="padding-top: 10px; width: 20%;">{{ starter.club }}</td>
-                    <td style="padding-top: 10px; width: 20%;">{{ starter.category }}</td>
-                    <td style="padding-top: 10px; width: 20%;"></td>
-                </tr>
-                {% else %}
+            {% if device.starters.starters[device2] is defined %}
+                {% for starter in device.starters.starters[device2] %}
+                    {% if starter != "pause" %}
                     <tr style="page-break-inside: avoid; color: #656d78;">
-                        <td style="padding-top: 10px; width: 20%;" colspan="6">{{ starter }}</td>
+                        <td style="padding-top: 10px; width: 20%;">{{ starter.id }}</td>
+                        <td style="padding-top: 10px; width: 20%;">{{ starter.firstname }}</td>
+                        <td style="padding-top: 10px; width: 20%;">{{ starter.lastname }}</td>
+                        <td style="padding-top: 10px; width: 20%;">{{ starter.club }}</td>
+                        <td style="padding-top: 10px; width: 20%;">{{ starter.category }}</td>
+                        <td style="padding-top: 10px; width: 20%;"></td>
                     </tr>
-                {% endif %}
-            {% else %}
-                <h4>{{ 'egt.judging.pause'|trans }}
-                </h4>
-            {% endfor %}
+                    {% else %}
+                        <tr style="page-break-inside: avoid; color: #656d78;">
+                            <td style="padding-top: 10px; width: 20%;" colspan="6">{{ starter }}</td>
+                        </tr>
+                    {% endif %}
+                {% else %}
+                    <h4>{{ 'egt.judging.pause'|trans }}
+                    </h4>
+                {% endfor %}
             {% else %}
                 <h4>{{ 'egt.judging.pause'|trans }}
                 </h4>
