@@ -91,4 +91,16 @@ class ServiceController extends DefaultController
 
         return $module->reportingDivisionsPost($request, $comp);
     }
+    
+    /**
+     * @Route("{compid}/grades/enter/{competitionPlace}", name="enterGrades")
+     * @Method("GET")
+     */
+    public function enterGradesAction(Request $request, $compid, $competitionPlace) {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+        $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+
+        return $module->enterGrades($request, $comp, $competitionPlace);
+    }
 }

@@ -436,6 +436,7 @@ reporting:
 
 egt:
     nav:
+        grades: 'Enter Grades'
         judges: 'Judges'
         grouping: 'Starter Grouping'
         departments: 'Departments'
@@ -446,6 +447,9 @@ egt:
         ranking.female: 'Female'
         judging: 'Judging'
         judging.competitionPlace: 'Competition Place %number%'
+    grades:
+        title: 'Enter Grades'
+        header: 'Enter Grades'
     judges:
         title: 'Judges'
         header: 'Judges'

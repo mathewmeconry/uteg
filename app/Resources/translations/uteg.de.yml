@@ -436,6 +436,7 @@ reporting:
 
 egt:
     nav:
+        grades: 'Noteneingabe'
         judges: 'Wertungsrichter'
         grouping: 'Riegeneinteilung'
         departments: 'Abteilungen'

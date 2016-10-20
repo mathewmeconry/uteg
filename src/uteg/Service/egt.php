@@ -45,6 +45,10 @@ class egt
     public function onAddServiceMenu(MenuEvent $event)
     {
         $menu = $event->getMenu();
+        $menu->addChild('egt.nav.grades', array('uri' => '#', 'icon' => 'graduation-cap', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        for ($i = 1; $i <= $event->getEntityManager()->getRepository('uteg:Competition')->find($event->getRequest()->get('compid'))->getCountCompetitionPlace(); $i++) {
+            $menu['egt.nav.grades']->addChild($event->getTranslator()->trans('egt.nav.judging.competitionPlace', array('%number%' => $i), 'uteg'), array('route' => 'enterGrades', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'competitionPlace' => $i)));
+        }
         $menu->addChild('egt.nav.judges', array('route' => 'judges', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'gavel', 'labelAttributes' => array('class' => 'xn-text')));
         $menu->addChild('egt.nav.grouping', array('uri' => '#', 'icon' => 'object-group', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
         $menu['egt.nav.grouping']->addChild('egt.nav.departments', array('route' => 'department', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
@@ -524,7 +528,7 @@ class egt
         ));
     }
 
-    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, \uteg\Entity\Judges2Competitions $j2c, $competitionPlace)
+    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $competitionPlace)
     {
         if($competitionPlace > 0) {
             $judgingArr = $this->generateJudgingArray($device, $competition, $competitionPlace);
@@ -535,28 +539,9 @@ class egt
         }
 
         if (isset($judgingArr['error'])) {
-            return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
-                "compid" => $competition->getId(),
-                "device" => $j2c->getDevice(),
-                "deviceid" => $j2c->getDevice()->getId(),
-                "starters" => array(),
-                "devices" => array(),
-                "round" => array(),
-                "error" => $judgingArr['error'],
-                "countCompetitionPlace" => $competition->getCountCompetitionPlace(),
-                "competitionPlace" => $competitionPlace
-            ));
+            return $this->container->get('templating')->renderResponse('egt/judging.html.twig', $this->getJudgingOptions($competition, $device, $competitionPlace));
         }
-        return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
-            "compid" => $competition->getId(),
-            "device" => $j2c->getDevice(),
-            "deviceid" => $j2c->getDevice()->getId(),
-            "starters" => $judgingArr['starters'],
-            "devices" => $judgingArr['devices'],
-            "round" => $judgingArr['round'],
-            "countCompetitionPlace" => $competition->getCountCompetitionPlace(),
-            "competitionPlace" => $competitionPlace
-        ));
+        return $this->container->get('templating')->renderResponse('egt/judging.html.twig', $this->getJudgingOptions($competition, $device, $competitionPlace));
     }
 
     public function judgingReport(Request $request, \uteg\Entity\Competition $competition, $competitionPlace, $format) {
@@ -622,6 +607,47 @@ class egt
         }
 
         return new Response(json_encode($error));
+    }
+
+    public function enterGrades(Request $request, \uteg\Entity\Competition $competition, $competitionPlace)
+    {
+        
+        //return $this->container->get('templating')->renderResponse('egt/enterGrades.html.twig', );
+    }
+
+    private function getJudgingOptions(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $competitionPlace)
+    {
+        if($competitionPlace > 0) {
+            $judgingArr = $this->generateJudgingArray($device, $competition, $competitionPlace);
+        } else {
+            $judgingArr['starters'] = [];
+            $judgingArr['devices'] = [];
+            $judgingArr['round'] = 0;
+        }
+
+        if (isset($judgingArr['error'])) {
+            return  array(
+                "compid" => $competition->getId(),
+                "device" => $device,
+                "deviceid" => $device->getId(),
+                "starters" => array(),
+                "devices" => array(),
+                "round" => array(),
+                "error" => $judgingArr['error'],
+                "countCompetitionPlace" => $competition->getCountCompetitionPlace(),
+                "competitionPlace" => $competitionPlace
+            );
+        }
+        return array(
+            "compid" => $competition->getId(),
+            "device" => $device,
+            "deviceid" => $device->getId(),
+            "starters" => $judgingArr['starters'],
+            "devices" => $judgingArr['devices'],
+            "round" => $judgingArr['round'],
+            "countCompetitionPlace" => $competition->getCountCompetitionPlace(),
+            "competitionPlace" => $competitionPlace
+        );
     }
 
     private function generateJudgingArray(\uteg\Entity\Device $device, \uteg\Entity\Competition $competition, $competitionPlace)
