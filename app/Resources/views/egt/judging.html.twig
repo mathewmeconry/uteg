@@ -59,7 +59,7 @@
                     }
                 });
 
-                $('.save').on('finished', function (e) {
+                $(document).on('finished', function (e) {
                     session.publish('judging/topic/{{ compid }}/{{ competitionPlace }}', {
                         method: "changeState",
                         device: {{ deviceid }},
@@ -142,7 +142,7 @@
                                     timeout: 5000
                                 });
                                 $('#message-box-wait').addClass('open');
-                                $(self).trigger('finished');
+                                $(document).trigger('finished');
                             }
                         }
                     });
@@ -161,8 +161,9 @@
                 $('#message-box-wait').removeClass('open');
                 $.noty.closeAll();
 
-                if($('#' + round + '_div').data('pause')) {
-                    $('#' + round + '_button').trigger('finished');
+                if($('#' + round + '_div').hasClass('pause')) {
+                    $('#message-box-wait').addClass('open');
+                    $(document).trigger('finished');
                 }
             }
 
@@ -177,19 +178,16 @@
                 {% if starter != 'pause' %}
                 $('#{{ loop.parent.key }}_table tbody').append('<tr><td>{{ starter.firstname }}</td><td>{{ starter.lastname }}</td><td>{{ starter.club }}</td><td>{{ starter.category }}</td><td><input name="grade" class="grade form-control" data-starter="{{ starter.id }}" data-toggle="tooltip" maxlength="5" min="1" max="5" pattern="((0)|(\d{1,2})([\.])(\d{2}))" placeholder="00.00" disabled/></tr>');
                 {% else %}
+                $('#{{ loop.parent.key }}_table').parent().addClass('pause');
                 $('#{{ loop.parent.key }}_table').parent().html('<h1>{{ 'egt.judging.pause'|trans }}<h1>');
-                $('#{{ loop.parent.key }}_table').parent().data('pause', true);
-                $('#{{ loop.parent.key }}_button').trigger('finished');
                 {% endif %}
                 {% else %}
+                $('#{{ loop.parent.key }}_table').parent().addClass('pause');
                 $('#{{ loop.parent.key }}_table').parent().html('<h1>{{ 'egt.judging.pause'|trans }}<h1>');
-                $('#{{ loop.parent.key }}_table').parent().data('pause', true);
-                $('#{{ loop.parent.key }}_button').trigger('finished');
                 {% endfor %}
                 {% else %}
+                $('#{{ key }}_div').addClass('pause');
                 $('#{{ key }}_div').html('<h1>{{ 'egt.judging.pause'|trans }}<h1>');
-                $('#{{ key }}_div').data('pause', true);
-                $('#{{ key }}_button').trigger('finished');
                 {% endfor %}
 
                 $('#{{ round }}_li').addClass('active');
@@ -206,6 +204,11 @@
                         type: 'info'
                     });
                 });
+
+                if($('#1_div').hasClass('pause')) {
+                    $('#message-box-wait').addClass('open');
+                    $(document).trigger('finished');
+                }
 
                 saveClick();
             });

@@ -64,11 +64,11 @@ class judgingTopic implements TopicInterface
             switch ($event['method']) {
                 case 'changeState':
                     $this->changeState($comp, $competitionPlace, $event['device'], $event['state']);
-                    $connection->event($topic->getId(), ['method' => 'changeState', 'msg' => 'ok']);
+                    $connection->event($topic->getId(), ['method' => 'changeState', 'msg' => 'ok', 'competitionPlace' => $competitionPlace]);
                     var_dump($this->states);
                     break;
                 case 'amIfinished':
-                    $connection->event($topic->getId(), ['method' => 'amIfinished', 'msg' => $this->getState($comp, $competitionPlace, $event['device'])]);
+                    $connection->event($topic->getId(), ['method' => 'amIfinished', 'msg' => $this->getState($comp, $competitionPlace, $event['device']), 'competitionPlace' => $competitionPlace]);
                     break;
                 case 'reloadStarters':
                     $topic->broadcast([
@@ -90,7 +90,7 @@ class judgingTopic implements TopicInterface
 
 
         } else {
-            $connection->event($topic->getId(), ['msg' => 'noneStarted']);
+            $connection->event($topic->getId(), ['msg' => 'noneStarted', 'competitionPlace' => $competitionPlace]);
         }
 
     }
