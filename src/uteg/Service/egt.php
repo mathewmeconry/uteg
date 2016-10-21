@@ -876,7 +876,7 @@ class egt
                     $grades->setMaxResults($round);
                 }
 
-                $grades->getQuery()->getResult();
+                $grades = $grades->getQuery()->getResult();
 
             $sum = 0;
 
