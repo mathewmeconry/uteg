@@ -15,7 +15,7 @@ parameters:
 gos_web_socket:
     server:
         port: 8080
-        host: 172.17.0.2
+        host: uteg.com
         router:
             resources:
                 - '@uteg/Resources/config/pubsub/routing.yml'

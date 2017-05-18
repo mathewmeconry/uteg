@@ -543,6 +543,7 @@ egt:
             club: 'Club'
             category: 'Category'
             grade: 'Grade'
+            gradeValidate: 'Validate'
             save: 'Save'
 
     ranking:

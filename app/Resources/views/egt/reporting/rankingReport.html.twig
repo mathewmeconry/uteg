@@ -1,12 +1,15 @@
 {% trans_default_domain 'uteg' %}
 
-{% macro buildReport(headers, starters, category, competition, highGrades) %}
+{% macro buildReport(headers, starters, category, competition, highGrades, url) %}
     <thead style="display: table-header-group">
     <tr>
         <td colspan="{{ headers|length }}">
             <h2 style=" margin: 0; color: #434a54;"
                 class="bold">{{ 'egt.reporting.ranking.title'|trans }} {{ category.name }}</h2>
-            <h4 style=" margin: 0; color: #434a54;">{{ competition.name }}</h4></td>
+            <h4 style=" margin: 0; color: #434a54;">{{ competition.name }}</h4>
+            {% if url|last == "pdf" %}
+            <img style="float:right; height:50px; margin-top: -50px" src="/srv/web/logo.jpg" />
+            {% endif %}</td>
     </tr>
     {% for header in headers %}
         <th style="color: #434a54; border-bottom: 2px solid #5d5b5b; vertical-align: middle;padding-top: 20px; {{ header.style }}">{{ header.name | trans }}</th>
@@ -57,5 +60,5 @@
 {% endif %}
 
 <table style="width: 100%; text-align: left; border-collapse: collapse;font-family: 'Quicksand', sans-serif;">
-    {{ _self.buildReport(headers, starters, category, competition, highGrades) }}
+    {{ _self.buildReport(headers, starters, category, competition, highGrades, url) }}
 </table>

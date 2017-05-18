@@ -187,7 +187,7 @@ class judgingTopic implements TopicInterface
                 $this->states[$comp][$competitionPlace] = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
 
                 if ($this->getGender($comp, $competitionPlace) === "male") {
-                    $this->states[$comp][5] = 0;
+                    $this->states[$comp][$competitionPlace][5] = 0;
                 }
             }
         }

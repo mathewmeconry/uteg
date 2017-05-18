@@ -539,6 +539,7 @@ egt:
             club: 'Verein'
             category: 'Kategorie'
             grade: 'Note'
+            gradeValidate: 'Validieren'
             save: 'Speichern'
 
     ranking:

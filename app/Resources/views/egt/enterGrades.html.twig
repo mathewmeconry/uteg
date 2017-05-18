@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block jsplugins %}
+    <script type="text/javascript" src="{{ asset('js/plugins/maskedinput/jquery.maskedinput.min.js') }}"></script>
 {% endblock %}
 
 {% block css %}
@@ -18,7 +19,115 @@
 
 {% block script %}
     <script>
+        $(document).ready(function () {
+            {% for round, roundStarters in data.starters %}
+            {% for key, devicestarters in roundStarters %}
+            {% for starter in devicestarters %}
+            {% if starter != 'pause' %}
+            $('#{{ round }}_{{ key }}_table tbody').append('<tr><td>{{ starter.firstname }}</td><td>{{ starter.lastname }}</td><td>{{ starter.club }}</td><td>{{ starter.category }}</td><td><input name="grade" class="grade form-control" id="{{ round + 1 }}_{{ starter.id }}" data-starter="{{ starter.id }}" data-toggle="tooltip" maxlength="5" min="1" max="5" pattern="((0)|(\d{1,2})([\.])(\d{2}))" placeholder="00.00"/></td><td><input id="{{ round + 1 }}_{{ starter.id }}_validate" class="grade_validate form-control" data-starter="{{ starter.id }}" data-toggle="tooltip" maxlength="5" min="1" max="5" pattern="((0)|(\d{1,2})([\.])(\d{2}))" placeholder="00.00"/></td></tr>');
+            {% else %}
+            $('#{{ loop.parent.key }}_{{ key }}_table').parent().addClass('pause');
+            $('#{{ loop.parent.key }}_{{ key }}_table').parent().html('<h1>{{ 'egt.judging.pause'|trans }}<h1>');
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+            {% endfor %}
 
+            $('#{{ data.round }}_li').addClass('active');
+            $('#{{ data.round }}_div').addClass('active');
+            $('.grade').mask("99.99");
+            $('.grade').tooltip();
+            $('.grade_validate').mask("99.99");
+            $('.grade_validate').tooltip();
+
+            $('.save').click(function() {
+                var round = $(this).data('round');
+                var tables = $('#' + round + '_div table');
+                var grades = {};
+                var error = false;
+
+                $.each(tables, function(key, table) {
+                   var tableGrades = $($(table).children('tbody')[0]).find('input.grade');
+                    grades[$(table).data('device')] = new Array();
+                    $.each(tableGrades, function(key, grade) {
+                        console.log($('#' + round + '_' + $(grade).data('starter') + '_validate').val())
+                       if($(grade).val() !== $('#' + round + '_' + $(grade).data('starter') + '_validate').val()) {
+                          $(grade).addClass('error');
+                           $(grade).attr('title', 'validation error');
+                           error = true;
+                       } else {
+                           if($(grade).val() !== '') {
+                                grades[$(table).data('device')].push({'s2c': $(grade).data('starter'), 'grade': $(grade).val()});
+                               $(grade).addClass('valid');
+                               $(grade).attr('title', 'ok');
+                            } else {
+                               $(grade).addClass('error');
+                               $(grade).attr('title', 'not empty');
+                               error = true;
+                           }
+                       }
+                    });
+                });
+
+                if(!error) {
+                    error = false;
+                    $.each(grades, function (device, grades) {
+                        $.ajax({
+                            'url': "{{ path('saveGrades', { 'compid': app.request.get('compid')}) }}/" + device,
+                            'method': "POST",
+                            'data': {round: round - 1, grades: grades},
+                            'success': function (data) {
+                                var decode = JSON.parse(data);
+                                $.each(decode, function (key, data) {
+                                    if (data[0] === "ok") {
+                                        $('#' + round + '_' + key).removeClass('error');
+                                        $('#' + round + '_' + key).addClass('valid');
+                                        $('#' + round + '_' + key).attr('title', 'ok');
+                                    } else if (data[0] === "invalidGrade") {
+                                        $('#' + round + '_' + key).removeClass('valid');
+                                        $('#' + round + '_' + key).addClass('error');
+                                        $('#' + round + '_' + key).attr('title', data[1]);
+                                        error = true;
+                                    } else if (data[0] === "wrongDevice") {
+                                        $('#' + round + '_' + key).removeClass('valid');
+                                        $('#' + round + '_' + key).addClass('error');
+                                        $('#' + round + '_' + key).attr('title', data[1]);
+                                        error = true;
+                                    } else {
+                                        $('#' + round + '_' + key).removeClass('valid');
+                                        $('#' + round + '_' + key).addClass('error');
+                                        $('#' + round + '_' + key).attr('title', 'Undefined error');
+                                        error = true;
+                                    }
+
+                                });
+
+                                $('.grade').tooltip();
+                            }
+                        });
+                    });
+
+                    if (error) {
+                        noty({
+                            text: "{{ 'egt.judging.fixErrors' | trans }}",
+                            layout: 'topCenter',
+                            type: 'error',
+                            timeout: 5000
+                        });
+                    } else {
+                        noty({
+                            text: "{{ 'egt.judging.saveSuccess' | trans }}",
+                            layout: 'topCenter',
+                            type: 'success',
+                            timeout: 5000
+                        });
+                        $('#' + round + '_modal').modal('hide');
+                        $('#message-box-wait').addClass('open');
+                        $(document).trigger('finished');
+                    }
+                }
+            });
+        });
     </script>
 {% endblock %}
 
@@ -26,36 +135,29 @@
     {% if error is not defined %}
         <div class="row">
             <div class="col-md-12">
-                <div id="panel_ranking" class="panel panel-default nav-tabs-horizontal" style="min-height: 400px;">
+                <div id="panel_judging" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
                     <div class="panel-heading">
-                        <h3 class="panel-title">{{ 'egt.grades.header'|trans }}</h3>
+                        <h3 class="panel-title">{{ 'egt.judging.header'|trans }}</h3>
                         <ul class="panel-controls">
-                            <li><a target="_blank" class="control-primary" id="report-file-button"><span
-                                            class="fa fa-file-pdf-o"></span></a></li>
-                            <li><a href="#" class="control-primary panel-fullscreen"><span class="fa fa-expand"></span></a>
-                            </li>
+                            <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                         </ul>
                     </div>
                     <div class="tabs">
                         <ul class="nav nav-tabs">
-                            {% for category in categories %}
-                                <li id="{{ loop.index }}_li" {% if loop.first %}class="active"{% endif %}>
-                                    <a class="tab" href="#{{ loop.index }}_div" data-toggle="tab"
-                                       aria-expanded="true" data-id="{{ category.name }}">{{ category.name }}</a>
+                            {% for device in data.devices[0] %}
+                                <li id="{{ loop.index }}_li">
+                                    <a href="#{{ loop.index }}_div" data-toggle="tab"
+                                       aria-expanded="true">{{ 'egt.judging.division'|trans }} {{ loop.index }}</a>
                                 </li>
                             {% endfor %}
                         </ul>
                     </div>
                     <div class="panel-body tab-content" style="width: 90%">
-                        {% for category in categories %}
-                            <div id="{{ loop.index }}_div" class="tab-pane {% if loop.first %}active{% endif %}"
-                                 style="width: 100%">
-
-                            </div>
-                        {% endfor %}
-                        {% for key, device in devices %}
-                            <div id="{{ loop.index }}_div" class="tab-pane" style="width: 100%">
-                                <table id="{{ device }}_table" data-device="{{ deviceid }}"
+                        {% for baseKey, baseDevice in data.devices %}
+                        <div id="{{ loop.index }}_div" class="tab-pane" style="width: 100%">
+                            {% for deviceKey,device in baseDevice %}
+                                <h3>{{ data.avDevices[deviceKey].name | trans }}</h3>
+                                <table id="{{ baseKey }}_{{ data.devices[deviceKey][baseKey] }}_table" data-device="{{ data.avDevices[deviceKey].id }}"
                                        class="table table-striped table-hover"
                                        width="100%">
                                     <thead>
@@ -65,15 +167,17 @@
                                         <th class="all">{{ 'egt.judging.table.club'|trans }}</th>
                                         <th class="all">{{ 'egt.judging.table.category'|trans }}</th>
                                         <th class="all">{{ 'egt.judging.table.grade'|trans }}</th>
+                                        <th class="all">{{ 'egt.judging.table.gradeValidate'|trans }}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     </tbody>
                                 </table>
-                                <button id="{{ loop.index }}_button" class="btn pull-right btn-success save"
-                                        data-round="{{ loop.index }}" {% if loop.index != round %}disabled{% endif %}><i
-                                            class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
-                            </div>
+                                {% endfor %}
+                            <button id="{{ loop.index }}_validate_button" class="btn pull-right btn-success save"
+                                    data-round="{{ loop.index }}"><i
+                                        class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
