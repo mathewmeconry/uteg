@@ -13,7 +13,7 @@ class S2cType extends AbstractType
 
     protected $disabled;
 
-    public function __construct($disabled = true)
+    public function __construct($disabled = false)
     {
         $this->disabled = $disabled;
     }

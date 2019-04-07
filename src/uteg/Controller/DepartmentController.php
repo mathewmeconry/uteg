@@ -2,6 +2,7 @@
 
 namespace uteg\Controller;
 
+use Doctrine\Common\Util\ClassUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -48,7 +49,7 @@ class DepartmentController extends DefaultController
 
         foreach ($deps as $dep) {
             if($dep->getStarted() === false && $dep->getEnded() == false) {
-                $state = '<button class="btn btn-primary btn-condensed btn-icon start"><i class="fa fa-play"></i><span>'.$translator->trans('departments.start', array(), 'uteg').'</span></button>';
+                $state = '<button class="btn btn-primary btn-condensed btn-icon start" data-competitionPlace="'.$dep->getCompetitionPlace().'"><i class="fa fa-play"></i><span>'.$translator->trans('departments.start', array(), 'uteg').'</span></button>';
             } elseif($dep->getStarted() === true && $dep->getEnded() == false) {
                 $state = '<button class="btn btn-warning btn-condensed btn-icon"><i class="fa fa-hourglass-half"></i><span>'.$translator->trans('departments.running', array(), 'uteg').'</span></button>';;
             } else {
@@ -57,6 +58,7 @@ class DepartmentController extends DefaultController
             $departments["data"][] = array("id" => $dep->getId(),
                 "number" => $dep->getNumber(),
                 "date" => $dateFormatter->format($dep->getDate(), "medium", "none", $request->getPreferredLanguage()),
+                "competitionPlace" => $dep->getCompetitionPlace(),
                 "category" => $dep->getCategory()->getName(),
                 "gender" => $dep->getGender(),
                 "state" => $state
@@ -88,8 +90,13 @@ class DepartmentController extends DefaultController
             $dateList[$dateFormatter->format($date, "short", "none", "en")] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
         }
 
+        $competitionPlaceList = [];
+        for($i = 1; $i <= $competition->getCountCompetitionPlace(); $i++) {
+            $competitionPlaceList[$i] = $i;
+        }
+
         $department = new Department();
-        $form = $this->container->get('form.factory')->create(new DepartmentType($dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage())), $department);
+        $form = $this->container->get('form.factory')->create(new DepartmentType($competitionPlaceList, $dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage())), $department);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -150,10 +157,15 @@ class DepartmentController extends DefaultController
             $dateList[$dateFormatter->format($date, "short", "none", "en")] = $dateFormatter->format($date, "short", "none", $request->getPreferredLanguage());
         }
 
+        $competitionPlaceList = [];
+        for($i = 1; $i <= $competition->getCountCompetitionPlace(); $i++) {
+            $competitionPlaceList[$i] = $i;
+        }
+
         $department = $em->find('uteg:Department', $id);
         $department->setDate($dateFormatter->format($department->getDate(), "short", "none", $request->getPreferredLanguage()));
 
-        $form = $this->container->get('form.factory')->create(new DepartmentType($dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage()), true), $department);
+        $form = $this->container->get('form.factory')->create(new DepartmentType($competitionPlaceList, $dateList, $dateFormatter->getPattern("short", "none", $request->getPreferredLanguage()), true), $department);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -163,12 +175,12 @@ class DepartmentController extends DefaultController
             $oldDepartment = $uow->getOriginalEntityData($department);
 
             $department->setDate(new \DateTime($department->getDate()));
-
-            if ($oldDepartment['category'] !== $department->getCategory() || $oldDepartment['date'] !== $department->getDate() || $oldDepartment['gender'] !== $department->getGender()) {
+            if ($oldDepartment['category'] !== $department->getCategory() || $oldDepartment['date']->format('Y-m-d') !== $department->getDate()->format('Y-m-d') || $oldDepartment['gender'] !== $department->getGender()) {
                 $this->adjustDepNumbering($competition, $oldDepartment, 'down');
+            } else {
+                $em->persist($department);
+                $em->flush();
             }
-
-            $this->adjustDepNumbering($competition, $department, 'up');
 
             $this->container->get('session')->getFlashBag()->add('success', 'department.edit.success');
 
@@ -234,7 +246,6 @@ class DepartmentController extends DefaultController
             $departments = $competition->getDepartmentsByCatDateGender($srcDepartment->getCategory(), $srcDepartment->getDate(), $srcDepartment->getGender());
         }
         $em = $this->getDoctrine()->getManager();
-
         switch ($mode) {
             case 'up':
                 if (count($departments) > 0 && $departments[count($departments) - 1]->getId() !== $srcDepartment->getId()) {
@@ -253,8 +264,10 @@ class DepartmentController extends DefaultController
                         $srcNumber = $srcDepartment->getNumber();
                     }
 
-                    if ($department->getNumber() > $srcNumber) {
+                    if ($department->getNumber() >= $srcNumber) {
                         $department->setNumber($department->getNumber() - 1);
+                    } else {
+                        $department->setNumber($department->getNumber() + 1);
                     }
 
                     $em->persist($department);

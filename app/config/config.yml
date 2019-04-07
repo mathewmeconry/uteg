@@ -9,7 +9,7 @@ parameters:
 
 framework:
     #esi:             ~
-    translator: { fallbacks: [en] }
+    translator: { fallbacks: [de] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -114,7 +114,7 @@ ewz_recaptcha:
 
 jms_i18n_routing:
     default_locale: de
-    locales: [de, en, fr]
+    locales: [de]
     strategy: custom
 
 knp_snappy:

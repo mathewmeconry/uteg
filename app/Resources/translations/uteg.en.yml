@@ -36,6 +36,7 @@ competitionlist:
         name: 'Competition name'
         gym: 'Gym'
         location: 'Location'
+        countCompetitionPlace: 'Count of competition places'
         zipcode: 'Zip code'
         module: 'Module'
         startdate: 'Start date'
@@ -368,6 +369,7 @@ department:
     add:
         number: 'Number'
         date: 'Date'
+        competitionPlace: 'Competition Place'
         female: 'Female'
         male: 'Male'
         gender: 'Gender'
@@ -406,6 +408,7 @@ departments:
             searchPlaceholder: 'Search...'
             zeroRecords: 'No Departments defined'
             number: 'Number'
+            competitionPlace: 'Competition place'
             date: 'Date'
             category: 'Category'
             gender: 'Gender'
@@ -433,6 +436,7 @@ reporting:
 
 egt:
     nav:
+        grades: 'Enter Grades'
         judges: 'Judges'
         grouping: 'Starter Grouping'
         departments: 'Departments'
@@ -442,6 +446,10 @@ egt:
         ranking.male: 'Male'
         ranking.female: 'Female'
         judging: 'Judging'
+        judging.competitionPlace: 'Competition Place %number%'
+    grades:
+        title: 'Enter Grades'
+        header: 'Enter Grades'
     judges:
         title: 'Judges'
         header: 'Judges'
@@ -477,6 +485,7 @@ egt:
         male: 'Male'
         all: 'All'
         department: 'Department'
+        competitionPlace: 'Competition place'
         header-unassigned: 'Unassigned Starters'
         hint: 'Use CTRL and Shift for more efficiency'
     reporting:
@@ -523,6 +532,10 @@ egt:
         startTitle: 'Starting Department...'
         notstartedTitle: 'No Department started'
         notstartedContent: 'Please wait...'
+        chooseCompetitionPlace: 'Choose a competition place'
+        competitionPlace: 'Competition place'
+        minimize: 'Minimize'
+        pleaseWait: 'Please wait'
         table:
             id: 'ID'
             firstname: 'Firstname'
@@ -530,6 +543,7 @@ egt:
             club: 'Club'
             category: 'Category'
             grade: 'Grade'
+            gradeValidate: 'Validate'
             save: 'Save'
 
     ranking:

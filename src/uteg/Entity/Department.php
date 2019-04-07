@@ -50,6 +50,11 @@ class Department
     protected $date;
 
     /**
+     * @ORM\Column(type="integer", name="competitionPlace")
+     */
+    protected $competitionPlace;
+
+    /**
      * @ORM\Column(type="boolean", name="started", options={"default" = false})
      */
     protected $started = false;
@@ -133,6 +138,28 @@ class Department
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set CompetitionPlace
+     * 
+     * @param integer $competitionPlace
+     * @return Department
+     */
+    public function setCompetitionPlace($competitionPlace) 
+    {
+        $this->competitionPlace = $competitionPlace;
+        return $this;
+    }
+
+    /**
+     * get CompetitionPlace
+     * 
+     * @return integer
+     */
+    public function getCompetitionPlace()
+    {
+        return $this->competitionPlace;
     }
 
     /**

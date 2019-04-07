@@ -147,11 +147,11 @@
                         $.each(data.value, function (key, day) {
                             var optgroup = $('<optgroup>');
                             optgroup.attr('label', day.date);
-
-                            $.each(day.deps, function (key, value) {
-                                $(optgroup).append('<option value="' + value.id + '" data-subtext="' + value.date + '">{{ 'egt.divisions.department' | trans }} ' + value.number + '</option>');
+                            $.each(day.deps, function (key, competitionPlace) {
+                                $.each(competitionPlace.deps, function (key, value) {
+                                    $(optgroup).append('<option value="' + value.id + '" data-subtext="' + value.date + ' / {{ 'egt.divisions.competitionPlace'|trans }} ' + competitionPlace.competitionPlace + '">{{ 'egt.divisions.department' | trans }} ' + value.number + '</option>');
+                                });
                             });
-
                             $('#divisions-filter-department').append(optgroup);
 
                         });

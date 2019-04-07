@@ -1,0 +1,173 @@
+{% trans_default_domain 'uteg' %}
+
+
+    {% extends "base.html.twig" %}
+
+    {% block title %}{{ 'egt.grades.title'|trans }}{% endblock %}
+
+    {% block cssplugins %}
+    {% endblock %}
+
+    {% block jsplugins %}
+        <script type="text/javascript" src="{{ asset('js/plugins/maskedinput/jquery.maskedinput.min.js') }}"></script>
+    {% endblock %}
+
+    {% block css %}
+        <style>
+
+        </style>
+    {% endblock %}
+
+    {% block script %}
+        <script>
+            $(document).ready(function () {
+                $('#report-file-button').click(function () {
+                    window.open("{{ path('championat', { 'compid': app.request.get('compid'), 'deviceid':app.request.get('deviceid'), 'limit': app.request.get('limit'), 'format': 'pdf' }) }}");
+                });
+
+                $('.grade').mask("99.999");
+                $('.grade_validate').mask("99.999");
+
+                $('.save').click(function () {
+                    var grades = {};
+                    var error = false;
+                    var table = $('#championat_table tbody');
+
+                    var tableGrades = $(table).find('input.grade');
+                    grades[$(table).data('device')] = new Array();
+                    $.each(tableGrades, function (key, grade) {
+                        if ($(grade).val() !== $('#' + $(grade).data('starter') + '_validate').val()) {
+                            $(grade).addClass('error');
+                            $(grade).attr('title', 'validation error');
+                            error = true;
+                        } else {
+                            if ($(grade).val() !== '') {
+                                grades[$(table).data('device')].push({
+                                    's2c': $(grade).data('starter'),
+                                    'grade': $(grade).val()
+                                });
+                                $(grade).addClass('valid');
+                                $(grade).attr('title', 'ok');
+                            } else {
+                                $(grade).addClass('error');
+                                $(grade).attr('title', 'not empty');
+                                error = true;
+                            }
+                        }
+                    });
+
+                    if (!error) {
+                        var ajax = [];
+                        error = false;
+                        $.each(grades, function (device, grades) {
+                            ajax.push($.ajax({
+                                'url': "{{ path('saveChampionatGrades', { 'compid': app.request.get('compid')}) }}/" + {{ app.request.get('deviceid') }},
+                                'method': "POST",
+                                'data': {grades: grades},
+                                'success': function (data) {
+                                    var decode = JSON.parse(data);
+                                    $.each(decode, function (key, data) {
+                                        if (data[0] === "ok") {
+                                            $('#' + key).removeClass('error');
+                                            $('#' + key).addClass('valid');
+                                            $('#' + key).attr('title', 'ok');
+                                        } else if (data[0] === "invalidGrade") {
+                                            $('#' + key).removeClass('valid');
+                                            $('#' + key).addClass('error');
+                                            $('#' + key).attr('title', data[1]);
+                                            error = true;
+                                        } else if (data[0] === "wrongDevice") {
+                                            $('#' + key).removeClass('valid');
+                                            $('#' + key).addClass('error');
+                                            $('#' + key).attr('title', data[1]);
+                                            error = true;
+                                        } else {
+                                            $('#' + key).removeClass('valid');
+                                            $('#' + key).addClass('error');
+                                            $('#' + key).attr('title', 'Undefined error');
+                                            error = true;
+                                        }
+
+                                    });
+
+                                    $('.grade').tooltip();
+                                }
+                            }));
+                        });
+
+                        $.when.apply($, ajax).done(function () {
+                            if (error) {
+                                noty({
+                                    text: "{{ 'egt.judging.fixErrors' | trans }}",
+                                    layout: 'topCenter',
+                                    type: 'error',
+                                    timeout: 5000
+                                });
+                            } else {
+                                noty({
+                                    text: "{{ 'egt.judging.saveSuccess' | trans }}",
+                                    layout: 'topCenter',
+                                    type: 'success',
+                                    timeout: 5000
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+    {% endblock %}
+
+{% block content %}
+    {% if error is not defined %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="panel_judging" class="panel panel-default nav-tabs-vertical" style="min-height: 400px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Championat</h3>
+                        <ul class="panel-controls">
+                            <li><a target="_blank" class="control-primary" id="report-file-button"><span
+                                            class="fa fa-file-pdf-o"></span></a></li>
+                            <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                        </ul>
+                    </div>
+                    <table id="championat_table"
+                           data-device="{{ app.request.get('deviceid') }}"
+                           class="table table-striped table-hover"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th class="all">{{ 'egt.judging.table.firstname'|trans }}</th>
+                            <th class="all">{{ 'egt.judging.table.lastname'|trans }}</th>
+                            <th class="all">{{ 'egt.judging.table.club'|trans }}</th>
+                            <th class="all">{{ 'egt.judging.table.category'|trans }}</th>
+                            <th class="all">Note am Gerät</th>
+                            <th class="all">{{ 'egt.judging.table.grade'|trans }}</th>
+                            <th class="all">{{ 'egt.judging.table.gradeValidate'|trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for starter in starters %}
+                            <tr>
+                                <td>{{ starter.firstname }}</td>
+                                <td>{{ starter.lastname }}</td>
+                                <td>{{ starter.club }}</td>
+                                <td>{{ starter.category }}</td>
+                                <td>{{ starter.grade }}</td>
+                                <td><input name="grade" class="grade form-control" id="{{ starter.id }}"
+                                           data-starter="{{ starter.id }}" data-toggle="tooltip" maxlength="6" min="1"
+                                           max="6" pattern="((0)|(\d{1,2})([\.])(\d{3}))" placeholder="00.000"/></td>
+                                <td><input id="{{ starter.id }}_validate" class="grade_validate form-control"
+                                           data-starter="{{ starter.id }}" data-toggle="tooltip" maxlength="6" min="1"
+                                           max="6" placeholder="00.000" pattern="((0)|(\d{1,2})([\.])(\d{3}))"/></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <button id="save_button" class="btn pull-right btn-success save"><i
+                                class="fa fa-save"></i>{{ 'egt.judging.table.save'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

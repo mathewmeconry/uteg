@@ -96,10 +96,10 @@ class JudgeController extends DefaultController
 
 
     /**
-     * @Route("/{compid}/{deviceid}/judge", name="judge", requirements={"compid": "\d+", "deviceid": "\d+"})
+     * @Route("/{compid}/{deviceid}/{competitionPlace}/judge", name="judge", requirements={"compid": "\d+", "deviceid": "\d+", "competitionPlace": "\d+"}, defaults={"competitionPlace" = 0})
      * @Method("GET")
      */
-    public function judgeAction(Request $request, $compid, $deviceid)
+    public function judgeAction(Request $request, $compid, $deviceid, $competitionPlace)
     {
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $device = $this->getDoctrine()->getEntityManager()->find('uteg:Device', $deviceid);
@@ -115,7 +115,7 @@ class JudgeController extends DefaultController
             throw new AccessDeniedException();
         }
 
-        return $module->judging($request, $comp, $device, $j2c);
+        return $module->judging($request, $comp, $device, $competitionPlace);
     }
 
     /**
@@ -132,13 +132,13 @@ class JudgeController extends DefaultController
     }
 
     /**
-     * @Route("/{compid}/judging/report/{format}", name="judgingReport", defaults={"format": "html"}, requirements={"compid": "\d+", "format": "pdf|html"})
+     * @Route("/{compid}/{competitionPlace}/judging/report/{format}", name="judgingReport", defaults={"format": "html", "competitionPlace" : 0}, requirements={"compid": "\d+", "competitionPlace": "\d+", "format": "pdf|html"})
      * @Method("GET")
      */
-    public function judgingReportAction(Request $request, $compid, $format) {
+    public function judgingReportAction(Request $request, $compid, $competitionPlace, $format) {
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $module = $this->get($comp->getModule()->getServiceName());
 
-        return $module->judgingReport($request, $comp, $format);
+        return $module->judgingReport($request, $comp, $competitionPlace, $format);
     }
 }

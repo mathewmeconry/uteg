@@ -18,19 +18,22 @@
 {% block script %}
     <script>
         function socket(session) {
-            session.subscribe('judging/topic/{{ app.request.get('compid') }}', function (uri, payload) {
+            {% for i in 1..comp.countCompetitionPlace %}
+                session.subscribe('judging/topic/{{ app.request.get('compid') }}/{{ i }}', function (uri, payload) {
 
-            });
+                });
+            {% endfor %}
 
-            $(document).on('startDepartment', function () {
+            $(document).on('startDepartment', function (event, competitionPlace) {
                 console.log('start');
-                session.publish('judging/topic/{{ app.request.get('compid') }}', {
+                console.log('judging/topic/{{ app.request.get('compid') }}/' + competitionPlace);
+                session.publish('judging/topic/{{ app.request.get('compid') }}/' + competitionPlace, {
                     method: "startDepartment"
                 });
             });
 
-            $(document).on('reloadStarters', function () {
-                session.publish('judging/topic/{{ app.request.get('compid') }}', {
+            $(document).on('reloadStarters', function (event, competitionPlace) {
+                session.publish('judging/topic/{{ app.request.get('compid') }}/' + competitionPlace, {
                     method: "reloadStarters"
                 });
             });
@@ -48,7 +51,7 @@
                 "search": {
                     "regex": true
                 },
-                "order": [[2, "asc"], [1, "asc"], [4, "asc"], [3, "asc"]],
+                "order": [[2, "asc"], [1, "asc"], [5, "asc"], [4, "asc"]],
                 responsive: {
                     details: {
                         type: 'column'
@@ -58,6 +61,7 @@
                     {"data": "id", "type": "integer"},
                     {"data": "number", "type": "integer"},
                     {"data": "date", "type": "string"},
+                    {"data": "competitionPlace", "type": "integer"},
                     {"data": "category", "type": "string"},
                     {"data": "gender", "type": "string"},
                     {"data": "state", "type": "string"},
@@ -165,6 +169,7 @@
             });
 
             $('tbody').on('click', 'td button.start', function () {
+                var self = this;
                 var table = $(this).parent().parent().parent().parent().DataTable();
                 var dep_id = table.cell($(this).parent().parent(), 0).data();
                 $.ajax({
@@ -173,7 +178,8 @@
                 }).success(function (data) {
                     showFlashbag();
                     $('.panel-refresh').click();
-                    $(document).trigger('startDepartment');
+                    console.log($(self).data('competitionplace'));
+                    $(document).trigger('startDepartment', $(self).data('competitionplace'));
                 });
             });
 
@@ -244,6 +250,7 @@
                             <th class="never">id</th>
                             <th class="all">{{ 'departments.table.number'|trans }}</th>
                             <th class="all">{{ 'departments.table.date'|trans }}</th>
+                            <th class="all">{{ 'departments.table.competitionPlace'|trans }}</th>
                             <th class="all">{{ 'departments.table.category'|trans }}</th>
                             <th class="all">{{ 'departments.table.gender'|trans }}</th>
                             <th class="min-tablet-p"></th>

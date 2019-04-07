@@ -45,7 +45,12 @@ class egt
     public function onAddServiceMenu(MenuEvent $event)
     {
         $menu = $event->getMenu();
+        $menu->addChild('egt.nav.grades', array('uri' => '#', 'icon' => 'graduation-cap', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        for ($i = 1; $i <= $event->getEntityManager()->getRepository('uteg:Competition')->find($event->getRequest()->get('compid'))->getCountCompetitionPlace(); $i++) {
+            $menu['egt.nav.grades']->addChild($event->getTranslator()->trans('egt.nav.judging.competitionPlace', array('%number%' => $i), 'uteg'), array('route' => 'enterGrades', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'competitionPlace' => $i)));
+        }
         $menu->addChild('egt.nav.judges', array('route' => 'judges', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => 'gavel', 'labelAttributes' => array('class' => 'xn-text')));
+        $menu->addChild('Championat', array('route' => 'championat', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'deviceid' => 1, 'limit' => 6), 'icon' => '', 'labelAttributes' => array('class' => 'xn-text')));
         $menu->addChild('egt.nav.grouping', array('uri' => '#', 'icon' => 'object-group', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
         $menu['egt.nav.grouping']->addChild('egt.nav.departments', array('route' => 'department', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
         $menu['egt.nav.grouping']->addChild('egt.nav.divisions', array('route' => 'division', 'routeParameters' => array('compid' => $event->getRequest()->get('compid')), 'icon' => ''));
@@ -58,7 +63,10 @@ class egt
         $menu['nav.reporting']->addChild('egt.nav.ranking', array('uri' => '#', 'icon' => 'trophy', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
         $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.male', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'male'), 'icon' => 'male'));
         $menu['nav.reporting']['egt.nav.ranking']->addChild('egt.nav.ranking.female', array('route' => 'reportingRanking', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'gender' => 'female'), 'icon' => 'female'));
-        $menu['nav.reporting']->addChild('egt.nav.judging', array('route' => 'judgingReport', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'format' => 'pdf'), 'icon' => 'gavel'));
+        $menu['nav.reporting']->addChild('egt.nav.judging', array('uri' => '#', 'icon' => 'gavel', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
+        for ($i = 1; $i <= $event->getEntityManager()->getRepository('uteg:Competition')->find($event->getRequest()->get('compid'))->getCountCompetitionPlace(); $i++) {
+            $menu['nav.reporting']['egt.nav.judging']->addChild($event->getTranslator()->trans('egt.nav.judging.competitionPlace', array('%number%' => $i), 'uteg'), array('route' => 'judgingReport', 'routeParameters' => array('compid' => $event->getRequest()->get('compid'), 'competitionPlace' => $i, 'format' => 'pdf')));
+        }
     }
 
     public function getS2c()
@@ -237,6 +245,7 @@ class egt
                     foreach ($deps as $dep) {
                         if (!array_key_exists($dep->getCategory()->getNumber(), $return['value'])) {
                             $return['value'][$dep->getCategory()->getNumber()] = array("number" => $dep->getCategory()->getNumber(),
+                                "competitionPlace" => $dep->getCompetitionPlace(),
                                 "name" => $dep->getCategory()->getName()
                             );
                         }
@@ -257,9 +266,10 @@ class egt
 
                     foreach ($deps as $dep) {
                         if (!array_key_exists($dep->getCategory()->getNumber(), $array['value'])) {
-                            $array['value'][$dep->getDate()->getTimestamp()][$dep->getId()] = array("id" => $dep->getId(),
+                            $array['value'][$dep->getDate()->getTimestamp()][$dep->getCompetitionPlace()][$dep->getId()] = array("id" => $dep->getId(),
                                 "number" => $dep->getNumber(),
                                 "date" => $dateFormatter->format($dep->getDate(), "short", "none", $request->getPreferredLanguage()),
+                                "competitionPlace" => $dep->getCompetitionPlace(),
                                 "category" => $dep->getCategory()->getName(),
                                 "gender" => $dep->getGender()
                             );
@@ -268,12 +278,15 @@ class egt
 
                     ksort($array['value']);
                     foreach ($array['value'] as $key => $day) {
-                        usort($day, function ($a, $b) {
-                            return $a['number'] - $b['number'];
-                        });
+                        foreach ($day as $key2 => $compPlace) {
+                            usort($compPlace, function ($a, $b) {
+                                return $a['number'] - $b['number'];
+                            });
 
-                        $return['value'][$key]['deps'] = $day;
-                        $return['value'][$key]['date'] = end($day)['date'];
+                            $return['value'][$key]['deps'][$key2]['deps'] = $compPlace;
+                            $return['value'][$key]['deps'][$key2]['competitionPlace'] = end($compPlace)['competitionPlace'];
+                            $return['value'][$key]['date'] = end($compPlace)['date'];
+                        }
                     }
                 } else {
                     $return = "";
@@ -384,10 +397,11 @@ class egt
                             "medicalcert" => $s2c->getMedicalcert()
                         );
                     }
+                    $return['value']['assigned'] = $assignedS2cs;
+                    $return['value']['unassigned'] = $unassignedS2cs;
+                } else {
+                    $return = "";
                 }
-
-                $return['value']['assigned'] = $assignedS2cs;
-                $return['value']['unassigned'] = $unassignedS2cs;
                 break;
             default:
                 echo "server error";
@@ -458,7 +472,7 @@ class egt
     {
         $starters = $this->getRankingArray($competition, $category, $gender);
         $starters = $this->sortRanking($starters, $gender);
-        $starters = $this->genRanking($starters, 33);
+        $starters = $this->genRanking($starters, 30);
         $highGrades = $this->getHighestGrades($starters, $gender);
 
         $headers = array(array('name' => 'egt.reporting.ranking.rank', 'style' => 'width: 5px;'),
@@ -515,32 +529,23 @@ class egt
         ));
     }
 
-    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, \uteg\Entity\Judges2Competitions $j2c)
+    public function judging(Request $request, \uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $competitionPlace)
     {
-        $judgingArr = $this->generateJudgingArray($device, $competition);
+        if ($competitionPlace > 0) {
+            $judgingArr = $this->generateJudgingArray($device, $competition, $competitionPlace);
+        } else {
+            $judgingArr['starters'] = [];
+            $judgingArr['devices'] = [];
+            $judgingArr['round'] = 0;
+        }
 
         if (isset($judgingArr['error'])) {
-            return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
-                "compid" => $competition->getId(),
-                "device" => $j2c->getDevice(),
-                "deviceid" => $j2c->getDevice()->getId(),
-                "starters" => array(),
-                "devices" => array(),
-                "round" => array(),
-                "error" => $judgingArr['error']
-            ));
+            return $this->container->get('templating')->renderResponse('egt/judging.html.twig', $this->getJudgingOptions($competition, $device, $competitionPlace));
         }
-        return $this->container->get('templating')->renderResponse('egt/judging.html.twig', array(
-            "compid" => $competition->getId(),
-            "device" => $j2c->getDevice(),
-            "deviceid" => $j2c->getDevice()->getId(),
-            "starters" => $judgingArr['starters'],
-            "devices" => $judgingArr['devices'],
-            "round" => $judgingArr['round']
-        ));
+        return $this->container->get('templating')->renderResponse('egt/judging.html.twig', $this->getJudgingOptions($competition, $device, $competitionPlace));
     }
 
-    public function judgingReport(Request $request, \uteg\Entity\Competition $competition, $format)
+    public function judgingReport(Request $request, \uteg\Entity\Competition $competition, $competitionPlace, $format)
     {
         $em = $this->container->get('Doctrine')->getManager();
         $devices = array(1 => $em->find('uteg:Device', 1),
@@ -556,7 +561,8 @@ class egt
             ->where('d.started = 1')
             ->andWhere('d.ended = 0')
             ->andWhere('d.competition = :competition')
-            ->setParameters(array('competition' => $competition->getId()))
+            ->andWhere('d.competitionPlace = :competitionPlace')
+            ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
 
         foreach ($departments as $department) {
@@ -566,7 +572,7 @@ class egt
         }
 
         foreach ($devices as $device) {
-            $judgingArr[$device->getNumber()] = array("starters" => $this->generateJudgingArray($device, $competition), "devicename" => $device->getName());
+            $judgingArr[$device->getNumber()] = array("starters" => $this->generateJudgingArray($device, $competition, $competitionPlace), "devicename" => $device->getName());
         }
 
         ksort($judgingArr);
@@ -584,14 +590,14 @@ class egt
         ));
     }
 
-    public function saveGrades(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $grades)
+    public function saveGrades(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $grades, $numberFormatLenght = 2, $deepValidate = true)
     {
         $em = $this->container->get('Doctrine')->getManager();
         $error = array();
 
         foreach ($grades as $grade) {
             $s2c = $em->getRepository('uteg:Starters2Competitions')->find($grade['s2c']);
-            $realGrade = number_format($grade['grade'], 2, '.', '');
+            $realGrade = number_format($grade['grade'], $numberFormatLenght, '.', '');
 
             $gradeEntity = new Grade();
             $gradeEntity->setId($competition->getId() . $s2c->getId() . $device->getNumber());
@@ -599,16 +605,117 @@ class egt
             $gradeEntity->setCompetition($competition);
             $gradeEntity->setDevice($device);
             $gradeEntity->setGrade($realGrade);
-            $error[$grade['s2c']] = $this->saveGrade($gradeEntity);
+            $error[$grade['s2c']] = $this->saveGrade($gradeEntity, $deepValidate);
         }
 
         return new Response(json_encode($error));
     }
 
-    private function generateJudgingArray(\uteg\Entity\Device $device, \uteg\Entity\Competition $competition)
+    public function enterGrades(Request $request, \uteg\Entity\Competition $competition, $competitionPlace)
+    {
+        $startersMerge = [];
+
+        for ($i = 1; $i < 6; $i++) {
+            $device = $this->container->get('doctrine')->getEntityManager()->find('uteg:Device', $i);
+            $baseMerge[$i] = $this->getJudgingOptions($competition, $device, $competitionPlace);
+        }
+
+        $rounds = $baseMerge[1]['devices'];
+        ksort($rounds);
+        $baseData = $baseMerge[1];
+        $baseData['starters'] = [];
+        $baseData['devices'] = [];
+
+        $cleanedMerge = [];
+        $a = 0;
+        foreach ($rounds as $i) {
+            $baseData['avDevices'][$a] = $this->container->get('doctrine')->getEntityManager()->getRepository('uteg:Device')->findBy(Array("number" => $i))[0];
+            $cleanedMerge[$a] = $baseMerge[$i];
+            $cleanedMerge[$a]['devices'] = [];
+
+            $c = 0;
+            foreach ($baseMerge[$i]['devices'] as $devices) {
+                $cleanedMerge[$a]['devices'][$c] = $devices;
+                $c++;
+            }
+            $a++;
+        }
+
+
+        for ($i = 0; $i < count($cleanedMerge); $i++) {
+            $baseData['devices'][$i] = $cleanedMerge[$i]['devices'];
+            $baseData['starters'][$i] = $cleanedMerge[$i]['starters'];
+        }
+
+
+        return $this->container->get('templating')->renderResponse('egt/enterGrades.html.twig', Array(
+            'data' => $baseData
+        ));
+    }
+
+    public function turn(Request $request, \uteg\Entity\Competition $competition, $competitionPlace)
+    {
+        $deps = $this->getDepartments($competition, $competitionPlace);
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $depRepo = $em->getRepository('uteg:Department');
+        $ended = false;
+
+
+        foreach ($deps as $dep) {
+            $depEntity = $depRepo->findOneBy(array("id" => $dep['id']));
+            $depEntity->increaseRound();
+            if ($dep['round'] + 1 === 4 && $dep['gender'] === "female") {
+                $depEntity->setEnded(1);
+                $ended = true;
+            } elseif ($dep['round'] + 1 === 5 && $dep['gender'] === "male") {
+                $depEntity->setEnded(1);
+                $ended = true;
+            }
+            $em->persist($depEntity);
+        }
+        $em->flush();
+        return new Response(json_encode($ended));
+    }
+
+    private function getJudgingOptions(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $competitionPlace)
+    {
+        if ($competitionPlace > 0) {
+            $judgingArr = $this->generateJudgingArray($device, $competition, $competitionPlace);
+        } else {
+            $judgingArr['starters'] = [];
+            $judgingArr['devices'] = [];
+            $judgingArr['round'] = 0;
+        }
+
+        if (isset($judgingArr['error'])) {
+            return array(
+                "compid" => $competition->getId(),
+                "device" => $device,
+                "deviceid" => $device->getId(),
+                "starters" => array(),
+                "devices" => array(),
+                "round" => array(),
+                "error" => $judgingArr['error'],
+                "countCompetitionPlace" => $competition->getCountCompetitionPlace(),
+                "competitionPlace" => $competitionPlace
+            );
+        }
+        return array(
+            "compid" => $competition->getId(),
+            "device" => $device,
+            "deviceid" => $device->getId(),
+            "starters" => $judgingArr['starters'],
+            "devices" => $judgingArr['devices'],
+            "round" => $judgingArr['round'],
+            "countCompetitionPlace" => $competition->getCountCompetitionPlace(),
+            "competitionPlace" => $competitionPlace
+        );
+    }
+
+    private function generateJudgingArray(\uteg\Entity\Device $device, \uteg\Entity\Competition $competition, $competitionPlace)
     {
         $em = $this->container->get('Doctrine')->getManager();
-        $devices = array(1 => 1, 2 => 2, 3 => 3, 4 => 5);
+        $devices = array(1 => 1, 2 => 2, 3 => 3, 4 => 5, 5 => 4);
 
         $departments = $em
             ->getRepository('uteg:Department')
@@ -617,7 +724,8 @@ class egt
             ->where('d.started = 1')
             ->andWhere('d.ended = 0')
             ->andWhere('d.competition = :competition')
-            ->setParameters(array('competition' => $competition->getId()))
+            ->andWhere('d.competitionPlace = :competitionPlace')
+            ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
 
         $starters = $em
@@ -634,12 +742,15 @@ class egt
             ->andWhere('de.ended = 0')
             ->andWhere('s.present = 1')
             ->andWhere('de.competition = :competition')
-            ->setParameters(array('competition' => $competition->getId()))
+            ->andWhere('de.competitionPlace = :competitionPlace')
+            ->addOrderBy('ca.id', 'ASC')
+            ->addOrderBy('s.id', 'ASC')
+            ->setParameters(array('competition' => $competition->getId(), 'competitionPlace' => $competitionPlace))
             ->getQuery()->getResult();
 
         if ($starters) {
             foreach ($starters as $starter) {
-                $return[$starter['deviceid']][] = $starter;
+                $return[$starter['devicenumber']][] = $starter;
 
                 if ($starter['gender'] === 'male') {
                     $devices[5] = 4;
@@ -652,15 +763,25 @@ class egt
             $devices = array_replace($slice, $devices);
 
             $round = 0;
-            foreach ($devices as $key => $device) {
-                $startersDevice = $return[$device];
 
-                if ($round > count($startersDevice)) {
-                    $round -= count($startersDevice);
+            foreach ($devices as $key => $device) {
+
+                if (array_key_exists($device, $return)) {
+                    $startersDevice = $return[$device];
                 }
 
-                $splice = array_splice($startersDevice, 0, $round);
-                $return[$device] = array_merge($startersDevice, $splice);
+                if (isset($startersDevice)) {
+                    if ($round > count($startersDevice)) {
+                        $round -= count($startersDevice);
+                    }
+
+                    $splice = array_splice($startersDevice, 0, $round);
+                    $return[$device] = array_merge($startersDevice, $splice);
+                } else {
+                    $return[$device] = Array('pause');
+                }
+
+                unset($startersDevice);
                 $round++;
             }
 
@@ -670,25 +791,38 @@ class egt
         }
     }
 
-    private function saveGrade(\uteg\Entity\Grade $grade)
+    private function saveGrade(\uteg\Entity\Grade $grade, $deepValidate = true)
     {
         $em = $this->container->get('Doctrine')->getManager();
 
-        $float = explode('.', $grade->getGrade());
-        if (!isset($float[1])) {
-            $float[1] = 00;
+        if ($deepValidate) {
+            $float = explode('.', $grade->getGrade());
+            if (!isset($float[1])) {
+                $float[1] = 00;
+            }
+            $float = $float[1] % 5;
         }
-        $float = $float[1] % 5;
 
-        if ($grade->getGrade() >= 0 && $grade->getGrade() <= 10 && $float === 0) {
-            $startDevice = $grade->getS2c()->getDivision()->getDevice()->getNumber();
-            $gender = $grade->getS2c()->getStarter()->getGender();
-            $round = $grade->getS2c()->getDivision()->getDepartment()->getRound();
-            $rotated = $this->rotate($startDevice, $round, $gender);
+        if ($grade->getGrade() >= 0 && $grade->getGrade() <= 10) {
+            if ($deepValidate) {
+                if ($float === 0) {
+                    $startDevice = $grade->getS2c()->getDivision()->getDevice()->getId();
+                    $gender = $grade->getS2c()->getStarter()->getGender();
+                    $round = $grade->getS2c()->getDivision()->getDepartment()->getRound();
+                    $rotated = $this->rotate($startDevice, $round, $gender);
 
-            $em->merge($grade);
-            $em->flush();
-            return array('ok');
+                    $em->merge($grade);
+                    $em->flush();
+                    return array('ok');
+                } else {
+                    return array('invalidGrade', $this->container->get('translator')->trans('egt.judging.invalidGrade', array(), 'uteg'));
+                }
+            } else {
+                $em->merge($grade);
+                $em->flush();
+
+                return array('ok');
+            }
         } else {
             return array('invalidGrade', $this->container->get('translator')->trans('egt.judging.invalidGrade', array(), 'uteg'));
         }
@@ -703,13 +837,13 @@ class egt
             $device -= 5;
         }
 
-        if ($gender === "male") {
+/*         if ($gender === "male") {
             if ($device === 5) {
                 $device = 4;
             } elseif ($device === 4) {
                 $device = 5;
             }
-        }
+        } */
 
         return $device;
     }
@@ -773,10 +907,20 @@ class egt
     private function getRankingArray(\uteg\Entity\Competition $competition, \uteg\Entity\Category $category, $gender)
     {
         $em = $this->container->get('doctrine')->getManager();
-        $default = array(1 => number_format((float)"0.00", 2, '.', ''), 2 => number_format((float)"0.00", 2, '.', ''), 3 => number_format((float)"0.00", 2, '.', ''), 5 => number_format((float)"0.00", 2, '.', ''));
+        $deps = $competition->getDepartmentsByCatGender($category, $gender);
+        $running = false;
+        $round = 0;
+
+        foreach ($deps as $dep) {
+            if ($dep->getStarted() && !$dep->getEnded()) {
+                $running = true;
+                $round = $dep->getRound();
+            }
+        }
+        $default = array(1 => number_format((float)"0.00", 2, '.', ''), 2 => number_format((float)"0.00", 2, '.', ''), 3 => number_format((float)"0.00", 2, '.', ''), 4 => number_format((float)"0.00", 2, '.', ''));
 
         if ($gender === "male") {
-            $default[4] = number_format((float)"0.00", 2, '.', '');
+            $default[5] = number_format((float)"0.00", 2, '.', '');
         }
 
         $starters = $em
@@ -799,19 +943,33 @@ class egt
                 ->select('g.grade as grade, d.number as dnumber, d.name as device')
                 ->join('g.device', 'd')
                 ->where('g.s2c = :s2c')
-                ->setParameter('s2c', $starter['s2cid'])
-                ->getQuery()->getResult();
+                ->orderBy('g.created', 'ASC')
+                ->setParameter('s2c', $starter['s2cid']);
+
+            if ($running) {
+                $grades->setMaxResults($round);
+            }
+
+            $grades = $grades->getQuery()->getResult();
 
             $sum = 0;
 
             foreach ($grades as $grade) {
-                $grade['grade'] = number_format((float)$grade['grade'], 2, '.', '');
+                if ($category->getId() !== 9) {
+                    $grade['grade'] = number_format((float)$grade['grade'], 2, '.', '');
+                } else {
+                    $grade['grade'] = number_format((float)$grade['grade'], 3, '.', '');
+                }
                 $starter[$grade['dnumber']] = $grade['grade'];
                 $sum += $grade['grade'];
             }
 
             $starter = array_replace($default, $starter);
-            $starter['total'] = number_format((float)$sum, 2, '.', '');;
+            if ($category->getId() === 9) {
+                $starter['total'] = number_format((float)$sum, 3, '.', '');;;
+            } else {
+                $starter['total'] = number_format((float)$sum, 2, '.', '');;
+            }
             $starters[$key] = $starter;
         }
 
@@ -824,11 +982,11 @@ class egt
             $floor[$key] = $starter[1];
             $swiningrings[$key] = $starter[2];
             $vault[$key] = $starter[3];
-            $horizontalbar[$key] = $starter[5];
+            $horizontalbar[$key] = $starter[4];
             $total[$key] = $starter['total'];
 
             if ($gender === "male") {
-                $parallelbars[$key] = $starters[4];
+                $parallelbars[$key] = $starters[5];
             }
         }
 
@@ -881,7 +1039,7 @@ class egt
 
     private function getHighestGrades($starters, $gender)
     {
-        $highGrades = array(1 => number_format((float)"0.00", 2, '.', ''), 2 => number_format((float)"0.00", 2, '.', ''), 3 => number_format((float)"0.00", 2, '.', ''), 5 => number_format((float)"0.00", 2, '.', ''));
+        $highGrades = array(1 => number_format((float)"0.00", 2, '.', ''), 2 => number_format((float)"0.00", 2, '.', ''), 3 => number_format((float)"0.00", 2, '.', ''), 4 => number_format((float)"0.00", 2, '.', ''), 5 => number_format((float)"0.00", 2, '.', ''));
 
         if ($gender === "male") {
             $highGrades[4] = number_format((float)"0.00", 2, '.', '');
@@ -892,9 +1050,9 @@ class egt
             (bccomp($highGrades[2], $starter[2], 2) === -1) ? $highGrades[2] = number_format((float)$starter[2], 2, '.', '') : number_format((float)$highGrades[2], 2, '.', '');
             (bccomp($highGrades[3], $starter[3], 2) === -1) ? $highGrades[3] = number_format((float)$starter[3], 2, '.', '') : number_format((float)$highGrades[3], 2, '.', '');
             if ($gender === "male") {
-                (bccomp($highGrades[4], $starter[4], 2) === -1) ? $highGrades[4] = number_format((float)$starter[4], 2, '.', '') : number_format((float)$highGrades[4], 2, '.', '');
+                (bccomp($highGrades[5], $starter[5], 2) === -1) ? $highGrades[5] = number_format((float)$starter[5], 2, '.', '') : number_format((float)$highGrades[5], 2, '.', '');
             }
-            (bccomp($highGrades[5], $starter[5], 2) === -1) ? $highGrades[5] = number_format((float)$starter[5], 2, '.', '') : number_format((float)$highGrades[5], 2, '.', '');
+            (bccomp($highGrades[4], $starter[4], 2) === -1) ? $highGrades[4] = number_format((float)$starter[4], 2, '.', '') : number_format((float)$highGrades[4], 2, '.', '');
         }
 
         return $highGrades;
@@ -911,11 +1069,11 @@ class egt
             $second = $b[$c];
 
             $c++;
-            if ($c === 4 && $a['gender'] === "female") {
+            if ($c === 4 && $a['gender'] === "male") {
                 $c = 5;
             }
 
-            if ($c === 6) {
+            if ($c === 5) {
                 return 0;
             }
         }
@@ -971,7 +1129,10 @@ class egt
                 $newarr[$key] = $this->groupByRecursive($value, $groupBy);
             } else {
                 $gb = $value[$groupBy];
-                unset($value[$groupBy]);
+
+                if ($groupBy !== "category") {
+                    unset($value[$groupBy]);
+                }
 
                 if ($groupBy === "department") {
                     $gb = $this->container->get('translator')->trans('egt.reporting.divisions.department', array(), 'uteg') . ' ' . $gb;
@@ -1001,5 +1162,69 @@ class egt
             return $this->getLastDim(end($array));
         }
         return $array;
+    }
+
+    private function getDepartments($comp, $competitionPlace)
+    {
+        return $this->container->get('doctrine')->getEntityManager()
+            ->getRepository('uteg:Department')
+            ->createQueryBuilder('d')
+            ->select('d.id as id, d.round as round, d.gender as gender')
+            ->where('d.started = 1')
+            ->andWhere('d.ended = 0')
+            ->andWhere('d.competition = :competition')
+            ->andWhere('d.competitionPlace = :competitionPlace')
+            ->setParameters(array('competition' => $comp, 'competitionPlace' => $competitionPlace))
+            ->getQuery()->getResult();
+    }
+
+
+    public function generateCampionat(\uteg\Entity\Competition $comp, \uteg\Entity\Device $device, $limit, $format)
+    {
+        $em = $this->container->get('doctrine')->getEntityManager();
+
+        $queryResult = $em->getRepository('uteg:Grade')
+            ->createQueryBuilder('g')
+            ->select('s2c.id as id, s.firstname, s.lastname, c.name as club, cat.name as category, g.grade')
+            ->join('g.s2c', 's2c')
+            ->join('s2c.starter', 's')
+            ->join('s2c.club', 'c')
+            ->join('s2c.category', 'cat')
+            ->where('cat.id >= 6')
+            ->andWhere('cat.id <= 8')
+            ->andWhere('g.device = :device')
+            ->andWhere('s2c.competition = :competition')
+            ->orderBy('g.grade', 'DESC')
+            ->setMaxResults($limit)
+            ->setParameters(array('device' => $device, 'competition' => $comp))
+            ->getQuery()->getResult();
+
+        if ($format === "pdf") {
+            return $this->renderPdf('Championat', 'egt/reporting/championatReport.html.twig',
+                array('starters' => $queryResult)
+            );
+        } else {
+            return $this->container->get('templating')->renderResponse('egt/championat.html.twig',
+                array('starters' => $queryResult)
+            );
+        }
+    }
+
+    public function saveChampionatGrades(\uteg\Entity\Competition $competition, \uteg\Entity\Device $device, $grades)
+    {
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $championat = $em->getRepository('uteg:Category')->find(9);
+
+        foreach ($grades as $key => $grade) {
+            $s2c = $em->getRepository('uteg:Starters2Competitions')->find($grade['s2c']);
+
+            $newS2c = clone $s2c;
+            $newS2c->setCategory($championat);
+            $em->persist($newS2c);
+            $em->flush();
+            echo $newS2c->getId();
+            $grades[$key]['s2c'] = $newS2c->getId();
+        }
+        return $this->saveGrades($competition, $device, $grades, 3, false);
     }
 }

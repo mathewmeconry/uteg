@@ -19,8 +19,8 @@
 {% block script %}
     <script>
         {% for category in categories %}
-        var {{ category.name }} = "{{ path('reportingRanking', {'compid': app.request.get('compid'), 'format': 'ajax', 'catid': category.id, "gender": gender}) }}";
-        var {{ category.name ~ "pdf"}} = "{{ path('reportingRanking', {'compid': app.request.get('compid'), 'format': 'pdf', 'catid': category.id, "gender": gender}) }}";
+        var {{ "k" ~ category.id }} = "{{ path('reportingRanking', {'compid': app.request.get('compid'), 'format': 'ajax', 'catid': category.id, "gender": gender}) }}";
+        var {{ "k" ~ category.id ~ "pdf"}} = "{{ path('reportingRanking', {'compid': app.request.get('compid'), 'format': 'pdf', 'catid': category.id, "gender": gender}) }}";
         {% endfor %}
 
         $(document).ready(function () {
@@ -68,7 +68,7 @@
                             {% for category in categories %}
                                 <li id="{{ loop.index }}_li" {% if loop.first %}class="active"{% endif %}>
                                     <a class="tab" href="#{{ loop.index }}_div" data-toggle="tab"
-                                       aria-expanded="true" data-id="{{ category.name }}">{{ category.name }}</a>
+                                       aria-expanded="true" data-id="{{ "k" ~ category.id }}">{{ category.name }}</a>
                                 </li>
                             {% endfor %}
                         </ul>

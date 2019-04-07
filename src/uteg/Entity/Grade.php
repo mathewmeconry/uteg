@@ -5,7 +5,7 @@ namespace uteg\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
 
 /**
  * @ORM\Entity
@@ -20,7 +20,7 @@ class Grade
     protected $id;
 
     /**
-     * @ORM\Column(type="decimal", precision=4, scale=2, name="grade")
+     * @ORM\Column(type="decimal", precision=4, scale=3, name="grade")
      */
     protected $grade;
 
@@ -41,6 +41,17 @@ class Grade
      * @ORM\JoinColumn(name="comp_id", referencedColumnName="comp_id")
      */
     protected $competition;
+
+    /**
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    protected $created;
+
+    public function __construct()
+    {
+        $this->created = new \DateTime();
+    }
 
     /**
      * Set id

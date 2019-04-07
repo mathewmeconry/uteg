@@ -4,9 +4,11 @@ namespace uteg\Menu;
 
 use Doctrine\ORM\EntityManager;
 use Knp\Menu\FactoryInterface;
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\LoggingTranslator;
 use uteg\ACL\ACLCompetition;
 use uteg\EventListener\MenuEvent;
 
@@ -15,11 +17,13 @@ class MenuBuilder extends ContainerAware
 {
     private $factory;
     private $em;
+    private $translator;
 
-    public function __construct(EntityManager $em, FactoryInterface $factory)
+    public function __construct(EntityManager $em, FactoryInterface $factory, $translator)
     {
         $this->em = $em;
         $this->factory = $factory;
+        $this->translator = $translator;
     }
 
     public function mainMenu(Request $request, ACLCompetition $acl, EventDispatcherInterface $eventDispatcher)
@@ -42,11 +46,11 @@ class MenuBuilder extends ContainerAware
             $menu['nav.invites']->addChild('nav.invites.list', array('route' => 'inviteList', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'bars'));
         }
 
-        $eventDispatcher->dispatch(MenuEvent::SERVICE_MENU, new MenuEvent($this->factory, $menu, $request));
+        $eventDispatcher->dispatch(MenuEvent::SERVICE_MENU, new MenuEvent($this->factory, $menu, $request, $this->em, $this->translator));
 
         $menu->addChild('nav.reporting', array('uri' => '#', 'icon' => 'book', 'attributes' => array('class' => 'xn-openable'), 'labelAttributes' => array('class' => 'xn-text')));
 
-        $eventDispatcher->dispatch(MenuEvent::REPORTING_MENU, new MenuEvent($this->factory, $menu, $request));
+        $eventDispatcher->dispatch(MenuEvent::REPORTING_MENU, new MenuEvent($this->factory, $menu, $request, $this->em, $this->translator));
 
         ($acl->isGranted('SETTINGS_VIEW')) ? $menu->addChild('nav.competition', array('route' => 'competition', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'cogs', 'labelAttributes' => array('class' => 'xn-text'))) : '';
         ($acl->isGranted('PERMISSIONS_VIEW')) ? $menu->addChild('nav.permissions', array('route' => 'permissions', 'routeParameters' => array('compid' => $request->get('compid')), 'icon' => 'lock', 'labelAttributes' => array('class' => 'xn-text'))) : '';

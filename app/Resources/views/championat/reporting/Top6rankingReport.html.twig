@@ -1,0 +1,56 @@
+{% trans_default_domain 'uteg' %}
+
+{% macro buildReport(headers, starters, category, competition, highGrades) %}
+    <thead style="display: table-header-group">
+    <tr>
+        <td colspan="{{ headers|length }}">
+            <h2 style=" margin: 0; color: #434a54;"
+                class="bold">{{ 'egt.reporting.ranking.title'|trans }} {{ category.name }}</h2>
+            <h4 style=" margin: 0; color: #434a54;">{{ competition.name }}</h4></td>
+    </tr>
+    {% for header in headers %}
+        <th style="color: #434a54; border-bottom: 2px solid #5d5b5b; vertical-align: middle;padding-top: 20px; {{ header.style }}">{{ header.name | trans }}</th>
+    {% endfor %}
+    </thead>
+    <tbody>
+    {% for starter in starters %}
+        {% if starter.4 is defined %}
+        <tr style="page-break-inside: avoid; color: #656d78;">
+            <td style="padding-top: 5px; width: 5px; padding-right: 5px; text-align: center;"
+                class="small center">{{ starter.rank }}</td>
+            <td style="padding-top: 5px;">{{ starter.firstname }}</td>
+            <td style="padding-top: 5px;">{{ starter.lastname }}</td>
+            <td style="padding-top: 5px;">{{ starter.birthyear }}</td>
+            <td style="padding-top: 5px;">{{ starter.club }}</td>
+            <td style="padding-top: 5px; width: 40px; text-align: center; {% if highGrades.5 == starter.5 %}font-weight: bold;{% endif %}">{{ starter.4 }}</td>
+            <td style="padding-top: 5px; width: 40px; font-weight: bold; text-align: center;">{{ starter.total }}</td>
+        </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+{% endmacro %}
+
+{% set url = app.request.uri | split('/') %}
+
+<style>
+    tbody > tr:nth-child(even) {
+        background-color: #c7c7c7;
+    }
+
+    table > thead > tr > th, table > tbody > tr {
+    {% if url|last == "pdf" %} font-size: 8pt;
+    {% else %} font-size: 10pt;
+    {% endif %}
+    }
+</style>
+
+{% if url|last == "pdf" %}
+    <head>
+        <meta charset="UTF-8"/>
+        <title>{{ 'egt.reporting.ranking.title'|trans }}</title>
+    </head>
+{% endif %}
+
+<table style="width: 100%; text-align: left; border-collapse: collapse;font-family: 'Quicksand', sans-serif;">
+    {{ _self.buildReport(headers, starters, category, competition, highGrades) }}
+</table>

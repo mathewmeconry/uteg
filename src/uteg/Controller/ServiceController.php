@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Zend\Json\Server\Response;
 
 class ServiceController extends DefaultController
 {
@@ -84,11 +85,70 @@ class ServiceController extends DefaultController
      * @Route("{compid}/reporting/divisions", name="reportingDivisionsPost")
      * @Method("POST")
      */
-    public function reportingDivisionsPostAction(Request $request, $compid) {
+    public function reportingDivisionsPostAction(Request $request, $compid)
+    {
         $this->get('acl_competition')->isGrantedUrl('STARTERS_VIEW');
         $comp = $this->getDoctrine()->getEntityManager()->find('uteg:Competition', $compid);
         $module = $this->get($comp->getModule()->getServiceName());
 
         return $module->reportingDivisionsPost($request, $comp);
+    }
+
+    /**
+     * @Route("{compid}/grades/enter/{competitionPlace}", name="enterGrades")
+     * @Method("GET")
+     */
+    public function enterGradesAction(Request $request, $compid, $competitionPlace)
+    {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+        $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
+        return $module->enterGrades($request, $comp, $competitionPlace);
+    }
+
+    /**
+     * @Route("{compid}/grades/enter/turn/{competitionPlace}", name="enterGradesTurn")
+     * @Method("POST")
+     */
+    public function enterGradesTurnAction(Request $request, $compid, $competitionPlace)
+    {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+        $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+
+        return $module->turn($request, $comp, $competitionPlace);
+    }
+
+    /**
+     * @Route("{compid}/championat/{deviceid}/{limit}/{format}", name="championat", defaults={"format": "html"})
+     * @Method("GET")
+     */
+    public function championatAction(Request $request, $compid, $deviceid, $limit, $format)
+    {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+        $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+        $module->init();
+
+        return $module->generateCampionat($comp, $this->getDoctrine()->getManager()->find('uteg:Device', $deviceid), $limit, $format);
+    }
+
+    /**
+     * @Route("{compid}/championat/save/{deviceid}", name="saveChampionatGrades", defaults={"deviceid": 0})
+     * @Method("POST")
+     */
+    public function saveChampionatGradesAction(Request $request, $compid, $deviceid)
+    {
+        $this->get('acl_competition')->isGrantedUrl('STARTERS_EDIT');
+        $comp = $this->getDoctrine()->getManager()->find('uteg:Competition', $compid);
+        $module = $this->get($comp->getModule()->getServiceName());
+
+        if ($deviceid > 0) {
+            return $module->saveChampionatGrades($comp, $this->getDoctrine()->getManager()->find('uteg:Device', $deviceid), $grades = $request->request->get('grades'));
+        } else {
+            return new Response('Error. Please return and try again');
+        }
     }
 }
